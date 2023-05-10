@@ -77,6 +77,7 @@ import axios from "axios"
 import Cookies from "js-cookie"
 import { defineComponent } from "vue"
 import ILista from "../interfaces/ILista"
+import api from "@/http"
     export default defineComponent({
         name: "HeaderTemplate",
         emits: ['search'],
@@ -114,14 +115,22 @@ import ILista from "../interfaces/ILista"
 
             },
 
-            async getListas(){
-                try {
-                    const token = Cookies.get("token")
-                    const headers = {
-                        'Authorization': `Bearer ${token}`
-                    };
+            getListas(){
 
-                    axios.post('http://localhost:8080/lista/getlista-consumidor', {nome:"Otavio Quirino", email : "otavio@gmail.com"}, { headers })
+                
+                const token = Cookies.get("token")
+                const headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+                if (token){
+                    api.post('lista/getListaConsumidor', 
+                        {nome:"Quirino", email : "otavio@gmail.com"},
+                        {
+                            headers: {
+                            Authorization: 'Bearer ' + Cookies.get('token')
+                            }
+                        }
+                     )
                     .then(response => {
                         const data = response.data;
                         console.log(data);
@@ -131,18 +140,12 @@ import ILista from "../interfaces/ILista"
                         console.log('Erro:', error);
                     });
                 }
-                catch{
-                    console.log("Erro ao carregar lista.")
-                }
+                
             },
             
             async getCategorias() {
             
-                await axios.get("https://localhost:8080/lista/getlista-categoria", {
-                    headers: {
-                    Authorization: `Bearer ${Cookies.get('token')}`
-                    }
-                })
+                await api.get("filtro/get-categorias")
                 .then((response) => this.categorias = response.data)
                 .catch((err) => console.log("Erro: " + err));
             }

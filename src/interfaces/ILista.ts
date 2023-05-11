@@ -1,6 +1,6 @@
 export default interface ILista {
     id: number,
-    nome: string,
-    idconsumidor: number,
+    nomeLista: string,
+    idConsumidor: number,
     consumidor: string
 }

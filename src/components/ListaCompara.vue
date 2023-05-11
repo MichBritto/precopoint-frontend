@@ -33,8 +33,12 @@
 
 </template>
 <script lang="ts">
+
     import { defineComponent } from 'vue';
-    import ModalItens from './ListaComparada.vue'
+    import ModalItens from './ListaResultados.vue'
+    import Cookies from "js-cookie"
+    import IRespostaLista from '@/interfaces/IRespostaLista'
+    import api from '@/http';
     export default defineComponent({
         name: "ListaCompara",
         components:{
@@ -52,11 +56,32 @@
                     valor_total: 350.50,
                     itens_nao_encontrados: ["item1", "item2", "item3"]
                 }]
+                /*listaComp: {} as IRespostaLista*/
             }
         }        
         ,
         methods: {
-           
+            getListas(){
+                try {
+                const token = Cookies.get("token")
+                const headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+
+                api.post('lista/getprodutos-lista',{ id: Cookies.get("lista")}, { headers : headers })
+                .then(response => {
+                    const data = response.data;
+                    console.log(data);
+                    
+                })
+                .catch(error => {
+                    console.log('Erro:', error);
+                });
+            }
+            catch{
+                console.log("Erro ao carregar lista.")
+            }
+                }
         }
     })
 </script>

@@ -22,7 +22,7 @@
                 <div class="card shadow me-5">
                         
                         <div class="card-body border" style="width: 18rem; height: 10rem">
-                            <h6 class="fw-bold text-muted text-center" style="font-size: 20px">{{ lista.nome }}</h6>
+                            <h6 class="fw-bold text-muted text-center" style="font-size: 20px">{{ lista.nomeLista }}</h6>
                             <div class="container text-center mt-3">
                                 <router-link :to="{ name: 'ListaProduto'}">
                                     <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString())">Editar</button>
@@ -49,11 +49,9 @@ import ILista from "@/interfaces/ILista";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Navbar from "../components/HeaderTemplate.vue"
+import api from "@/http";
 
-    type Lista = {
-    id: number;
-    nomeLista: string;
-    };
+   
 
     export default defineComponent({
         name: "ListaUsuario",
@@ -69,7 +67,7 @@ import Navbar from "../components/HeaderTemplate.vue"
             }
         },
         setup() {
-            async function getListas(componentInstance: any, email : any): Promise<void> {
+            async function getListas(componentInstance: any): Promise<void> {
                
                 const token = Cookies.get("token");
                 const headers = {
@@ -77,15 +75,15 @@ import Navbar from "../components/HeaderTemplate.vue"
                 };
 
                 try {
-                    const response = await axios.post(
-                        "http://localhost:8080/lista/getlista-consumidor",
+                    const response = await api.post(
+                        "lista/getlista-consumidor",
                         {
-                            email: email,
+                            email: Cookies.get("email")
                         },
                         { headers }
                     );
 
-                    const listas: Lista[] = response.data.map((lista: any) => ({
+                    const listas: ILista[] = response.data.map((lista: any) => ({
                         id: lista.id,
                         nomeLista: lista.nomeLista,
                     }));
@@ -102,8 +100,8 @@ import Navbar from "../components/HeaderTemplate.vue"
             };
         },
         created(){
-            const email = Cookies.get("email")
-            this.getListas(this, email)
+            
+            this.getListas(this)
             
         },
         methods:{

@@ -9,7 +9,7 @@ import EditarUsuario from '../views/EditarUsuario.vue'
 import EditarFornecedor from '../views/EditarFornecedor.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
 import Pagination  from '../components/Pagination.vue'
-import { RouteMeta } from '@/interfaces/RouteMeta'
+import RouteMeta from '@/interfaces/RouteMeta'
 
 
 const routes: Array<RouteRecordRaw> = [

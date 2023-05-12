@@ -7,6 +7,7 @@
   <script>
   import pdfMake from "pdfmake/build/pdfmake";
   import pdfFonts from "pdfmake/build/vfs_fonts";
+  import Cookies from "js-cookie"
   import { defineComponent} from 'vue'
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   
@@ -18,6 +19,13 @@
         required: true,
       },
     },
+    data(){
+      return{
+        nomeArquivo: Cookies.get('nomeLista'),
+        quantidade: 10
+      }
+    },
+    
     methods: {
       generatePDF() {
         
@@ -35,11 +43,28 @@
                 headerRows: 1,
                 body: [
                   ["Produto", "Detalhes", "Preco", "Quantidade", "Valor" ],
-                  ...this.products.map((product) => [product.produto, product.descricao,product.preco, product.quantidade, 'R$' + Number(product.preco * product.quantidadel).toLocaleString('pt-BR', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                    useGrouping: true
-                    }) ]),
+                  ...this.products.map((product) => [product.produto, product.descricao,
+                  
+                  product.preco.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }), 
+                  this.quantidade.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  , this.quantidade.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  
+                  /*product.quantidade, product.quantidade*/]),
                 ],
               },
             },
@@ -52,7 +77,8 @@
             },
           },
         };
-        pdfMake.createPdf(documentDefinition).download();
+        pdfMake.createPdf(documentDefinition).download(this.nomeArquivo ? this.nomeArquivo + '.pdf' : undefined);
+
       },
     },
   })

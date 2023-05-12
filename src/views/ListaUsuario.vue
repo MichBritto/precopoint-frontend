@@ -25,7 +25,7 @@
                             <h6 class="fw-bold text-muted text-center" style="font-size: 20px">{{ lista.nomeLista }}</h6>
                             <div class="container text-center mt-3">
                                 <router-link :to="{ name: 'ListaProduto'}">
-                                    <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString())">Editar</button>
+                                    <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString(), lista.nomeLista)">Editar</button>
                                 </router-link>
                                 <button class="btn btn-danger ms-2">Excluir</button>
                             </div>
@@ -105,8 +105,9 @@ import api from "@/http";
             
         },
         methods:{
-            carregarListaProdutos(id : string){
+            carregarListaProdutos(id : string, nomeLista: string){
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
+                Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
             }
         },
             

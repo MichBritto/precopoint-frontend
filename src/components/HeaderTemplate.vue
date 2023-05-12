@@ -34,7 +34,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length != 0">
                                 <li v-for="(item, index) in listas" :key="index">
-                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`" v-on:click="carregarListaProdutos((item.id).toString())"> {{ item.nomeLista }}</router-link>
+                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`" v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
                                 </li>
                             </ul>   
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length == 0">
@@ -97,8 +97,9 @@ import ICategoria from "@/interfaces/ICategoria"
         },
 
         methods:{
-            carregarListaProdutos(id : string){
+            carregarListaProdutos(id : string, nomeLista: string){
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
+                Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
             },
 
             pesquisar() {

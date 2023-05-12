@@ -22,59 +22,141 @@
     data(){
       return{
         nomeArquivo: Cookies.get('nomeLista'),
-        quantidade: 10
+        quantidade: 10,
+        quantidadeTotal: 0,
+        valorTotal: 0
+        
       }
     },
-    
     methods: {
       generatePDF() {
         
-        this.products.forEach(element => {
-            console.log(element.produto)
+        this.products.forEach((produto) => {
+            const valorItem = produto.preco * this.quantidade;
+            this.valorTotal += valorItem;
         });
+        this.quantidadeTotal = this.products.reduce((acumulador, produto) => acumulador + produto.preco, 0);
+        const qtdeTotal = this.quantidadeTotal.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+        
         const documentDefinition = {
-          content: [
-            {
-              text: "List of Products",
-              style: "header",
-            },
-            {
-              table: {
-                headerRows: 1,
-                body: [
-                  ["Produto", "Detalhes", "Preco", "Quantidade", "Valor" ],
-                  ...this.products.map((product) => [product.produto, product.descricao,
-                  
-                  product.preco.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }), 
-                  this.quantidade.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  , this.quantidade.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                  
-                  /*product.quantidade, product.quantidade*/]),
+        pageSize: 'A4',
+        pageMargins: [0, 0, 0, 0],
+        content: [
+          {
+            stack: [
+              {
+                canvas: [
+                  {
+                    type: "rect",
+                    x: 0,
+                    y: 0,
+                    w: 793,
+                    h: 50,
+                    color: "#202A2E",
+                  },
                 ],
+                margin: [0, 10, 0, 10],
+                
               },
-            },
-          ],
-          styles: {
-            header: {
-              fontSize: 18,
-              bold: true,
-              margin: [0, 0, 0, 10],
-            },
+              {
+                type: 'text',
+                text: 'PrecoPoint',
+                alignment: 'center',
+                fontSize: 30,
+                style: 'header',
+                background: "#202A2E"
+              },
+              {
+                type: 'text',
+                text: this.nomeArquivo,
+                alignment: 'center',
+                fontSize: 25,
+                bold: true,
+                margin: [0, 20, 0, 20]
+              },
+              {
+                table: {
+                    headerRows: 1,
+                    widths: ['*', 'auto', {width: 55, alignment: 'right'}, {width: 'auto', alignment: 'center'}, {width: 80, alignment: 'right'}],
+                    body: [
+                      [
+                        {text: "Produto", style: 'head' },
+                        {text: "Detalhes          ", style: 'head'},
+                        {text: "Preco     ", style: 'head'},
+                        {text: "Quantidade", style: 'head'},
+                        {text: "Valor     ", style: 'head', alignment:'right'}
+                      ],
+                      ...this.products.map((product) => [
+                        product.produto,
+                        product.descricao,
+                        {text: product.preco.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }), alignment: 'right'},
+                        {text: this.quantidade, alignment: 'right'},
+                        {text: this.quantidade.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }), alignment: 'right'}
+                      ]),
+                    ], style: 'table_theme'           
+                  },
+                
+                margin: [50, 40, 40, 0]
+              },
+              {
+                table: {
+                    alignment: 'center',
+                    headerRows: 1,
+                    widths: ['60%', '40%'],
+                    body: [
+                      [
+                        {text: "Quantidade de Produtos", style: 'head' },
+                        {text: "Valor Total", style: 'head', alignment: 'right'},
+                      ],
+                      [
+                        {text: this.valorTotal, alignment: 'center'},
+                        {text: qtdeTotal, alignment: 'right'}
+                      ]
+                    ], style: 'table_theme'                    
+                  },
+                  
+                margin: [50, 40, 40, 0] 
+              },
+            ],
+          },
+        ],
+        styles: {
+          header: {
+            bold: true,
+            margin: [0, -50, 0, 10],
+            background: "#000000",
+            color: "#FFA500",
+          },
+          head: {
+            bold: true,
+            fontSize: 14,
+            fillColor: '#42AEE5',
+            color: '#000000',
+            alignment: 'center'
+          },
+          table_theme:{
+            alignment: 'center',
+            
+          }
+
+        },
+        layout: {
+            defaultBorder: false,
           },
         };
         pdfMake.createPdf(documentDefinition).download(this.nomeArquivo ? this.nomeArquivo + '.pdf' : undefined);

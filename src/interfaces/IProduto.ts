@@ -5,5 +5,7 @@ export default interface IProdutoList {
     quantidade: number,
     imagem: string,
     descricao: string,
-    marcaProduto: string 
+    marcaProduto: string,
+    fornecedor: string,
+    categoria: string,
 }

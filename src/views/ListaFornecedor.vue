@@ -81,8 +81,14 @@
                             <label for="preco" class="form-label">Preço:</label>
                             <div class="form-check">
                                 <input id="preco" type="checkbox" v-model="precoAtivo" class="form-check-input">
-                                <input v-if="!precoAtivo" type="text" v-model="produtoAtual.preco" class="form-control" disabled>
-                                <input v-if="precoAtivo" type="text" v-model="preco" class="form-control">
+                                <input v-if="!precoAtivo" type="text" :value="produtoAtual.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })" class="form-control" disabled>
+                                <div class="input-group" v-if="precoAtivo">
+                                    <span class="input-group-text">R$</span>
+                                    <input  type="text" v-model="preco" class="form-control">
+                                </div>
+                                
+                                
+                                
                             </div>
                         </div>
                          <!-- imagem -->
@@ -100,7 +106,7 @@
                             <div class="form-check">
                                 <input id="descricao" type="checkbox" v-model="descricaoAtivo" class="form-check-input">
                                 <input v-if="!descricaoAtivo" type="text" v-model="produtoAtual.descricao" class="form-control" disabled>
-                                <input v-if="descricaoAtivo" type="text" v-model="descricao" class="form-control">
+                                <input v-if="descricaoAtivo" type="number" v-model="descricao" class="form-control">
                             </div>
                         </div>
                         <!-- categoria -->
@@ -121,10 +127,11 @@
             </div>
         </div>
     </div>
+   
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent, VueElement } from 'vue';
     import Navbar from '../components/HeaderTemplate.vue'
     import IProduto from '@/interfaces/IProduto'
     import api from '@/http'
@@ -134,7 +141,7 @@
     export default defineComponent({
         name: "ListaFornecedor",
         components: {
-            Navbar,    
+            Navbar,
         },
         data() {
             return{
@@ -166,6 +173,7 @@
                 const end = start + this.itemsPerPage;
                 return this.listaProduto.slice(start, end);
             },
+            
         },
         methods: {
             async getListaProduto(){
@@ -242,10 +250,13 @@
                 this.callModal = false;
                 alert('Atualização de produto bem sucedida');
                 this.getListaProduto();
-            }
+            },
+                
+
         },
         mounted() {
             this.getListaProduto()
+            
         },
         watch: {
             listaProduto() {

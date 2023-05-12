@@ -32,16 +32,11 @@
       generatePDF() {
         
         this.products.forEach((produto) => {
-            const valorItem = produto.preco * this.quantidade;
+            const valorItem = produto.preco * produto.qtde;
             this.valorTotal += valorItem;
         });
-        this.quantidadeTotal = this.products.reduce((acumulador, produto) => acumulador + produto.preco, 0);
-        const qtdeTotal = this.quantidadeTotal.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
+        this.quantidadeTotal = this.products.reduce((acumulador, produto) => acumulador + produto.qtde, 0);
+   
         
         const documentDefinition = {
         pageSize: 'A4',
@@ -100,8 +95,8 @@
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         }), alignment: 'right'},
-                        {text: this.quantidade, alignment: 'right'},
-                        {text: this.quantidade.toLocaleString("pt-BR", {
+                        {text: product.qtde, alignment: 'right'},
+                        {text: (product.preco * product.qtde).toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                           minimumFractionDigits: 2,
@@ -124,8 +119,13 @@
                         {text: "Valor Total", style: 'head', alignment: 'right'},
                       ],
                       [
-                        {text: this.valorTotal, alignment: 'center'},
-                        {text: qtdeTotal, alignment: 'right'}
+                        {text: this.quantidadeTotal, alignment: 'center'},
+                        {text: 'R$ ' + this.valorTotal.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }), alignment: 'right'}
                       ]
                     ], style: 'table_theme'                    
                   },

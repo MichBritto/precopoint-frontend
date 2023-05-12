@@ -99,7 +99,7 @@
 
                     this.produtos_nao_encontrados = data["produtos-nao-encontrados"] //Separa os produtos nao encontrados
                     let fornecedoresComLogotipos: FornecedoresComLogotipos = {};
-
+                    console.log(this.produtos_nao_encontrados)
                     for (const fornecedor in data.fornecedores) {
                         if (data.fornecedor_logotipo) {
                             for (const fornecedor in data.fornecedores) {

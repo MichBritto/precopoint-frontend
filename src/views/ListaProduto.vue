@@ -79,8 +79,10 @@
                     
                 </table>
                 <Total :produtos="listaProdutos"/>
+                <div class="d-flex justify-content-center">
+                    <Pagination :key="paginationKey" :currentPage="currentPage" :totalItems="totalItems" :itemsPerPage="parseInt(itemsPerPage)" v-on:page-changed="fetchData" ></Pagination>
+                </div>
                 
-                <Pagination :key="paginationKey" :currentPage="currentPage" :totalItems="totalItems" :itemsPerPage="parseInt(itemsPerPage)" v-on:page-changed="fetchData" ></Pagination>
                   
                 </form>
                 

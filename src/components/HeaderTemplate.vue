@@ -74,7 +74,6 @@
 </template>
 
 <script lang="ts">
-import axios from "axios"
 import Cookies from "js-cookie"
 import { defineComponent } from "vue"
 import ILista from "../interfaces/ILista"
@@ -126,12 +125,10 @@ import ICategoria from "@/interfaces/ICategoria"
                     'Authorization': `Bearer ${token}`
                 };
                 if (token){
-                    api.post("lista/getlista-consumidor", 
-                        {email : Cookies.get("email")},
-                        {
-                            headers: headers
-                        }
-                     )
+                    api.get(
+                        "lista/getlista-consumidor/" + Cookies.get("email"),
+                        { headers }
+                    )
                     .then(response => {
                         const data = response.data;
                         console.log(data);

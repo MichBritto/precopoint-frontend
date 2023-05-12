@@ -8,25 +8,26 @@
                 <th scope="col" style="width: 10%">Visualizar</th>
             </tr>
         </thead>
-        <tbody v-for="(lista, index) in listaComp" :key="index">
+        <tbody v-for="(fornecedor, index) in fornecedores" :key="index">
             <tr>
-                <td>
-                    <img src="../assets/user.png" style="width: 40px; height: 40px; margin-right: 10px;">
-                    <p></p>
-                    <span style="display: inline-block;" v-html="lista.fornecedor"></span>
-                </td>
-                <td style="text-align: right; vertical-align: middle;">
-                    R$ {{ Number(lista.valor_total).toLocaleString('pt-BR', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                    useGrouping: true
-                    }) }}
-                </td>
-                <td style="text-align: center">
-                    <ModalItens :itemsNaoEncontrados="lista.itens_nao_encontrados" :nomeFornec="lista.fornecedor" :id="'btnListaProduto'+index"/>
-                </td>
+              <td>
+                <img :src="fornecedor.logotipo || ''" style="width: 40px; height: 40px; margin-right: 10px;">
+                <p></p>
+                <span style="display: inline-block;">{{ fornecedor.fornecedor }}</span>
+              </td>
+              <td style="text-align: right; vertical-align: middle;">
+                R$ {{ Number(fornecedor.preco).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  useGrouping: true
+                }) }}
+              </td>
+              <td style="text-align: center">
+                <ModalItens :itemsNaoEncontrados="lista.itens_nao_encontrados" :nomeFornec="lista.fornecedor" :id="'btnListaProduto'+index"/>
+              </td>
             </tr>
-        </tbody>
+          </tbody>
+          
         
     </table>
 </div>
@@ -37,8 +38,30 @@
     import { defineComponent } from 'vue';
     import ModalItens from './ListaResultados.vue'
     import Cookies from "js-cookie"
-    import IRespostaLista from '@/interfaces/IRespostaLista'
     import api from '@/http';
+
+    interface Fornecedores {
+    [key: string]: number;
+    }
+
+    interface FornecedorLogotipo {
+    [key: string]: string;
+    }
+
+    interface ProdutosNaoEncontrados {
+    [key: string]: string[];
+    }
+    interface DadosJson {
+        fornecedores: Fornecedores;
+        "fornecedor-logotipo": FornecedorLogotipo;
+        "produtos-nao-encontrados": ProdutosNaoEncontrados;
+    }
+    interface FornecedoresComLogotipos {
+        [fornecedor: string]: {
+            preco: number,
+            logotipo: string | null
+        }
+    }
     export default defineComponent({
         name: "ListaCompara",
         components:{
@@ -46,20 +69,20 @@
         },
         data(){
             return{
-                listaComp: [{
-                    fornecedor: "Empresa X",
-                    valor_total: 200.50,
-                    itens_nao_encontrados: ["item1", "item2", "item3"]
-                },
-                {
-                    fornecedor: "Empresa Y",
-                    valor_total: 350.50,
-                    itens_nao_encontrados: ["item1", "item2", "item3"]
-                }]
-                /*listaComp: {} as IRespostaLista*/
+
+                listaComp: {
+                    fornecedores:{},
+                    "fornecedor-logotipo": {},
+                    "produtos-nao-encontrados": {}
+                } as DadosJson,
+                produtos_nao_encontrados: [],
+                fornecedores: {} as FornecedoresComLogotipos
             }
-        }        
-        ,
+        },
+        created(){
+            this.getListas()
+            console.log("TESTE" + JSON.stringify(this.fornecedores))
+        },
         methods: {
             getListas(){
                 try {
@@ -68,15 +91,41 @@
                     'Authorization': `Bearer ${token}`
                 };
 
-                api.post('lista/getprodutos-lista',{ id: Cookies.get("lista")}, { headers : headers })
+                api.get('lista/getvalortotal/' + Cookies.get("lista"), { headers : headers })
                 .then(response => {
                     const data = response.data;
+                    this.listaComp = data
                     console.log(data);
-                    
+
+                    this.produtos_nao_encontrados = data["produtos-nao-encontrados"] //Separa os produtos nao encontrados
+                    let fornecedoresComLogotipos: FornecedoresComLogotipos = {};
+
+                    for (const fornecedor in data.fornecedores) {
+                        if (data.fornecedor_logotipo) {
+                            for (const fornecedor in data.fornecedores) {
+                                if (data.fornecedor_logotipo[fornecedor]) {
+                                fornecedoresComLogotipos[fornecedor] = {
+                                    preco: data.fornecedores[fornecedor],
+                                    logotipo: data.fornecedor_logotipo[fornecedor]
+                                };
+                                } else {
+                                fornecedoresComLogotipos[fornecedor] = {
+                                    preco: data.fornecedores[fornecedor],
+                                    logotipo: null
+                                };
+                                }
+                            }
+                        }
+                    }
+
+                    this.fornecedores = fornecedoresComLogotipos
+                    console.log(this.fornecedores)
                 })
                 .catch(error => {
                     console.log('Erro:', error);
                 });
+                
+        
             }
             catch{
                 console.log("Erro ao carregar lista.")

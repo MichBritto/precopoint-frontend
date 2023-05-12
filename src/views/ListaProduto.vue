@@ -42,6 +42,7 @@
                         <th scope="col">Imagem</th>
                         <th scope="col">Produto</th>
                         <th scope="col">Detalhes</th>
+                        <th scope="col">Preco</th>
                         <th scope="col" style="width:12.5%">Quantidade</th>
                         <th scope="col">Valor</th>
                         <th scope="col">Alterar</th>
@@ -53,15 +54,20 @@
                           <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
                           <td style="text-align:left">{{ produto.produto }}</td>
                           <td>{{ produto.descricao }}</td>
-                          <td>{{ 10 /*produto.quantidade*/ }}</td>
-                          <td>R$ {{ (produto.preco * 10 /*produto.quantidade*/).toLocaleString('pt-BR', {
+                          <td>R$ {{ (produto.preco).toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                            useGrouping: true
+                          }) }}</td>
+                          <td>{{ produto.qtde }}</td>
+                          <td>R$ {{ (produto.preco * produto.qtde).toLocaleString('pt-BR', {
                                           minimumFractionDigits: 2,
                                           maximumFractionDigits: 2,
                                           useGrouping: true
                                         }) }}
                           </td>
                           <td>
-                            <EditarListaProduto :produto="produto" @editar-quantidade="atualizarQuantidade(1 ,produto.id, $event)" />
+                            <EditarListaProduto :produto="produto" @editar-quantidade="atualizarQuantidade(produto.id, $event)" />
                           </td>
                         </tr>
                       </tbody>
@@ -107,7 +113,6 @@ import IProduto from '../interfaces/IProduto'
 import EditarListaProduto from '../components/EditarListaProduto.vue'
 import { defineComponent } from 'vue'
 import Cookies from 'js-cookie'
-import axios from 'axios'
 import Pagination from '@/components/Pagination.vue'
 import geraPDF from '@/components/geraPDF.vue'
 import api from '@/http'
@@ -240,7 +245,7 @@ export default defineComponent({
                     'Authorization': `Bearer ${token}`
                 };
 
-                api.post('lista/getprodutos-lista',{ id: id}, { headers : headers })
+                api.get('lista/getprodutos-lista/' + id, { headers : headers })
                 .then(response => {
                     const data = response.data;
                     console.log(data);
@@ -257,13 +262,15 @@ export default defineComponent({
                 console.log("Erro ao carregar lista.")
             }
         },
-        atualizarQuantidade(id: number, index: number, novaQuantidade: number) {
-            index = index - 1
-            const produto = this.filteredList[index]
-            produto.quantidade = novaQuantidade
+        atualizarQuantidade(id: number, novaQuantidade: number) {
+            
+            this.filteredList.forEach(product => {
                 
-            this.listaProdutos[index].quantidade = produto.quantidade
-            this.filteredList[index].quantidade = produto.quantidade
+                if(product.id == id){
+                    product.qtde = novaQuantidade
+                }
+            });
+                
             this.fetchData(this.currentPage)
             /*const produto = this.listaProdutos.find(p => p.id === id);
             if (produto) {
@@ -273,7 +280,7 @@ export default defineComponent({
         },
 
 
-        fetchData(page : any) {
+        fetchData(page : number) {
             // calcula o índice do primeiro e do último item a serem exibidos na página selecionada
             const firstItem = (page - 1) * parseInt(this.itemsPerPage);
             const lastItem = firstItem + parseInt(this.itemsPerPage);

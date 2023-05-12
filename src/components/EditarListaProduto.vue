@@ -68,7 +68,7 @@ import { defineComponent ,PropType } from 'vue';
           }
         },
         mounted(){
-            this.quantidade = Number(this.produto?.quantidade);
+            this.quantidade = Number(this.produto?.qtde);
         },
         computed:{
             valorTotal(){

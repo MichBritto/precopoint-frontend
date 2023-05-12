@@ -33,24 +33,17 @@
                 required: true
             }
         },
-        data() {
-            return {
-                quantidadeProdutos: 0,
-                totalProdutos: 0
-            };
-        },
-        created() {
-            this.produtos.forEach(element => {
-                this.quantidadeProdutos += element.quantidade;
-                this.totalProdutos += element.quantidade * Number(element.preco);
-            });
-        },
         computed: {
-        total() {
-            return this.produtos.reduce((total, produto) => {
-                return total + Number(produto.preco) * produto.quantidade;
-            }, 0);
-        }
+            total() {
+                return this.produtos.reduce((total, produto) => {
+                    return total + Number(produto.preco) * produto.qtde;
+                }, 0);
+            },
+            quantidadeProdutos() : number{
+                return this.produtos.reduce((acumulado,produto) =>{
+                    return acumulado + produto.qtde;
+                }, 0);
+            }
         },
         methods: {
 

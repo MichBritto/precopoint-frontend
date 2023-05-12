@@ -19,7 +19,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="categorias.length != 0">
                                 <li v-for="(categoria, index) in categorias" :key="index" >
-                                    <router-link class="dropdown-item" :to="`/${categoria}`"> {{ categoria }}</router-link>
+                                    <router-link class="dropdown-item" :to="`/${categoria}`"> {{ categoria.categoria }}</router-link>
                                 </li>
                             </ul>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="categorias.length == 0">
@@ -34,7 +34,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length != 0">
                                 <li v-for="(item, index) in listas" :key="index">
-                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`" v-on:click="carregarListaProdutos((item.id).toString())"> {{ item.nome }}</router-link>
+                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`" v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
                                 </li>
                             </ul>   
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length == 0">
@@ -78,6 +78,7 @@ import Cookies from "js-cookie"
 import { defineComponent } from "vue"
 import ILista from "../interfaces/ILista"
 import api from "@/http"
+import ICategoria from "@/interfaces/ICategoria"
     export default defineComponent({
         name: "HeaderTemplate",
         emits: ['search'],
@@ -86,7 +87,7 @@ import api from "@/http"
             return{
                 searchTerm: "",
                 listas: [] as ILista[],
-                categorias:[]
+                categorias:[] as ICategoria[]
             }
         },
 
@@ -96,8 +97,9 @@ import api from "@/http"
         },
 
         methods:{
-            carregarListaProdutos(id : string){
+            carregarListaProdutos(id : string, nomeLista: string){
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
+                Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
             },
 
             pesquisar() {
@@ -123,12 +125,10 @@ import api from "@/http"
                     'Authorization': `Bearer ${token}`
                 };
                 if (token){
-                    api.post('lista/getListaConsumidor', 
-                        {nome:"Quirino", email : "otavio@gmail.com"},
+                    api.post("lista/getlista-consumidor", 
+                        {email : Cookies.get("email")},
                         {
-                            headers: {
-                            Authorization: 'Bearer ' + Cookies.get('token')
-                            }
+                            headers: headers
                         }
                      )
                     .then(response => {

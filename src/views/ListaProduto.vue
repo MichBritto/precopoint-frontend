@@ -53,8 +53,8 @@
                           <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
                           <td style="text-align:left">{{ produto.produto }}</td>
                           <td>{{ produto.descricao }}</td>
-                          <td>{{ produto.quantidade }}</td>
-                          <td>R$ {{ (Number(produto.preco) * produto.quantidade).toLocaleString('pt-BR', {
+                          <td>{{ 10 /*produto.quantidade*/ }}</td>
+                          <td>R$ {{ (produto.preco * 10 /*produto.quantidade*/).toLocaleString('pt-BR', {
                                           minimumFractionDigits: 2,
                                           maximumFractionDigits: 2,
                                           useGrouping: true
@@ -105,11 +105,12 @@ import Navbar from '../components/HeaderTemplate.vue'
 import ListaCompara from '../components/ListaCompara.vue'
 import IProduto from '../interfaces/IProduto'
 import EditarListaProduto from '../components/EditarListaProduto.vue'
-import { defineComponent, VueElement } from 'vue'
+import { defineComponent } from 'vue'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import Pagination from '@/components/Pagination.vue'
 import geraPDF from '@/components/geraPDF.vue'
+import api from '@/http'
 
 export default defineComponent({
     name: "ListaProduto",
@@ -124,7 +125,7 @@ export default defineComponent({
     },
     data() {
         return {
-
+            /*
             listaProdutos: [{
                 id: 1,
                 produto: "Chocolate Kit Kat ao Leite",
@@ -178,7 +179,8 @@ export default defineComponent({
                 descricao: "90g",
                 marcaProduto: "FiniStore"
             }
-        ] as IProduto[],
+        ] as IProduto[],*/
+            listaProdutos:[] as IProduto[], 
             searchTerm: '',
             filteredList: [] as IProduto[],
             dadoRecebido: null,
@@ -193,12 +195,10 @@ export default defineComponent({
         } 
     },
     created() {
-        this.listaId = "1"
+        console.log(this.listaId)
         if (this.listaId !== undefined) {
             this.getLista(this.listaId);
-            this.filteredList = this.listaProdutos
-            this.totalItems = this.filteredList.length
-            this.fetchData(this.currentPage)
+            
         } else{
             this.loadPage = false
         }
@@ -240,11 +240,14 @@ export default defineComponent({
                     'Authorization': `Bearer ${token}`
                 };
 
-                axios.post('http://localhost:8080/listaProdutos', id, { headers })
+                api.post('lista/getprodutos-lista',{ id: id}, { headers : headers })
                 .then(response => {
                     const data = response.data;
                     console.log(data);
                     this.listaProdutos = data;
+                    this.filteredList = this.listaProdutos
+                    this.totalItems = this.filteredList.length
+                    this.fetchData(this.currentPage)
                 })
                 .catch(error => {
                     console.log('Erro:', error);

@@ -19,7 +19,12 @@
                     <div class="card-body border ">
                         <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
-                        <p class="h6 ">R$ {{produto.preco}}</p>
+                        <p class="h6 ">{{ Number(produto.preco).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}}</p>
                         <div class="text-center mt-4"><button class="btn btn-outline-warning">Adicionar</button></div>
                     </div>
                 </div>

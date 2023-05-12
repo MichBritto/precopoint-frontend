@@ -26,7 +26,7 @@
     import { defineComponent } from 'vue';
 
     export default defineComponent({
-        name: "ListaComparada",
+        name: "ListaResultados",
         props: {
             itemsNaoEncontrados: {
                 type: Array,

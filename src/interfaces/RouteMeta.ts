@@ -1,3 +1,3 @@
-export interface RouteMeta {
+export default interface RouteMeta {
     title: string
   }

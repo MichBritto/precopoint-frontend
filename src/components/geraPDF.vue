@@ -145,8 +145,8 @@
           head: {
             bold: true,
             fontSize: 14,
-            fillColor: '#42AEE5',
-            color: '#000000',
+            fillColor: '#202A2E',
+            color: '#FFFFFF',
             alignment: 'center'
           },
           table_theme:{

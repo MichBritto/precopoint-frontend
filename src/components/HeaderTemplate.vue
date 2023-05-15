@@ -45,8 +45,8 @@
                         </li>
                         <li class="nav-item">
                             <div class="d-flex form-group">
-                                <input class="form-control me-2" type="text" placeholder="Pesquisar produto..." v-model="searchTerm" aria-label="Search">
-                                <button class="btn btn-outline-warning" @click="pesquisar">Pesquisar</button>
+                                <input v-model="produtoPesquisado" class="form-control me-2" type="text" placeholder="Pesquisar produto..." aria-label="Search">
+                                <button class="btn btn-outline-warning"  @click="pesquisarProduto">Pesquisar</button>
                             
                  
                             </div>
@@ -80,12 +80,10 @@ import ILista from "../interfaces/ILista"
 import api from "@/http"
 import ICategoria from "@/interfaces/ICategoria"
     export default defineComponent({
-        name: "HeaderTemplate",
-        emits: ['search'],
-        
+        name: "HeaderTemplate",       
         data () {
             return{
-                searchTerm: "",
+                produtoPesquisado: '',
                 listas: [] as ILista[],
                 categorias:[] as ICategoria[],
             }
@@ -105,25 +103,7 @@ import ICategoria from "@/interfaces/ICategoria"
                 }
                 
             },
-
-            pesquisar() {
-            
-                if (window.location.pathname === "/") {
-                    // Se o usuário estiver na página Home
-                    this.$emit("search", this.searchTerm);
-                } else {
-                    // Se o usuário não estiver na página Home
-                    this.$router.push("/")
-                    .then(() => {
-                        this.$emit("search", this.searchTerm);
-                    });
-                }
-
-            },
-
-            getListas(){
-
-                
+            getListas(){   
                 const token = Cookies.get("token")
                 const headers = {
                     'Authorization': `Bearer ${token}`
@@ -142,17 +122,22 @@ import ICategoria from "@/interfaces/ICategoria"
                     });
                 }
                 
-            },
-            
+            },       
             async getCategorias() {
-            
                 await api.get("filtro/get-categorias")
                 .then((response) => this.categorias = response.data)
                 .catch((err) => console.log("Erro: " + err));
-            }
-      
-
-
+            },
+            pesquisarProduto() {
+                if (this.produtoPesquisado.trim() !== '') {
+                    // Redirecionar para a página Home caso não esteja nela
+                    if (this.$route.name !== 'Home') {
+                        this.$router.replace({ name: 'Home' });
+                    }
+                    localStorage.setItem('produtoPesquisado', this.produtoPesquisado);
+                    this.$emit('produto-pesquisado', this.produtoPesquisado);
+                }
+            },
         }
     })
 </script>

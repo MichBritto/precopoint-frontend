@@ -1,12 +1,16 @@
 <template>
-    <!--FILTRO--> 
     <div class="container ">
-        <span class="fw-bold me-3">Filtrar por:</span>
+        <span class="fw-bold me-3">Filtrar:</span>
         <!--button FILTO-->
-        <a class="border rounded shadow p-1" href="" data-bs-toggle="modal" data-bs-target="#filtro">
-            <i class="fa-solid fa-filter text-center text-dark img-filtro"></i>
+        <a class="border rounded shadow p-1 me-5" href="" data-bs-toggle="modal" data-bs-target="#filtro">
+            <i class="fa-solid fa-filter text-center text-dark img-filtro hover-effect"></i>
         </a> 
-        <!--Modal-->
+        <span class="fw-bold me-3">Limpar Filtros:</span>
+        <!--button FILTO-->
+        <a class="border rounded shadow p-1 hover-effect" href="">
+            <i class="fa-sharp fa-solid fa-filter-circle-xmark text-center text-dark img-filtro hover-effect" @click="restaurarFiltro"></i>
+        </a> 
+        <!--Modal do Filtro-->
         <div class="modal fade" id="filtro" ref="modalFiltro"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -74,6 +78,9 @@
             limparFiltro() {
                 this.precoMaximo = '';
                 this.precoMinimo = '';
+            },
+            restaurarFiltro() { 
+                this.$emit('restaurar-filtro',true);
             }
       }
     })
@@ -83,5 +90,8 @@
     .img-filtro{
         height: 20px;
         width: 20px;
+    }
+    .hover-effect:hover{
+        color:#ffc107 !important;
     }
 </style>

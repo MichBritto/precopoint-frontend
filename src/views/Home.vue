@@ -7,9 +7,8 @@
     <div class="container-lg">
         <!--Titulo-->
         <div class="text-center mb-4 mt-4"> <span class="h1 text-warning fw-bold fs-1" >Produtos</span></div>
-        <!--agrupamento dos card - Realizar lógica para criar 5 cards por grupo-->
-        <FiltroProduto @filtro-aplicado="aplicarFiltro"></FiltroProduto>
-        <!--teste-->
+        <!--Filtro e Limpar Filtro-->
+        <FiltroProduto @filtro-aplicado="aplicarFiltro" @restaurar-filtro="restaurarFiltro"></FiltroProduto>
         <div class="row mt-3"  >
             <!--card-->
             <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 " v-for="produto in produtos" :key="produto.id" >
@@ -26,7 +25,7 @@
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}}</p>
-                        <div class="text-center mt-4"><button class="btn btn-outline-warning">Adicionar</button></div>
+                        <div class="text-center mt-4"><button class="btn btn-outline-warning">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
                     </div>
                 </div>
             </div>    
@@ -114,6 +113,11 @@ export default defineComponent({
             this.filtrarProduto(produto);
 
         },
+        restaurarFiltro(restaurar:boolean){
+            if(restaurar){
+                this.getProdutos;
+            }
+        }
     },
 })
 </script>

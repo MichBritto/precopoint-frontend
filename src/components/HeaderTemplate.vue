@@ -34,7 +34,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length != 0">
                                 <li v-for="(item, index) in listas" :key="index">
-                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`" v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
+                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`"  v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
                                 </li>
                             </ul>   
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length == 0">
@@ -74,7 +74,6 @@
 </template>
 
 <script lang="ts">
-import axios from "axios"
 import Cookies from "js-cookie"
 import { defineComponent } from "vue"
 import ILista from "../interfaces/ILista"
@@ -88,7 +87,7 @@ import ICategoria from "@/interfaces/ICategoria"
             return{
                 searchTerm: "",
                 listas: [] as ILista[],
-                categorias:[] as ICategoria[]
+                categorias:[] as ICategoria[],
             }
         },
 
@@ -101,6 +100,10 @@ import ICategoria from "@/interfaces/ICategoria"
             carregarListaProdutos(id : string, nomeLista: string){
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
                 Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
+                if(this.$route.path === '/lista-de-produtos'){
+                    window.location.reload()
+                }
+                
             },
 
             pesquisar() {
@@ -126,15 +129,12 @@ import ICategoria from "@/interfaces/ICategoria"
                     'Authorization': `Bearer ${token}`
                 };
                 if (token){
-                    api.post("lista/getlista-consumidor", 
-                        {email : Cookies.get("email")},
-                        {
-                            headers: headers
-                        }
-                     )
+                    api.get(
+                        "lista/getlista-consumidor/" + Cookies.get("email"),
+                        { headers }
+                    )
                     .then(response => {
                         const data = response.data;
-                        console.log(data);
                         this.listas = data;
                     })
                     .catch(error => {

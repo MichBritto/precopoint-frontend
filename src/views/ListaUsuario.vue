@@ -46,7 +46,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import ILista from "@/interfaces/ILista";
-import axios from "axios";
 import Cookies from "js-cookie";
 import Navbar from "../components/HeaderTemplate.vue"
 import api from "@/http";
@@ -75,11 +74,8 @@ import api from "@/http";
                 };
 
                 try {
-                    const response = await api.post(
-                        "lista/getlista-consumidor",
-                        {
-                            email: Cookies.get("email")
-                        },
+                    const response = await api.get(
+                        "lista/getlista-consumidor/" + Cookies.get("email"),
                         { headers }
                     );
 

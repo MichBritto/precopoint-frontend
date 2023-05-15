@@ -2,7 +2,7 @@ export default interface IProdutoList {
     id: number,
     produto: string,
     preco: number,
-    quantidade: number,
+    qtde: number,
     imagem: string,
     descricao: string,
     marcaProduto: string,

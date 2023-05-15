@@ -9,7 +9,7 @@
                     <div class="text-center mx-auto text-uppercase"> 
                     <span class="h1 text-warning fw-bold">listas de produtos</span>
                     </div>
-                    <geraPDF :products="filteredList"  :disabled="listaProdutos.length === 0"/>
+                    <geraPDF :products="listaProdutos"  :disabled="listaProdutos.length === 0"/>
 
                 </div>
             </div>
@@ -25,8 +25,8 @@
                 
                 <div class="col-5 d-flex justify-content-end">
                     <div class="form-group" style="display: flex">
-                        <input type="text" class="form-control mr-2" style="flex: 2;" v-model="searchTerm">
-                        <button class="btn btn-dark hover "  style="flex: 1;width: 25%; margin-left: 2%" @click="searchList">Pesquisar</button>
+                        <input type="text" class="form-control mr-2" style="flex: 2;" placeholder="Pesquisar produto..." v-model="searchTerm">
+                        <button class="btn btn-dark hover"  style="flex: 1;width: 25%; margin-left: 2%"  @click="searchList">Pesquisar</button>
                     </div>
                 </div>  
             </div>
@@ -42,6 +42,7 @@
                         <th scope="col">Imagem</th>
                         <th scope="col">Produto</th>
                         <th scope="col">Detalhes</th>
+                        <th scope="col">Preco</th>
                         <th scope="col" style="width:12.5%">Quantidade</th>
                         <th scope="col">Valor</th>
                         <th scope="col">Alterar</th>
@@ -53,15 +54,20 @@
                           <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
                           <td style="text-align:left">{{ produto.produto }}</td>
                           <td>{{ produto.descricao }}</td>
-                          <td>{{ 10 /*produto.quantidade*/ }}</td>
-                          <td>R$ {{ (produto.preco * 10 /*produto.quantidade*/).toLocaleString('pt-BR', {
+                          <td>R$ {{ (produto.preco).toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                            useGrouping: true
+                          }) }}</td>
+                          <td>{{ produto.qtde }}</td>
+                          <td>R$ {{ (produto.preco * produto.qtde).toLocaleString('pt-BR', {
                                           minimumFractionDigits: 2,
                                           maximumFractionDigits: 2,
                                           useGrouping: true
                                         }) }}
                           </td>
                           <td>
-                            <EditarListaProduto :produto="produto" @editar-quantidade="atualizarQuantidade(1 ,produto.id, $event)" />
+                            <EditarListaProduto :produto="produto" @editar-quantidade="atualizarQuantidade(produto.id, $event)" />
                           </td>
                         </tr>
                       </tbody>
@@ -73,13 +79,15 @@
                     
                 </table>
                 <Total :produtos="listaProdutos"/>
+                <div class="d-flex justify-content-center">
+                    <Pagination :key="paginationKey" :currentPage="currentPage" :totalItems="totalItems" :itemsPerPage="parseInt(itemsPerPage)" v-on:page-changed="fetchData" ></Pagination>
+                </div>
                 
-                <Pagination :key="paginationKey" :currentPage="currentPage" :totalItems="totalItems" :itemsPerPage="parseInt(itemsPerPage)" v-on:page-changed="fetchData" ></Pagination>
                   
                 </form>
                 
             </div>
-
+                
             <div class="col-12 col-md-4">
                 <ListaCompara :produtos="listaProdutos" />
                 
@@ -87,13 +95,7 @@
         </div>
         <!--container-->
     </div>
-    <div class="container" v-if="loadPage">
-        <div class="col text-end">
-            <button type="button" class="btn btn-dark hover ">Salvar</button>
-        </div>
-        
-
-    </div>
+    
     <div v-if="!loadPage" class="d-flex align-items-center justify-content-center" style="height: 50vh;">
         <span class="h4 text-muted">Nenhuma lista foi encontrada</span>
     </div>       
@@ -107,7 +109,6 @@ import IProduto from '../interfaces/IProduto'
 import EditarListaProduto from '../components/EditarListaProduto.vue'
 import { defineComponent } from 'vue'
 import Cookies from 'js-cookie'
-import axios from 'axios'
 import Pagination from '@/components/Pagination.vue'
 import geraPDF from '@/components/geraPDF.vue'
 import api from '@/http'
@@ -187,7 +188,7 @@ export default defineComponent({
             listaId: Cookies.get('lista'),
             currentPage: 1,
             totalItems: 0,
-            itemsPerPage: "3",
+            itemsPerPage: "5",
             itemsToShow: [] as IProduto [],
             loadPage: true,
             paginationKey: 1
@@ -195,7 +196,6 @@ export default defineComponent({
         } 
     },
     created() {
-        console.log(this.listaId)
         if (this.listaId !== undefined) {
             this.getLista(this.listaId);
             
@@ -214,7 +214,6 @@ export default defineComponent({
                 
                 this.filteredList = this.listaProdutos
                 
-                this.updateData()
                 this.fetchData(this.currentPage)
 
             }
@@ -227,7 +226,6 @@ export default defineComponent({
                     }
                 });
                 
-                this.updateData()
                 this.fetchData(this.currentPage)
             }
         },
@@ -240,10 +238,9 @@ export default defineComponent({
                     'Authorization': `Bearer ${token}`
                 };
 
-                api.post('lista/getprodutos-lista',{ id: id}, { headers : headers })
+                api.get('lista/getprodutos-lista/' + id, { headers : headers })
                 .then(response => {
                     const data = response.data;
-                    console.log(data);
                     this.listaProdutos = data;
                     this.filteredList = this.listaProdutos
                     this.totalItems = this.filteredList.length
@@ -257,13 +254,25 @@ export default defineComponent({
                 console.log("Erro ao carregar lista.")
             }
         },
-        atualizarQuantidade(id: number, index: number, novaQuantidade: number) {
-            index = index - 1
-            const produto = this.filteredList[index]
-            produto.quantidade = novaQuantidade
+        atualizarQuantidade(id: number, novaQuantidade: number) {
+            
+            this.filteredList.forEach(product => {
                 
-            this.listaProdutos[index].quantidade = produto.quantidade
-            this.filteredList[index].quantidade = produto.quantidade
+                if(product.id == id){
+                    if (novaQuantidade <= 0) {
+                        if (window.confirm("Deseja realmente remover este item?")) {
+                            this.filteredList = this.filteredList.filter(product => product.id !== id);
+                            this.listaProdutos = this.filteredList
+                        }
+                    } else {
+                        product.qtde = novaQuantidade;
+                        this.listaProdutos = this.filteredList
+                    }
+                    this.fetchData(this.currentPage)
+                    
+                }
+            });
+                
             this.fetchData(this.currentPage)
             /*const produto = this.listaProdutos.find(p => p.id === id);
             if (produto) {
@@ -273,7 +282,7 @@ export default defineComponent({
         },
 
 
-        fetchData(page : any) {
+        fetchData(page : number) {
             // calcula o índice do primeiro e do último item a serem exibidos na página selecionada
             const firstItem = (page - 1) * parseInt(this.itemsPerPage);
             const lastItem = firstItem + parseInt(this.itemsPerPage);
@@ -283,6 +292,7 @@ export default defineComponent({
 
             // atualiza a página atual
             this.currentPage = page;
+            this.updateData()
         },
         updateData() {
             // altera o valor da chave para forçar o componente ser carregado novamente

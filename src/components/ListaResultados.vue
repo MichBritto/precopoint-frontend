@@ -1,6 +1,6 @@
 <template >
     <!--Button Supplier-->
-    <button type="button"  class="btn" data-bs-toggle="modal" :data-bs-target="'#' + id" style="border:none;background-color: transparent;" ><img src="https://th.bing.com/th/id/OIP.HnnTTBsKtoEr9vZ2xnf_eQHaHa?w=180&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Texto alternativo" style="width: 40px; height: 40px; margin-right: 5px;" ></button>
+    <button type="button"  class="btn" data-bs-toggle="modal" :data-bs-target="'#' + id" style="border:none;background-color: transparent;"><i class="fa-solid fa-eye"></i></button>
     <!-- Modal - Fornecedor-->
     <div class="modal fade" :id="id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl modal-dialog-centered ">
@@ -10,11 +10,13 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body align-center">
-                            <h3 class="text-center mb-4">Itens não encontrados na lista {{ nomeFornec }}</h3>
-                            <ul class="list-group">
-                            <li class="list-group-item" v-for="(item, index) in itemsNaoEncontrados" :key="index">{{ item }}</li>
+                            <h3 class="text-center mb-4">Produtos não encontrados no {{ nomeFornec }}</h3>
+                            <ul class="list-group" v-if="nao_encontrados.length > 0">
+                              <li  class="list-group-item" v-for="(item, index) in nao_encontrados" :key="index">{{ item }}</li>
                             </ul>  
-
+                            <ul class="list-group" v-if="nao_encontrados.length <= 0">
+                              <li  class="list-group-item">Nenhum</li>
+                            </ul>  
                         </div>
                         
                     </div>
@@ -24,22 +26,55 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+   
 
     export default defineComponent({
         name: "ListaResultados",
         props: {
             itemsNaoEncontrados: {
-                type: Array,
-                default: () => []
+                type: Object 
             },
             nomeFornec: {
-                type: String
+                type: String,
+                required: true
             },
             id:{
                 type: String
             }
+        },
+        data(){
+          return{
+            
+            foundProducts: false,
+            nao_encontrados: [] as string[]
+          }
+        },
+        created(){
+          this.geraLista()
+        },
+        methods:{
+          geraLista() {
+
+            
+          const listaItens = this.itemsNaoEncontrados
+          if (listaItens != null) {
+            const nomeFornecLowerCase = this.nomeFornec.toLowerCase();
+            Object.keys(listaItens).forEach(empresa => {
+              if (empresa.toLowerCase() === nomeFornecLowerCase) {
+                this.foundProducts = true;
+                this.nao_encontrados = listaItens[empresa as any];
+                return
+              }
+              else{
+                this.foundProducts = false;
+              }
+            });
+          }
+          
         }
+      }
     })
+         
 </script>
 <style scoped>
 h3 {

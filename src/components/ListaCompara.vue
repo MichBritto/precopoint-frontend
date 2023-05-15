@@ -8,25 +8,26 @@
                 <th scope="col" style="width: 10%">Visualizar</th>
             </tr>
         </thead>
-        <tbody v-for="(lista, index) in listaComp" :key="index">
+        <tbody v-for="(fornecedor, nome) in fornecedores" :key="nome">
             <tr>
-                <td>
-                    <img src="../assets/user.png" style="width: 40px; height: 40px; margin-right: 10px;">
-                    <p></p>
-                    <span style="display: inline-block;" v-html="lista.fornecedor"></span>
-                </td>
-                <td style="text-align: right; vertical-align: middle;">
-                    R$ {{ Number(lista.valor_total).toLocaleString('pt-BR', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                    useGrouping: true
-                    }) }}
-                </td>
-                <td style="text-align: center">
-                    <ModalItens :itemsNaoEncontrados="lista.itens_nao_encontrados" :nomeFornec="lista.fornecedor" :id="'btnListaProduto'+index"/>
-                </td>
+                <td style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <img :src="fornecedor.logotipo || ''" style="width: 45px; height: 45px; margin-bottom: 5px;">
+                    <span style="display: inline-block; text-transform: capitalize;">{{ nome }}</span>
+                  </td>
+              <td style="text-align: right; vertical-align: middle;">
+                R$ {{ Number(fornecedor.valorTotal).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  useGrouping: true
+                }) }}
+              </td>
+              <td style="display: flex; justify-content: center; align-items: center;">
+                <ModalItens  :itemsNaoEncontrados="produtos_nao_encontrados" :nomeFornec="(nome as string)" :id="'btnListaProduto'+ nome"/>
+              </td>
+
             </tr>
-        </tbody>
+          </tbody>
+          
         
     </table>
 </div>
@@ -37,8 +38,15 @@
     import { defineComponent } from 'vue';
     import ModalItens from './ListaResultados.vue'
     import Cookies from "js-cookie"
-    import IRespostaLista from '@/interfaces/IRespostaLista'
     import api from '@/http';
+
+    
+    interface FornecedoresComLogotipos {
+        [fornecedor: string]: {
+            valorTotal: number,
+            logotipo: string | null
+        }
+    }
     export default defineComponent({
         name: "ListaCompara",
         components:{
@@ -46,20 +54,13 @@
         },
         data(){
             return{
-                listaComp: [{
-                    fornecedor: "Empresa X",
-                    valor_total: 200.50,
-                    itens_nao_encontrados: ["item1", "item2", "item3"]
-                },
-                {
-                    fornecedor: "Empresa Y",
-                    valor_total: 350.50,
-                    itens_nao_encontrados: ["item1", "item2", "item3"]
-                }]
-                /*listaComp: {} as IRespostaLista*/
+                produtos_nao_encontrados: Object,
+                fornecedores: {} as FornecedoresComLogotipos
             }
-        }        
-        ,
+        },
+        created(){
+            this.getListas()
+        },
         methods: {
             getListas(){
                 try {
@@ -68,20 +69,29 @@
                     'Authorization': `Bearer ${token}`
                 };
 
-                api.post('lista/getprodutos-lista',{ id: Cookies.get("lista")}, { headers : headers })
+                api.get('lista/getvalortotal/' + Cookies.get("lista"), { headers : headers })
                 .then(response => {
                     const data = response.data;
-                    console.log(data);
                     
+
+                    this.produtos_nao_encontrados = data["produtos-nao-encontrados"] //Separa os produtos nao encontrados
+                    this.fornecedores = data["fornecedores"]
+
                 })
                 .catch(error => {
                     console.log('Erro:', error);
                 });
-            }
-            catch{
-                console.log("Erro ao carregar lista.")
-            }
+                
+        
                 }
+                catch{
+                    console.log("Erro ao carregar lista.")
+                }
+            },
+            fornecedorNomeFormatado(nome: string) {
+                return nome.charAt(0).toUpperCase() + nome.slice(1);
+            }
+
         }
     })
 </script>

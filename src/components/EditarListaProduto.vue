@@ -1,8 +1,8 @@
 <template >
     <!--Button Supplier-->
-    <button type="button"  class="btn" data-bs-toggle="modal" :data-bs-target="'#btnEditarProduto' + produto?.id"><img src="../assets/edit.jpg" width="40" height="40" ></button>
+    <button type="button"  class="btn" data-bs-toggle="modal" :data-bs-target="'#btnEditarProduto' + produto?.id"><i class="fa-solid fa-pen-to-square hand-cursor"></i></button>
     <!-- Modal - Fornecedor-->
-    <div class="modal fade" :id="'btnEditarProduto' + produto?.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal fade" :id="'btnEditarProduto' + produto?.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false" ref="modal"> 
         <div class="modal-dialog modal-xl modal-dialog-centered ">
                     <div class="modal-content">
                         <div class="modal-header border-0">
@@ -64,11 +64,11 @@ import { defineComponent ,PropType } from 'vue';
         },
         data(){
           return {
-            quantidade: 0 as number
+            quantidade: 0 as number,
           }
         },
         mounted(){
-            this.quantidade = Number(this.produto?.quantidade);
+            this.quantidade = Number(this.produto?.qtde);
         },
         computed:{
             valorTotal(){
@@ -80,6 +80,7 @@ import { defineComponent ,PropType } from 'vue';
             }
         },
         methods: {
+           
             addProduto(){
                 this.quantidade += 1
             },
@@ -87,10 +88,12 @@ import { defineComponent ,PropType } from 'vue';
                 this.quantidade -= 1
             },
             emitirQuantidade() {
-                this.$emit('editar-quantidade', Math.round(this.quantidade))
+                if(this.quantidade == undefined){                    
+                    this.$emit('editar-quantidade', Math.round(this.quantidade))
+                }
             }
             
-        },
+        }
         
     })
 </script>

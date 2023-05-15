@@ -1,5 +1,5 @@
 <template>
-    <HeaderTemplate v-on:search="searchList"></HeaderTemplate>
+    <HeaderTemplate @produto-pesquisado="pesquisarProduto"></HeaderTemplate>
 
     <!--Espaço entre nav e conteudo-->
     <div class="mt-3"></div>
@@ -8,16 +8,17 @@
         <!--Titulo-->
         <div class="text-center mb-4 mt-4"> <span class="h1 text-warning fw-bold fs-1" >Produtos</span></div>
         <!--agrupamento dos card - Realizar lógica para criar 5 cards por grupo-->
-        <FiltroProduto></FiltroProduto>
+        <FiltroProduto @filtro-aplicado="aplicarFiltro"></FiltroProduto>
+        <!--teste-->
         <div class="row mt-3"  >
             <!--card-->
-            <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 " v-for="produto in filteredList" :key="produto.id" >
+            <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 " v-for="produto in produtos" :key="produto.id" >
                 <div class="card  shadow" style="width: 15rem; height: 19rem;">
                     <div class="container text-center">
                         <img :src=produto.imagem  class="card-img-top img-produto" >
                     </div>
                     <div class="card-body border ">
-                        <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
+                        <small class="text-danger fw-bold">{{produto.marcaProduto}} | {{ produto.fornecedor }}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
                         <p class="h6 ">{{ Number(produto.preco).toLocaleString('pt-BR', {
                             style: 'currency',
@@ -29,9 +30,8 @@
                     </div>
                 </div>
             </div>    
-                    
         </div>  
-        <div v-if="filteredList.length == 0" class="no-results-message">
+        <div v-if="produtos.length == 0" class="no-results-message">
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
         
@@ -47,7 +47,6 @@ import FiltroProduto from '@/components/FiltroProduto.vue'
 import api from '@/http/index'
 import IProduto from '@/interfaces/IProduto'
 
-
 export default defineComponent({
     
     name: "TesteView",
@@ -59,43 +58,63 @@ export default defineComponent({
     data() {
         return {
             produtos: [] as IProduto[],
-            filteredList: {} as IProduto[],
-            searchTerm: '',
-            
+            produtoPesquisado: '',
+            precoMinimo: 0,
+            precoMaximo: 0,
+            guardarProdutoPesquisado: '',
         };
     },
-    created() {
-        this.getProdutos();
-        this.filteredList = this.produtos;
-        
-    },  
+    mounted() {
+        const produtoPesquisado = localStorage.getItem('produtoPesquisado');
+        if (produtoPesquisado) {
+            this.guardarProdutoPesquisado = produtoPesquisado as string;
+            this.filtrarProduto(produtoPesquisado);
+            localStorage.removeItem('produtoPesquisado');
+        }
+        else {
+            this.getProdutos();
+        }
+    },
     methods: {
-        async getProdutos() {
-            
+        async getProdutos() {       
             await api.get("filtro/list-produto")
-            .then((response) => (
+            .then((response) => {
                 this.produtos = response.data
-            ))
+        })
             .catch((err) => console.log("Erro: " + err));
         },
-
-        searchList(searchTerm: string){
-            this.getProdutos();
-            this.filteredList = this.produtos;
-            if(searchTerm == '') {
-                this.filteredList = this.produtos
-            }
-            else{
-                this.filteredList = []
-                this.produtos.forEach(produto => {
-                    
-                    if(produto.produto.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1){
-                        this.filteredList.push(produto)
-                    }
-                });
-            }
+        async filtrarProduto(produto:string) {
+            await api.get('filtro/produto?produto='+produto)
+            .then((response) => {
+                this.produtos = response.data
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         },
-    }
+        aplicarFiltro(dadosFiltro: { precoMinimo: number, precoMaximo: number }) {
+            this.precoMinimo = dadosFiltro.precoMinimo;
+            this.precoMaximo = dadosFiltro.precoMaximo;
+            this.filtrarPreco();
+        },
+        async filtrarPreco() {
+            if(this.guardarProdutoPesquisado != '' && this.guardarProdutoPesquisado != null){
+                await api.get('filtro/produto?produto='+ this.guardarProdutoPesquisado +'&precoMin='+ this.precoMinimo +'&precoMax='+this.precoMaximo)
+                .then((response) => {
+                    this.produtos = response.data;
+                })
+                .catch((error) => {
+                    console.log("Error: "+error)
+                })
+            }
+            
+        },
+        pesquisarProduto(produto: string) {
+            this.guardarProdutoPesquisado = produto;
+            this.filtrarProduto(produto);
+
+        },
+    },
 })
 </script>
 
@@ -112,4 +131,5 @@ export default defineComponent({
     z-index: 1; /* Defina um valor menor do que o elemento que está sendo sobreposto */
   }
 </style>
+
 

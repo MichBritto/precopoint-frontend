@@ -8,7 +8,7 @@
         <!--Titulo-->
         <div class="text-center mb-4 mt-4"> <span class="h1 text-warning fw-bold fs-1" >Produtos</span></div>
         <!--agrupamento dos card - Realizar lógica para criar 5 cards por grupo-->
-        <FiltroProduto ></FiltroProduto>
+        <FiltroProduto></FiltroProduto>
         <div class="row mt-3"  >
             <!--card-->
             <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 " v-for="produto in filteredList" :key="produto.id" >
@@ -46,7 +46,6 @@ import HeaderTemplate from '@/components/HeaderTemplate.vue'
 import FiltroProduto from '@/components/FiltroProduto.vue'
 import api from '@/http/index'
 import IProduto from '@/interfaces/IProduto'
-import Cookies from 'js-cookie'
 
 
 export default defineComponent({
@@ -69,14 +68,7 @@ export default defineComponent({
         this.getProdutos();
         this.filteredList = this.produtos;
         
-    },
-    watch: {
-        searchTerm(newTerm) {
-            console.log(newTerm)
-            this.searchList(newTerm);
-        }
-    },
-   
+    },  
     methods: {
         async getProdutos() {
             
@@ -86,6 +78,7 @@ export default defineComponent({
             ))
             .catch((err) => console.log("Erro: " + err));
         },
+
         searchList(searchTerm: string){
             this.getProdutos();
             this.filteredList = this.produtos;

@@ -8,23 +8,23 @@
                 <th scope="col" style="width: 10%">Visualizar</th>
             </tr>
         </thead>
-        <tbody v-for="(fornecedor, index) in fornecedores" :key="index">
+        <tbody v-for="(fornecedor, nome) in fornecedores" :key="nome">
             <tr>
-              <td>
-                <img :src="fornecedor.logotipo || ''" style="width: 40px; height: 40px; margin-right: 10px;">
-                <p></p>
-                <span style="display: inline-block;">{{ fornecedor.fornecedor }}</span>
-              </td>
+                <td style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <img :src="fornecedor.logotipo || ''" style="width: 45px; height: 45px; margin-bottom: 5px;">
+                    <span style="display: inline-block; text-transform: capitalize;">{{ nome }}</span>
+                  </td>
               <td style="text-align: right; vertical-align: middle;">
-                R$ {{ Number(fornecedor.preco).toLocaleString('pt-BR', {
+                R$ {{ Number(fornecedor.valorTotal).toLocaleString('pt-BR', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                   useGrouping: true
                 }) }}
               </td>
-              <td style="text-align: center">
-                <ModalItens :itemsNaoEncontrados="lista.itens_nao_encontrados" :nomeFornec="lista.fornecedor" :id="'btnListaProduto'+index"/>
+              <td style="display: flex; justify-content: center; align-items: center;">
+                <ModalItens  :itemsNaoEncontrados="produtos_nao_encontrados" :nomeFornec="(nome as string)" :id="'btnListaProduto'+ nome"/>
               </td>
+
             </tr>
           </tbody>
           
@@ -40,25 +40,10 @@
     import Cookies from "js-cookie"
     import api from '@/http';
 
-    interface Fornecedores {
-    [key: string]: number;
-    }
-
-    interface FornecedorLogotipo {
-    [key: string]: string;
-    }
-
-    interface ProdutosNaoEncontrados {
-    [key: string]: string[];
-    }
-    interface DadosJson {
-        fornecedores: Fornecedores;
-        "fornecedor-logotipo": FornecedorLogotipo;
-        "produtos-nao-encontrados": ProdutosNaoEncontrados;
-    }
+    
     interface FornecedoresComLogotipos {
         [fornecedor: string]: {
-            preco: number,
+            valorTotal: number,
             logotipo: string | null
         }
     }
@@ -69,19 +54,12 @@
         },
         data(){
             return{
-
-                listaComp: {
-                    fornecedores:{},
-                    "fornecedor-logotipo": {},
-                    "produtos-nao-encontrados": {}
-                } as DadosJson,
-                produtos_nao_encontrados: [],
+                produtos_nao_encontrados: Object,
                 fornecedores: {} as FornecedoresComLogotipos
             }
         },
         created(){
             this.getListas()
-            console.log("TESTE" + JSON.stringify(this.fornecedores))
         },
         methods: {
             getListas(){
@@ -94,43 +72,26 @@
                 api.get('lista/getvalortotal/' + Cookies.get("lista"), { headers : headers })
                 .then(response => {
                     const data = response.data;
-                    this.listaComp = data
-                    console.log(data);
+                    
 
                     this.produtos_nao_encontrados = data["produtos-nao-encontrados"] //Separa os produtos nao encontrados
-                    let fornecedoresComLogotipos: FornecedoresComLogotipos = {};
-                    console.log(this.produtos_nao_encontrados)
-                    for (const fornecedor in data.fornecedores) {
-                        if (data.fornecedor_logotipo) {
-                            for (const fornecedor in data.fornecedores) {
-                                if (data.fornecedor_logotipo[fornecedor]) {
-                                fornecedoresComLogotipos[fornecedor] = {
-                                    preco: data.fornecedores[fornecedor],
-                                    logotipo: data.fornecedor_logotipo[fornecedor]
-                                };
-                                } else {
-                                fornecedoresComLogotipos[fornecedor] = {
-                                    preco: data.fornecedores[fornecedor],
-                                    logotipo: null
-                                };
-                                }
-                            }
-                        }
-                    }
+                    this.fornecedores = data["fornecedores"]
 
-                    this.fornecedores = fornecedoresComLogotipos
-                    console.log(this.fornecedores)
                 })
                 .catch(error => {
                     console.log('Erro:', error);
                 });
                 
         
-            }
-            catch{
-                console.log("Erro ao carregar lista.")
-            }
                 }
+                catch{
+                    console.log("Erro ao carregar lista.")
+                }
+            },
+            fornecedorNomeFormatado(nome: string) {
+                return nome.charAt(0).toUpperCase() + nome.slice(1);
+            }
+
         }
     })
 </script>

@@ -120,7 +120,7 @@
                       ],
                       [
                         {text: this.quantidadeTotal, alignment: 'center'},
-                        {text: 'R$ ' + this.valorTotal.toLocaleString("pt-BR", {
+                        {text: this.valorTotal.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                           minimumFractionDigits: 2,

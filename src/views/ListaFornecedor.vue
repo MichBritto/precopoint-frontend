@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, VueElement } from 'vue';
+    import { defineComponent } from 'vue';
     import Navbar from '../components/HeaderTemplate.vue'
     import IProduto from '@/interfaces/IProduto'
     import api from '@/http'

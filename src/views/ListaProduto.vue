@@ -9,7 +9,7 @@
                     <div class="text-center mx-auto text-uppercase"> 
                     <span class="h1 text-warning fw-bold">listas de produtos</span>
                     </div>
-                    <geraPDF :products="filteredList"  :disabled="listaProdutos.length === 0"/>
+                    <geraPDF :products="listaProdutos"  :disabled="listaProdutos.length === 0"/>
 
                 </div>
             </div>
@@ -25,8 +25,8 @@
                 
                 <div class="col-5 d-flex justify-content-end">
                     <div class="form-group" style="display: flex">
-                        <input type="text" class="form-control mr-2" style="flex: 2;" v-model="searchTerm">
-                        <button class="btn btn-dark hover "  style="flex: 1;width: 25%; margin-left: 2%" @click="searchList">Pesquisar</button>
+                        <input type="text" class="form-control mr-2" style="flex: 2;" placeholder="Pesquisar produto..." v-model="searchTerm">
+                        <button class="btn btn-dark hover"  style="flex: 1;width: 25%; margin-left: 2%"  @click="searchList">Pesquisar</button>
                     </div>
                 </div>  
             </div>
@@ -87,7 +87,7 @@
                 </form>
                 
             </div>
-
+                
             <div class="col-12 col-md-4">
                 <ListaCompara :produtos="listaProdutos" />
                 
@@ -95,13 +95,7 @@
         </div>
         <!--container-->
     </div>
-    <div class="container" v-if="loadPage">
-        <div class="col text-end">
-            <button type="button" class="btn btn-dark hover ">Salvar</button>
-        </div>
-        
-
-    </div>
+    
     <div v-if="!loadPage" class="d-flex align-items-center justify-content-center" style="height: 50vh;">
         <span class="h4 text-muted">Nenhuma lista foi encontrada</span>
     </div>       
@@ -194,7 +188,7 @@ export default defineComponent({
             listaId: Cookies.get('lista'),
             currentPage: 1,
             totalItems: 0,
-            itemsPerPage: "3",
+            itemsPerPage: "5",
             itemsToShow: [] as IProduto [],
             loadPage: true,
             paginationKey: 1
@@ -202,7 +196,6 @@ export default defineComponent({
         } 
     },
     created() {
-        console.log(this.listaId)
         if (this.listaId !== undefined) {
             this.getLista(this.listaId);
             
@@ -221,7 +214,6 @@ export default defineComponent({
                 
                 this.filteredList = this.listaProdutos
                 
-                this.updateData()
                 this.fetchData(this.currentPage)
 
             }
@@ -234,7 +226,6 @@ export default defineComponent({
                     }
                 });
                 
-                this.updateData()
                 this.fetchData(this.currentPage)
             }
         },
@@ -250,7 +241,6 @@ export default defineComponent({
                 api.get('lista/getprodutos-lista/' + id, { headers : headers })
                 .then(response => {
                     const data = response.data;
-                    console.log(data);
                     this.listaProdutos = data;
                     this.filteredList = this.listaProdutos
                     this.totalItems = this.filteredList.length
@@ -269,7 +259,17 @@ export default defineComponent({
             this.filteredList.forEach(product => {
                 
                 if(product.id == id){
-                    product.qtde = novaQuantidade
+                    if (novaQuantidade <= 0) {
+                        if (window.confirm("Deseja realmente remover este item?")) {
+                            this.filteredList = this.filteredList.filter(product => product.id !== id);
+                            this.listaProdutos = this.filteredList
+                        }
+                    } else {
+                        product.qtde = novaQuantidade;
+                        this.listaProdutos = this.filteredList
+                    }
+                    this.fetchData(this.currentPage)
+                    
                 }
             });
                 
@@ -292,6 +292,7 @@ export default defineComponent({
 
             // atualiza a página atual
             this.currentPage = page;
+            this.updateData()
         },
         updateData() {
             // altera o valor da chave para forçar o componente ser carregado novamente

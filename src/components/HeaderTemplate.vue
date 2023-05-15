@@ -135,7 +135,6 @@ import ICategoria from "@/interfaces/ICategoria"
                     )
                     .then(response => {
                         const data = response.data;
-                        console.log(data);
                         this.listas = data;
                     })
                     .catch(error => {

@@ -1,6 +1,6 @@
 <template >
     <!--Button Supplier-->
-    <button type="button"  class="btn" data-bs-toggle="modal" :data-bs-target="'#' + id" style="border:none;background-color: transparent;"><i class="fa-solid fa-eye"></i></button>
+    <button type="button"  class="btn" data-bs-toggle="modal" :data-bs-target="'#' + id" style="border:none;background-color: transparent;" ><i class="fa-solid fa-eye"></i></button>
     <!-- Modal - Fornecedor-->
     <div class="modal fade" :id="id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl modal-dialog-centered ">
@@ -11,10 +11,10 @@
                         </div>
                         <div class="modal-body align-center">
                             <h3 class="text-center mb-4">Produtos não encontrados no {{ nomeFornec }}</h3>
-                            <ul class="list-group" v-if="nao_encontrados.length > 0">
+                            <ul class="list-group text-center" v-if="nao_encontrados.length > 0">
                               <li  class="list-group-item" v-for="(item, index) in nao_encontrados" :key="index">{{ item }}</li>
                             </ul>  
-                            <ul class="list-group" v-if="nao_encontrados.length <= 0">
+                            <ul class="list-group text-center" v-if="nao_encontrados.length <= 0">
                               <li  class="list-group-item">Nenhum</li>
                             </ul>  
                         </div>
@@ -26,8 +26,7 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-   
-
+    
     export default defineComponent({
         name: "ListaResultados",
         props: {
@@ -50,6 +49,7 @@
           }
         },
         created(){
+          const items = this.itemsNaoEncontrados ? Object.keys(this.itemsNaoEncontrados) : [];
           this.geraLista()
         },
         methods:{

@@ -1,5 +1,5 @@
 <template>
-    <div class="container ">
+    <div class="container">
         <span class="fw-bold me-3">Filtrar:</span>
         <!--button FILTO-->
         <a class="border rounded shadow p-1 me-5" href="" data-bs-toggle="modal" data-bs-target="#filtro">

@@ -1,7 +1,7 @@
 <template>
     <header>
     <!--NAVBAR-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light fixed-top mb-5">
             <div class="container-fluid p-2">
                 <a class="navbar-brand pe-5 text-warning" href="#">PreçoPoint <i class="fa-solid fa-location-dot"></i></a>
                 <!--Botão para aparecer opções quando tela estiVer em proporção pequena-->
@@ -19,7 +19,9 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="categorias.length != 0">
                                 <li v-for="(categoria, index) in categorias" :key="index" >
-                                    <router-link class="dropdown-item" :to="`/${categoria}`"> {{ categoria.categoria }}</router-link>
+                                    <a class="dropdown-item" @click="getProdutosByCategoria(categoria.id,categoria.categoria)"> 
+                                        {{ categoria.categoria }}
+                                    </a>
                                 </li>
                             </ul>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="categorias.length == 0">
@@ -68,7 +70,8 @@
                 </div>
             </div>
         </nav>
-        
+         <!-- Espaçamento para correção do navbar fixed-tp -->
+         <div class="" style="margin-top: 80px;"></div>
         
     </header>
 </template>
@@ -79,6 +82,8 @@ import { defineComponent } from "vue"
 import ILista from "../interfaces/ILista"
 import api from "@/http"
 import ICategoria from "@/interfaces/ICategoria"
+import IProduto from '@/interfaces/IProduto'
+
     export default defineComponent({
         name: "HeaderTemplate",       
         data () {
@@ -86,6 +91,7 @@ import ICategoria from "@/interfaces/ICategoria"
                 produtoPesquisado: '',
                 listas: [] as ILista[],
                 categorias:[] as ICategoria[],
+                produtosByCategoria: [] as IProduto[],
             }
         },
 
@@ -100,8 +106,7 @@ import ICategoria from "@/interfaces/ICategoria"
                 Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
                 if(this.$route.path === '/lista-de-produtos'){
                     window.location.reload()
-                }
-                
+                }     
             },
             getListas(){   
                 const token = Cookies.get("token")
@@ -109,9 +114,8 @@ import ICategoria from "@/interfaces/ICategoria"
                     'Authorization': `Bearer ${token}`
                 };
                 if (token){
-                    api.get(
-                        "lista/getlista-consumidor/" + Cookies.get("email"),
-                        { headers }
+                    api.get("lista/getlista-consumidor/" + Cookies.get("email"),
+                    { headers }
                     )
                     .then(response => {
                         const data = response.data;
@@ -120,13 +124,20 @@ import ICategoria from "@/interfaces/ICategoria"
                     .catch(error => {
                         console.log('Erro:', error);
                     });
-                }
-                
+                }   
             },       
             async getCategorias() {
                 await api.get("filtro/get-categorias")
                 .then((response) => this.categorias = response.data)
                 .catch((err) => console.log("Erro: " + err));
+            },
+            async getProdutosByCategoria(idCategoria:number, nomeCategoria:string){
+                await api.get('filtro/list-produtos-by-categoria/'+ idCategoria)
+                .then((response) => {
+                    this.produtosByCategoria = response.data;
+                    this.$emit('produtos-by-categoria', { produtos: this.produtosByCategoria, nome: nomeCategoria} );
+                })  
+                .catch((error) => console.log(error));  
             },
             pesquisarProduto() {
                 if (this.produtoPesquisado.trim() !== '') {
@@ -143,20 +154,6 @@ import ICategoria from "@/interfaces/ICategoria"
 </script>
 
 <style scoped>
-.estrelas input[type=radio] {
-    display: none;
-  }
-  .estrelas label i.fa{
-    font-size: 2.5em
-  }
-  .estrelas label i.fa:before {
-    content:'\f005';
-    color: #FC0;
-  }
-  .estrelas input[type=radio]:checked ~ label i.fa:before {
-    color: #CCC;
-  }
-
   .hover{
     color: white;
   }

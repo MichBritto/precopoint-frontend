@@ -1,12 +1,12 @@
 <template>
-    <HeaderTemplate @produto-pesquisado="pesquisarProduto"></HeaderTemplate>
+    <HeaderTemplate @produto-pesquisado="pesquisarProduto" @produtos-by-categoria="filtrarProdutosByCategoria"></HeaderTemplate>
 
     <!--Espaço entre nav e conteudo-->
     <div class="mt-3"></div>
     
     <div class="container-lg">
         <!--Titulo-->
-        <div class="text-center mb-4 mt-4"> <span class="h1 text-warning fw-bold fs-1" >Produtos</span></div>
+        <div class="text-center mb-4 mt-4"> <span class="h1 text-warning fw-bold fs-1" >{{ nomeCategoria }}</span></div>
         <!--Filtro e Limpar Filtro-->
         <FiltroProduto @filtro-aplicado="aplicarFiltro" @restaurar-filtro="restaurarFiltro"></FiltroProduto>
         <div class="row mt-3"  >
@@ -61,6 +61,7 @@ export default defineComponent({
             precoMinimo: 0,
             precoMaximo: 0,
             guardarProdutoPesquisado: '',
+            nomeCategoria: 'Produtos',
         };
     },
     mounted() {
@@ -117,6 +118,10 @@ export default defineComponent({
             if(restaurar){
                 this.getProdutos;
             }
+        },
+        filtrarProdutosByCategoria(data: {produtos: IProduto[], nome:string}){
+            this.produtos = data.produtos;
+            this.nomeCategoria = data.nome;
         }
     },
 })

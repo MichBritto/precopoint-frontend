@@ -9,6 +9,7 @@
                     <div class="text-center mx-auto text-uppercase"> 
                     <span class="h1 text-warning fw-bold">listas de produtos</span>
                     </div>
+                    
                     <geraPDF :products="listaProdutos"  :disabled="listaProdutos.length === 0"/>
 
                 </div>

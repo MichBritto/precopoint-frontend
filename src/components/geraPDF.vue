@@ -1,6 +1,7 @@
 <template>
+  
     <div>
-      <button type="button" class="btn btn-dark hover mb-2"  @click="generatePDF">Gerar Lista</button>
+      <button type="button" class="btn btn-dark hover mb-2"  @click="generatePDF"><i class="fa-solid fa-download" style="color: #ffffff;"></i>&nbsp;&nbsp;Gerar Lista</button>
     </div>
   </template>
   
@@ -9,6 +10,7 @@
   import pdfFonts from "pdfmake/build/vfs_fonts";
   import Cookies from "js-cookie"
   import { defineComponent} from 'vue'
+  import api from '@/http'
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   
   export default defineComponent({
@@ -29,6 +31,32 @@
       }
     },
     methods: {
+      getListas(){
+                try {
+                const token = Cookies.get("token")
+                const headers = {
+                    'Authorization': `Bearer ${token}`
+                };
+
+                api.get('lista/getvalortotal/' + Cookies.get("lista"), { headers : headers })
+                .then(response => {
+                    const data = response.data;
+                    
+
+                    this.produtos_nao_encontrados = data["produtos-nao-encontrados"] //Separa os produtos nao encontrados
+                    this.fornecedores = data["fornecedores"]
+
+                })
+                .catch(error => {
+                    console.log('Erro:', error);
+                });
+                
+        
+                }
+                catch{
+                    console.log("Erro ao carregar lista.")
+                }
+      },
       generatePDF() {
         
         this.products.forEach((produto) => {

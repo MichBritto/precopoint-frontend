@@ -3,7 +3,7 @@
     <!--NAVBAR-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light fixed-top mb-5">
             <div class="container-fluid p-2">
-                <a class="navbar-brand pe-5 text-warning" href="#">PreçoPoint <i class="fa-solid fa-location-dot"></i></a>
+                <a class="navbar-brand pe-5 text-warning" href="#">&nbsp;PreçoPoint&nbsp; <i class="fa-solid fa-location-dot"></i></a>
                 <!--Botão para aparecer opções quando tela estiVer em proporção pequena-->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -11,11 +11,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item  pe-3">
-                            <a class="nav-link hover" aria-current="page" href="/" >Home <i class="fa-solid fa-house"></i></a>
+                            <a class="nav-link hover" aria-current="page" href="/" ><i class="fa-solid fa-house"></i>&nbsp;&nbsp;Home </a>
                         </li>
                         <li class="nav-item dropdown  pe-3">
                             <a class="nav-link dropdown-toggle hover" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Categoria <i class="fa-solid fa-tags"></i>
+                                <i class="fa-solid fa-tags"></i>&nbsp;&nbsp;Categoria &nbsp;
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="categorias.length != 0">
                                 <li v-for="(categoria, index) in categorias" :key="index" >
@@ -32,7 +32,7 @@
                         </li>
                         <li class="nav-item dropdown  pe-3">
                             <a class="nav-link dropdown-toggle hover" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Suas listas <i class="fa-solid fa-list"></i>
+                                <i class="fa-solid fa-list"></i>&nbsp;&nbsp;Suas listas&nbsp;
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length != 0">
                                 <li v-for="(item, index) in listas" :key="index">
@@ -56,15 +56,15 @@
                     </ul>
                     <div class="dropdown pe-4">
                         <a href="" class=" nav-link nav-item dropdown-toggle hover" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Opções usuário
-                            <i class="fa-solid fa-user" height="30px" width="30px"></i>
+                            Opções usuário&nbsp;&nbsp;
+                            <i class="fa-solid fa-user" height="30px" width="30px"></i>&nbsp;
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
                             <li><router-link class="dropdown-item" to="/editar-usuario">Ver minha conta</router-link></li>
                             <li><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
                             <li><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/login">Sair <i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                            <li><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
                         </ul>
                     </div>
                 </div>
@@ -149,6 +149,9 @@ import IProduto from '@/interfaces/IProduto'
                     this.$emit('produto-pesquisado', this.produtoPesquisado);
                 }
             },
+            sair(){
+                Cookies.set('token', '')
+            }
         }
     })
 </script>

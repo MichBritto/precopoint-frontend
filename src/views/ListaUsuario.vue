@@ -10,7 +10,7 @@
                     <div class="d-flex justify-content-between mt-4 mb-4" >
                         <p></p>
                         <div class="text-center mx-auto "> <span class="h1 text-warning fw-bold" >Listas</span></div>
-                        <a  href="/lista-de-produtos"><button type="button" class="btn btn-dark hover">Criar Lista</button></a>
+                        <button type="button" class="btn btn-dark hover" @click="abrirModal">Criar Lista&nbsp;&nbsp;<i class="fa-solid fa-plus"></i></button>
                         
                     </div>
                 </div>
@@ -25,9 +25,9 @@
                             <h6 class="fw-bold text-muted text-center" style="font-size: 20px">{{ lista.nomeLista }}</h6>
                             <div class="container text-center mt-3">
                                 <router-link :to="{ name: 'ListaProduto'}">
-                                    <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString(), lista.nomeLista)">Editar</button>
+                                    <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString(), lista.nomeLista)">Editar&nbsp;&nbsp;<i class="fa-solid fa-pen-to-square"></i></button>
                                 </router-link>
-                                <button class="btn btn-danger ms-2">Excluir</button>
+                                <button class="btn btn-danger ms-2">Excluir&nbsp;&nbsp;<i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     </div>  
@@ -39,7 +39,29 @@
         </div>
           
     </div>
-
+    <div v-if="showModal" class="modal-overlay">
+        <div class="card col-6 mx-auto">
+            <div class="card-body">
+                <h2 class="card-title text-center h1 text-warning fw-bold mb-5">Criar uma Lista</h2>
+                <form @submit.prevent="criarLista">
+                                       
+                    <!-- descricao -->
+                    <div class="mb-3">
+                        
+                        
+                        <input type="text" v-model="nomeLista" placeholder="Nome da Lista" class="form-control">
+                        <div class="text-center mt-5">
+                            <button class="btn btn-dark ms-2 text-center">Criar Lista</button>
+                            <button class="btn btn-danger" @click="showModal = false;nomeLista= ''">Cancelar</button>
+                        </div>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+            
+        </div>
+    </div>
 
 </template>
 
@@ -62,6 +84,8 @@ import api from "@/http";
         data(){
             return{
                 listas: [] as ILista[],
+                showModal: false,
+                nomeLista: ''
                 
             }
         },
@@ -104,6 +128,20 @@ import api from "@/http";
             carregarListaProdutos(id : string, nomeLista: string){
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
                 Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
+            },
+            closeModal() {
+                this.showModal = false;
+            },
+            abrirModal(){
+                this.showModal = true
+            },
+            criarLista() {
+                // Lógica para criar a lista de produtos com o nome inserido
+                // Pode enviar os dados para o backend ou fazer outras operações necessárias
+                console.log('Criar lista:', this.nomeLista);
+
+                // Fechar o modal após criar a lista, se necessário
+                this.closeModal();
             }
         },
             
@@ -145,6 +183,29 @@ import api from "@/http";
         button:hover span:after {
             opacity: 1;
             right: 0;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+    
+        .modal-content {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            height: 50%;
+            width: 50%;
+        }
+        .hand-cursor {
+            cursor: pointer;
         }
 
 </style>

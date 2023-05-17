@@ -63,7 +63,6 @@
                             </div>
                         </div>
                     </form>
-                    <Teste :email="email" :password="senha"/>
                 </div>
             </div>
         </div>
@@ -75,7 +74,6 @@
     import { defineComponent } from 'vue'
     import RegUsuario from '../components/modal/RegistrarUsuarioModal.vue'
     import RegFornecedor from '../components/modal/RegistrarFornecedorModal.vue'
-    import Teste from './Teste.vue'
     import api from '@/http/index'
     import router from '@/router'
     import Cookies from 'js-cookie';
@@ -94,7 +92,7 @@
         components: {
             RegUsuario,
             RegFornecedor,
-            Teste,
+           
            
         },
         methods: {

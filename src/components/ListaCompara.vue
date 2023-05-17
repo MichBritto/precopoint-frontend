@@ -8,7 +8,7 @@
                 <th scope="col" style="width: 10%">Visualizar</th>
             </tr>
         </thead>
-        <tbody v-for="(fornecedor, nome) in fornecedores" :key="nome">
+        <tbody v-for="(fornecedor, nome, index) in fornecedores" :key="nome">
             <tr>
                 <td style="text-align: center; display: flex; flex-direction: column; align-items: center;">
                     <img :src="fornecedor.logotipo || ''" style="width: 45px; height: 45px; margin-bottom: 5px;">
@@ -22,7 +22,7 @@
                 }) }}
               </td>
               <td style="display: flex; justify-content: center; align-items: center;">
-                <ModalItens  :itemsNaoEncontrados="produtos_nao_encontrados" :nomeFornec="(nome as string)" :id="'btnListaProduto'+ nome"/>
+                <ModalItens  :itemsNaoEncontrados="produtos_nao_encontrados" :nomeFornec="(nome as string)" :id="'btnListaProduto'+ index"/>
               </td>
 
             </tr>

@@ -88,7 +88,7 @@ import { defineComponent ,PropType } from 'vue';
                 this.quantidade -= 1
             },
             emitirQuantidade() {
-                if(this.quantidade == undefined){                    
+                if(this.quantidade != undefined){                    
                     this.$emit('editar-quantidade', Math.round(this.quantidade))
                 }
             }

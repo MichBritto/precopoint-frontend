@@ -9,9 +9,9 @@
         <div class="text-center mb-4 mt-4"> <span class="h1 text-warning fw-bold fs-1" >{{ nomeCategoria }}</span></div>
         <!--Filtro e Limpar Filtro-->
         <FiltroProduto @filtro-aplicado="aplicarFiltro" @restaurar-filtro="restaurarFiltro"></FiltroProduto>
-        <div class="row mt-3"  >
+        <div class="row mt-3 "  >
             <!--card-->
-            <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 " v-for="produto in produtos" :key="produto.id" >
+            <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 mt-4 " v-for="produto in produtos" :key="produto.id" >
                 <div class="card  shadow" style="width: 15rem; height: 19rem;">
                     <div class="container text-center">
                         <img :src=produto.imagem  class="card-img-top img-produto" >

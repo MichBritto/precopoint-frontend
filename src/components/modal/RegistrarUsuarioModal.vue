@@ -61,7 +61,7 @@
                                     <div class="form-check d-flex justify-content-center mb-5">
                                         <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" v-model="agreement"/>
                                         <label class="form-check-label" for="form2Example3c">
-                                            Concordo com os <a href="#!">Termos de Serviço</a>
+                                            Concordo com os <a href="#!" data-bs-toggle="modal" data-bs-target="#modalFilho">Termos de Serviço</a>
                                         </label>
                                     </div>
                         
@@ -79,6 +79,42 @@
                     </div>
                 </div>   
             </div>
+
+<div class="modal fade" id="modalFilho" tabindex="-1" role="dialog" aria-labelledby="modalFilhoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-custom modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            
+            <div class="modal-body ">
+
+                <h1>TERMO DE USO - CLIENTE</h1>
+
+                <p>Este Termo de Uso ("Termo") estabelece os termos e condições aplicáveis ao uso do nosso site de comparação de produtos de supermercado ("Plataforma") pelo cliente. Leia atentamente este Termo antes de utilizar nossa Plataforma. Ao utilizar nossa Plataforma, você concorda em cumprir e ficar vinculado a este Termo.</p>
+            
+                <h2>Serviços Prestados</h2>
+                <p>A nossa Plataforma oferece a você, cliente, a possibilidade de comparar listas de produtos de supermercado criadas por você e obter informações sobre a melhor opção disponível nos mercados presentes em nosso banco de dados. Os resultados da comparação são fornecidos com base nas informações fornecidas pelos fornecedores cadastrados.</p>
+            
+                <h2>Cadastro do Cliente</h2>
+                <p>Para utilizar nossa Plataforma, é necessário realizar um cadastro fornecendo as seguintes informações: nome, e-mail e endereço. As informações fornecidas devem ser precisas, completas e atualizadas. Você é responsável por manter a confidencialidade dos seus dados de acesso e por todas as atividades realizadas em sua conta.</p>
+            
+                <h2>Propriedade Intelectual</h2>
+                <p>A Plataforma, incluindo todo o seu conteúdo e funcionalidades, é de propriedade da nossa empresa e está protegida por leis de direitos autorais e outras leis de propriedade intelectual. Você concorda em não reproduzir, distribuir, modificar, criar obras derivadas, exibir publicamente, realizar engenharia reversa ou utilizar de qualquer outra forma o conteúdo da Plataforma, exceto conforme expressamente permitido por nós.</p>
+            
+                <h2>Limitação de Responsabilidade</h2>
+                <p>A nossa empresa se esforça para fornecer informações precisas e atualizadas por meio da Plataforma. No entanto, não garantimos a exatidão, integridade ou atualidade das informações apresentadas. Você entende e concorda que é responsável por verificar a precisão das informações antes de tomar qualquer decisão baseada nelas.</p>
+            
+                <h2>Privacidade</h2>
+                <p>Respeitamos sua privacidade e tratamos seus dados pessoais de acordo com nossa Política de Privacidade. Ao utilizar nossa Plataforma, você consente com a coleta, uso e divulgação de suas informações pessoais de acordo com nossa Política de Privacidade.</p>
+            
+                <h2>Rescisão</h2>
+                <p>Podemos rescindir ou suspender seu acesso à Plataforma a qualquer momento, por qualquer motivo, sem aviso prévio ou responsabilidade.</p>
+            
+                <h2>Disposições Gerais</h2>
+                <p>Este Termo constitui o acordo integral entre você e nossa empresa em relação ao uso da Plataforma. A falha em exercer ou aplicar qualquer direito ou disposição deste Termo não constituirá uma renúncia a tal direito ou disposição. Se alguma disposição deste Termo for considerada inválida ou inexequível, as demais disposições permanecerão em vigor.</p>
+            
+            </div>
+        </div>
+    </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -172,5 +208,13 @@ import { defineComponent } from 'vue';
     .icon-input i {
         margin-top: -35px; /* Adjust this value to move the icons up or down */
     }
-
+    .modal-body h1 {
+        margin-top: 2rem;
+      }
+    .modal-body h2 {
+    margin-top: 2rem;
+    }
+    .modal-body p {
+    margin-bottom: 2rem;
+    }
 </style>

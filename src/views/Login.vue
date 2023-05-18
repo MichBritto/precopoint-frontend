@@ -72,8 +72,8 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue'
-    import RegUsuario from '../components/modal/RegistrarUsuarioModal.vue'
-    import RegFornecedor from '../components/modal/RegistrarFornecedorModal.vue'
+    import RegUsuario from '@/components/modal/RegistrarUsuarioModal.vue'
+    import RegFornecedor from '@/components/modal/RegistrarFornecedorModal.vue'
     import api from '@/http/index'
     import router from '@/router'
     import Cookies from 'js-cookie';

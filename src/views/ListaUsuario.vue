@@ -22,8 +22,8 @@
                 <div class="card shadow me-5">
                         
                         <div class="card-body border" style="width: 18rem; height: 10rem">
-                            <h6 class="fw-bold text-muted text-center" style="font-size: 20px">{{ lista.nomeLista }}</h6>
-                            <div class="container text-center mt-3">
+                            <h6 class="fw-bold text-muted text-center " style="font-size: 20px">{{ lista.nomeLista }}</h6>
+                            <div class="container text-center mt-4 ">
                                 <router-link :to="{ name: 'ListaProduto'}">
                                     <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString(), lista.nomeLista)">Editar&nbsp;&nbsp;<i class="fa-solid fa-pen-to-square"></i></button>
                                 </router-link>
@@ -39,15 +39,17 @@
         </div>
           
     </div>
+
+    <!--                                 Modal para criar Lista                                                -->
     <div v-if="showModal" class="modal-overlay">
         <div class="card col-6 mx-auto">
             <div class="card-body">
                 <h2 class="card-title text-center h1 text-warning fw-bold mb-5">Criar uma Lista</h2>
                 <form @submit.prevent="criarLista">
                                        
-                    <!-- descricao -->
-                    <div class="mb-3">
-                        
+                    <!-- descricao -->  
+                    <div class="mb-3">  
+
                         
                         <input type="text" v-model="nomeLista" placeholder="Nome da Lista" class="form-control">
                         <div class="text-center mt-5">
@@ -85,7 +87,7 @@ import api from "@/http";
             return{
                 listas: [] as ILista[],
                 showModal: false,
-                nomeLista: ''
+                nomeLista: '',
                 
             }
         },
@@ -133,15 +135,40 @@ import api from "@/http";
                 this.showModal = false;
             },
             abrirModal(){
-                this.showModal = true
+                if(Cookies.get('token')){
+                    this.showModal = true
+                }else{
+                    alert('Necessário estar logado para criar uma lista')
+                }
+                
             },
-            criarLista() {
+            async criarLista() {
                 // Lógica para criar a lista de produtos com o nome inserido
                 // Pode enviar os dados para o backend ou fazer outras operações necessárias
-                console.log('Criar lista:', this.nomeLista);
-
-                // Fechar o modal após criar a lista, se necessário
-                this.closeModal();
+                if(this.nomeLista.length <= 35){
+                    await api.post('lista/crialista/',
+                    {
+                        nomeLista: this.nomeLista,
+                        email: Cookies.get('email')
+                    },
+                    {
+                        headers: {
+                            Authorization: 'Bearer '+ Cookies.get('token')
+                        }
+                    })
+                    .then((response) => {
+                        alert('Lista criada com sucesso!')
+                        this.nomeLista = ''
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                    // Fechar o modal após criar a lista, se necessário
+                    this.closeModal();
+                }else{
+                    alert('Nome da lista só pode conter 35 caracteres')
+                }
+                
             }
         },
             

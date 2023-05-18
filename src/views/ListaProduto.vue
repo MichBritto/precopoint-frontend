@@ -10,7 +10,7 @@
                     <span class="h1 text-warning fw-bold">listas de produtos</span>
                     </div>
                     
-                    <geraPDF :products="listaProdutos"  :disabled="listaProdutos.length === 0"/>
+                    <geraPDF :products="listaProdutos"  />
 
                 </div>
             </div>

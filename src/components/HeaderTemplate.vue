@@ -36,7 +36,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length != 0">
                                 <li v-for="(item, index) in listas" :key="index">
-                                    <router-link class="dropdown-item" :to="`/lista-de-produtos/`"  v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
+                                    <router-link class="dropdown-item" :to="{ name: 'ListaProduto'}"  v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
                                 </li>
                             </ul>   
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length == 0">
@@ -105,7 +105,9 @@ import IProduto from '@/interfaces/IProduto'
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
                 Cookies.set('nomeLista', nomeLista, {secure:true, httpOnly: false})
                 if(this.$route.path === '/lista-de-produtos'){
-                    window.location.reload()
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100); // Aguarde 100 milissegundos (ajuste conforme necessário)
                 }     
             },
             getListas(){   

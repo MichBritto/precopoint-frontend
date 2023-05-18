@@ -1,7 +1,7 @@
 <template>
   
     <div>
-      <button type="button" class="btn btn-dark hover mb-2"  @click="generatePDF"><i class="fa-solid fa-download" style="color: #ffffff;"></i>&nbsp;&nbsp;Gerar Lista</button>
+      <button type="button" class="btn btn-dark hover mb-2"  @click="generate" ><i class="fa-solid fa-download" style="color: #ffffff;"></i>&nbsp;&nbsp;Gerar Lista</button>
     </div>
   </template>
   
@@ -26,7 +26,9 @@
         nomeArquivo: Cookies.get('nomeLista'),
         quantidade: 10,
         quantidadeTotal: 0,
-        valorTotal: 0
+        valorTotal: 0,
+        fornecedores: [],
+        
         
       }
     },
@@ -160,6 +162,38 @@
                   
                 margin: [50, 40, 40, 0] 
               },
+              {
+                table: {
+                    alignment: 'center',
+                    headerRows: 1,
+                    widths: ['50%', '50%'],
+                    body: [
+                      [
+                        {text: "Empresa", style: 'head' },
+                        {text: "Valor Total", style: 'head', alignment: 'right'},
+                      ],
+                      ...this.products.map((product) => [
+                        product.produto,
+                        product.descricao,
+                        {text: product.preco.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }), alignment: 'right'},
+                        {text: product.qtde, alignment: 'right'},
+                        {text: (product.preco * product.qtde).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }), alignment: 'right'}
+                      ]),
+                    ], style: 'table_theme'                    
+                  },
+                  
+                margin: [50, 40, 40, 0] 
+              }
             ],
           },
         ],
@@ -190,6 +224,13 @@
         pdfMake.createPdf(documentDefinition).download(this.nomeArquivo ? this.nomeArquivo + '.pdf' : undefined);
 
       },
+      generate(){
+        if (this.products.length > 0){
+          this.generatePDF()
+        }else{
+          alert('Sua lista de produtos está vazia')
+        }
+      }
     },
   })
 

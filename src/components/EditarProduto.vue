@@ -23,9 +23,9 @@
 
 <script lang="ts">
 
-import { PropType } from 'vue';
+import { defineComponent, PropType } from 'vue';
     import IProduto from '../interfaces/IProduto'
-    export default ({
+    export default defineComponent({
         name: "EditarProduto",
         props: {
             produtos: {

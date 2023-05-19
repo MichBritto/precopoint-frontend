@@ -36,7 +36,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length != 0">
                                 <li v-for="(item, index) in listas" :key="index">
-                                    <router-link class="dropdown-item" :to="{ name: 'ListaUsuario'}"  v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
+                                    <router-link class="dropdown-item" :to="{ name: 'ListaProduto'}"  v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>

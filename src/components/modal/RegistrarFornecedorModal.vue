@@ -3,7 +3,7 @@
     <button type="button" class="btn btn-danger shadow btn-sm" style="margin-left:2px" data-bs-toggle="modal" data-bs-target="#btnSupplier">Empresa</button>
     <!-- Modal - Fornecedor-->
     <div class="modal fade" id="btnSupplier" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header border-0">
                             <!--Button Close-->
@@ -88,7 +88,7 @@
                                             <div class="form-check d-flex justify-content-center mb-5">
                                                 <input class="form-check-input me-2" type="checkbox" value="" id="form2Example4c"  v-model="agreement" />
                                                 <label class="form-check-label">
-                                                    Concordo com os <a href="#!" data-bs-toggle="modal" data-bs-target="#modalFilho2">Termos de Serviço</a>
+                                                    Concordo com os <a href="#!" @click="callLiTermos">Termos de Serviço</a>
                                                 </label>
                                             </div>
                                             <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
@@ -106,16 +106,10 @@
             </div>
 
 
-            
-<!-- Modal Filho -->
-<div class="modal fade" id="modalFilho2" tabindex="-1" role="dialog" aria-labelledby="modalFilhoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-custom modal-dialog-scrollable modal-lg" role="document">
-        <div class="modal-content">
-            
-            <div class="modal-body ">
-
-                <h1 class="mb-3">TERMO DE USO - EMPRESA</h1>
-
+<div v-if="callModal" class="modal-overlay ">
+    <div class="card col-6 mx-auto" style="background-color: #EFEBE9">
+            <h1 class="text-warning" >TERMO DE USO - EMPRESA</h1>
+            <div class="card-body modal-dialog-scrollable" style="max-height: 600px; overflow-y: auto;">
                 <p class="mb-3 mt-2">Este Termo de Uso ("Termo") estabelece os termos e condições aplicáveis ao uso da nossa Plataforma de comparação de produtos de supermercado ("Plataforma") pelo fornecedor. Leia atentamente este Termo antes de utilizar nossa Plataforma. Ao utilizar nossa Plataforma, você concorda em cumprir e ficar vinculado a este Termo.</p>
 
                 <h2 >Serviços Prestados</h2>
@@ -140,9 +134,10 @@
                 <p >Este Termo constitui o acordo integral entre você e nossa empresa em relação ao uso da Plataforma. A falha em exercer ou aplicar qualquer direito ou disposição deste Termo não constituirá uma renúncia a tal direito ou disposição. Se alguma disposição deste Termo for considerada inválida ou inexequível, as demais disposições permanecerão em vigor.</p>
 
             </div>
+            <button type="button" class="btn btn-warning btn-sm mx-auto mt-1" @click="callModal=false" >&nbsp;<i class="fa-solid fa-chevron-left " ></i>&nbsp;&nbsp;Voltar&nbsp;&nbsp;</button>
         </div>
     </div>
-</div>
+
 </template>
 
 <script lang="ts">  
@@ -159,7 +154,8 @@ import { defineComponent } from 'vue';
                 senha: "",
                 rsenha:"",
                 agreement: false,
-                path:""
+                path:"",
+                callModal: false
 
             }
         },
@@ -184,45 +180,49 @@ import { defineComponent } from 'vue';
             },
             async criarFornecedor(){
                 if (this.agreement){
-                    await api.post('cadastro/fornecedor',
-                    {
-                        nome: this.empresa,
-                        email: this.email,
-                        senha: this.senha,
-                        endereco: this.endereco,
-                        cnpj: this.cnpj,
-                        logotipo: this.path
+                    if(this.senha == this.rsenha){
+                        await api.post('cadastro/fornecedor',
+                        {
+                            nome: this.empresa,
+                            email: this.email,
+                            senha: this.senha,
+                            endereco: this.endereco,
+                            cnpj: this.cnpj,
+                            logotipo: this.path
 
-                    },
-                    {
-                        headers: {
-                            
-                        }
-                    })
-                    .then((response) => {
-                        this.atualizacaoBemSucedida()
-                    })
-                    .catch((error) => {
-                        if (error.response && error.response.status === 400) {
-                        // Ocorreu um erro de Bad Request (400)
-                            const errorData = error.response.data;
-                            if (Array.isArray(errorData) && errorData.length > 0) {
-                                let errorMessage = 'Os seguintes campos devem ser preenchidos:';
-                                errorData.forEach((errorItem) => {
-                                    const field = errorItem.field;
-                                    const errorMessageItem = errorItem.errorMessage;
-                                    errorMessage += '\n- O campo: ' + field + ' ' + errorMessageItem;
-                                });
-
-                                alert(errorMessage);
-                            } else {
-                                console.log('Erro de Bad Request (400):', errorData);
+                        },
+                        {
+                            headers: {
+                                
                             }
-                        } else {
-                            // Outro tipo de erro ocorreu
-                            console.log('Erro:', error.message);
-                        }
-                    })
+                        })
+                        .then((response) => {
+                            this.atualizacaoBemSucedida()
+                        })
+                        .catch((error) => {
+                            if (error.response && error.response.status === 400) {
+                            // Ocorreu um erro de Bad Request (400)
+                                const errorData = error.response.data;
+                                if (Array.isArray(errorData) && errorData.length > 0) {
+                                    let errorMessage = 'Os seguintes campos devem ser preenchidos:';
+                                    errorData.forEach((errorItem) => {
+                                        const field = errorItem.field;
+                                        const errorMessageItem = errorItem.errorMessage;
+                                        errorMessage += '\n- O ' + field + ' ' + errorMessageItem;
+                                    });
+
+                                    alert(errorMessage);
+                                } else {
+                                    console.log('Erro de Bad Request (400):', errorData);
+                                }
+                            } else {
+                                // Outro tipo de erro ocorreu
+                                console.log('Erro:', error.message);
+                            }
+                        })
+                    }else{
+                        alert('As senhas devem ser iguais')
+                    }
                 }else{
                     alert('Necessario aceitar os termos de uso.')
                 }
@@ -236,6 +236,13 @@ import { defineComponent } from 'vue';
                 this.path= ''
                 this.agreement = false
                 alert('Atualização de produto bem sucedida');
+            },
+            callLiTermos(){
+                if(this.callModal)
+                    this.callModal = false;
+                else{
+                    this.callModal = true; 
+                }       
             }
         },
         

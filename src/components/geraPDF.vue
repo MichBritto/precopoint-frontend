@@ -12,7 +12,7 @@
   import { defineComponent} from 'vue'
   import api from '@/http'
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
-  
+
   export default defineComponent({
     name: "geraPDF",
     props: {
@@ -27,10 +27,13 @@
         quantidade: 10,
         quantidadeTotal: 0,
         valorTotal: 0,
-        fornecedores: [],
+        fornecedores: {},
         
         
       }
+    },
+    created(){
+      this.getListas()
     },
     methods: {
       getListas(){
@@ -59,7 +62,7 @@
                     console.log("Erro ao carregar lista.")
                 }
       },
-      generatePDF() {
+      async generatePDF() {
         
         this.products.forEach((produto) => {
             const valorItem = produto.preco * produto.qtde;
@@ -67,6 +70,7 @@
         });
         this.quantidadeTotal = this.products.reduce((acumulador, produto) => acumulador + produto.qtde, 0);
    
+
         
         const documentDefinition = {
         pageSize: 'A4',
@@ -162,38 +166,7 @@
                   
                 margin: [50, 40, 40, 0] 
               },
-              {
-                table: {
-                    alignment: 'center',
-                    headerRows: 1,
-                    widths: ['50%', '50%'],
-                    body: [
-                      [
-                        {text: "Empresa", style: 'head' },
-                        {text: "Valor Total", style: 'head', alignment: 'right'},
-                      ],
-                      ...this.products.map((product) => [
-                        product.produto,
-                        product.descricao,
-                        {text: product.preco.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }), alignment: 'right'},
-                        {text: product.qtde, alignment: 'right'},
-                        {text: (product.preco * product.qtde).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        }), alignment: 'right'}
-                      ]),
-                    ], style: 'table_theme'                    
-                  },
-                  
-                margin: [50, 40, 40, 0] 
-              }
+              
             ],
           },
         ],
@@ -230,7 +203,8 @@
         }else{
           alert('Sua lista de produtos está vazia')
         }
-      }
+      },
+      
     },
   })
 

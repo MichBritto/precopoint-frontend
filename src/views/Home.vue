@@ -17,14 +17,14 @@
                         <img :src=produto.imagem  class="card-img-top img-produto" >
                     </div>
                     <div class="card-body border ">
-                        <small class="text-danger fw-bold">{{produto.marcaProduto}} | {{ produto.fornecedor }}</small><br>
+                        <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
-                        <p class="h6 ">{{ Number(produto.preco).toLocaleString('pt-BR', {
+                        <!-- <p class="h6 ">{{ Number(produto.preco).toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
-                          })}}</p>
+                          })}}</p> -->
                         <div class="text-center mt-4"><button class="btn btn-outline-warning">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ export default defineComponent({
     },
     methods: {
         async getProdutos() {       
-            await api.get("filtro/list-produto")
+            await api.get("filtro/list-distinct-produto")
             .then((response) => {
                 this.produtos = response.data
         })

@@ -5,20 +5,20 @@
     <div class="container"  >
         <!--                                   Header Body                                                  -->
        
-            <div class="row">
-                <div class="col">
-                    <div class="d-flex justify-content-between mt-4 mb-4" >
-                        <p></p>
-                        <div class="text-center mx-auto "> <span class="h1 text-warning fw-bold" >Listas</span></div>
-                        <button type="button" class="btn btn-dark hover" @click="abrirModal">Criar Lista&nbsp;&nbsp;<i class="fa-solid fa-plus"></i></button>
-                        
-                    </div>
+        <div class="row">
+            <div class="col">
+                <div class="d-flex justify-content-between mt-4 mb-4" >
+                    <p></p>
+                    <div class="text-center mx-auto "> <span class="h1 text-warning fw-bold" >Listas</span></div>
+                    <button type="button" class="btn btn-dark hover" @click="abrirModal">Criar Lista&nbsp;&nbsp;<i class="fa-solid fa-plus"></i></button>
+                    
                 </div>
-            </div> 
-            <hr>   
+            </div>
+        </div> 
+        <hr>    
                        
         <div class="row" >
-            <div class="col-lg-4 mb-4 d-flex align-items-lg-center " v-for="(lista, index) in listas" :key="index" >
+            <div class="col-lg-4 mb-4 d-flex align-items-lg-center mt-5 " v-for="(lista, index) in listas" :key="index" >
                 <div class="card shadow me-5">
                         
                         <div class="card-body border" style="width: 18rem; height: 10rem">
@@ -145,7 +145,7 @@ import api from "@/http";
             async criarLista() {
                 // Lógica para criar a lista de produtos com o nome inserido
                 // Pode enviar os dados para o backend ou fazer outras operações necessárias
-                if(this.nomeLista.length <= 35){
+                if(this.nomeLista.length <= 35 && this.nomeLista.length > 5){
                     await api.post('lista/crialista/',
                     {
                         nomeLista: this.nomeLista,
@@ -158,17 +158,21 @@ import api from "@/http";
                     })
                     .then((response) => {
                         alert('Lista criada com sucesso!')
-                        this.nomeLista = ''
+                        this.clear()
                     })
                     .catch((error) => {
                         console.log(error)
                     })
                     // Fechar o modal após criar a lista, se necessário
+                    this.clear()
                     this.closeModal();
                 }else{
-                    alert('Nome da lista só pode conter 35 caracteres')
+                    alert('Nome da lista tem que conter de 5 a 35 caracteres')
                 }
                 
+            },
+            clear(){
+                this.nomeLista ='' 
             }
         },
             

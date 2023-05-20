@@ -38,6 +38,11 @@
                                 <li v-for="(item, index) in listas" :key="index">
                                     <router-link class="dropdown-item" :to="{ name: 'ListaProduto'}"  v-on:click="carregarListaProdutos((item.id).toString(), item.nomeLista)"> {{ item.nomeLista }}</router-link>
                                 </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <router-link class="dropdown-item" :to="{ name: 'ListaUsuario'}" ><i class="fa-solid fa-plus"></i> &nbsp;Criar lista</router-link>
+                                </li>
+                                
                             </ul>   
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown" v-if="listas.length == 0">
                                 <li class="text-center">
@@ -59,12 +64,16 @@
                             Opções usuário&nbsp;&nbsp;
                             <i class="fa-solid fa-user" height="30px" width="30px"></i>&nbsp;
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2" v-if="isLogged()">
                             <li><router-link class="dropdown-item" to="/editar-usuario">Ver minha conta</router-link></li>
                             <li><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
                             <li><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
+                        </ul>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2" v-else>
+                            
+                            <li><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Entrar </a></li>
                         </ul>
                     </div>
                 </div>
@@ -153,6 +162,11 @@ import IProduto from '@/interfaces/IProduto'
             },
             sair(){
                 Cookies.set('token', '')
+            },
+            isLogged() : boolean{
+                const cookieValue = Cookies.get('token'); // Substitua 'nome-do-cookie' pelo nome do seu cookie
+
+                return !!cookieValue; // Converte o valor do cookie para um booleano
             }
         }
     })

@@ -61,7 +61,7 @@
                                     <div class="form-check d-flex justify-content-center mb-5">
                                         <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" v-model="agreement"/>
                                         <label class="form-check-label" for="form2Example3c">
-                                            Concordo com os <a href="#!" data-bs-toggle="modal" data-bs-target="#modalFilho">Termos de Serviço</a>
+                                            Concordo com os <a href="#!" @click="callLiTermos()">Termos de Serviço</a>
                                         </label>
                                     </div>
                         
@@ -80,41 +80,48 @@
                 </div>   
             </div>
 
-<div class="modal fade" id="modalFilho" tabindex="-1" role="dialog" aria-labelledby="modalFilhoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-custom modal-dialog-scrollable modal-lg" role="document">
-        <div class="modal-content">
-            
-            <div class="modal-body ">
 
-                <h1>TERMO DE USO - CLIENTE</h1>
+            <div v-if="callModal" class="modal-overlay ">
+                <div class="card col-6 mx-auto" style="background-color: #EFEBE9">
+                        <h1 class="text-warning" >TERMO DE USO - CLIENTE</h1>
+                        <div class="card-body modal-dialog-scrollable" style="max-height: 600px; overflow-y: auto;">
+                            
+                            
+                
+                                
+                
+                                <p>Este Termo de Uso ("Termo") estabelece os termos e condições aplicáveis ao uso do nosso site de comparação de produtos de supermercado ("Plataforma") pelo cliente. Leia atentamente este Termo antes de utilizar nossa Plataforma. Ao utilizar nossa Plataforma, você concorda em cumprir e ficar vinculado a este Termo.</p>
+                            
+                                <h2>Serviços Prestados</h2>
+                                <p>A nossa Plataforma oferece a você, cliente, a possibilidade de comparar listas de produtos de supermercado criadas por você e obter informações sobre a melhor opção disponível nos mercados presentes em nosso banco de dados. Os resultados da comparação são fornecidos com base nas informações fornecidas pelos fornecedores cadastrados.</p>
+                            
+                                <h2>Cadastro do Cliente</h2>
+                                <p>Para utilizar nossa Plataforma, é necessário realizar um cadastro fornecendo as seguintes informações: nome, e-mail e endereço. As informações fornecidas devem ser precisas, completas e atualizadas. Você é responsável por manter a confidencialidade dos seus dados de acesso e por todas as atividades realizadas em sua conta.</p>
+                            
+                                <h2>Propriedade Intelectual</h2>
+                                <p>A Plataforma, incluindo todo o seu conteúdo e funcionalidades, é de propriedade da nossa empresa e está protegida por leis de direitos autorais e outras leis de propriedade intelectual. Você concorda em não reproduzir, distribuir, modificar, criar obras derivadas, exibir publicamente, realizar engenharia reversa ou utilizar de qualquer outra forma o conteúdo da Plataforma, exceto conforme expressamente permitido por nós.</p>
+                            
+                                <h2>Limitação de Responsabilidade</h2>
+                                <p>A nossa empresa se esforça para fornecer informações precisas e atualizadas por meio da Plataforma. No entanto, não garantimos a exatidão, integridade ou atualidade das informações apresentadas. Você entende e concorda que é responsável por verificar a precisão das informações antes de tomar qualquer decisão baseada nelas.</p>
+                            
+                                <h2>Privacidade</h2>
+                                <p>Respeitamos sua privacidade e tratamos seus dados pessoais de acordo com nossa Política de Privacidade. Ao utilizar nossa Plataforma, você consente com a coleta, uso e divulgação de suas informações pessoais de acordo com nossa Política de Privacidade.</p>
+                            
+                                <h2>Rescisão</h2>
+                                <p>Podemos rescindir ou suspender seu acesso à Plataforma a qualquer momento, por qualquer motivo, sem aviso prévio ou responsabilidade.</p>
+                            
+                                <h2>Disposições Gerais</h2>
+                                <p>Este Termo constitui o acordo integral entre você e nossa empresa em relação ao uso da Plataforma. A falha em exercer ou aplicar qualquer direito ou disposição deste Termo não constituirá uma renúncia a tal direito ou disposição. Se alguma disposição deste Termo for considerada inválida ou inexequível, as demais disposições permanecerão em vigor.</p>
 
-                <p>Este Termo de Uso ("Termo") estabelece os termos e condições aplicáveis ao uso do nosso site de comparação de produtos de supermercado ("Plataforma") pelo cliente. Leia atentamente este Termo antes de utilizar nossa Plataforma. Ao utilizar nossa Plataforma, você concorda em cumprir e ficar vinculado a este Termo.</p>
-            
-                <h2>Serviços Prestados</h2>
-                <p>A nossa Plataforma oferece a você, cliente, a possibilidade de comparar listas de produtos de supermercado criadas por você e obter informações sobre a melhor opção disponível nos mercados presentes em nosso banco de dados. Os resultados da comparação são fornecidos com base nas informações fornecidas pelos fornecedores cadastrados.</p>
-            
-                <h2>Cadastro do Cliente</h2>
-                <p>Para utilizar nossa Plataforma, é necessário realizar um cadastro fornecendo as seguintes informações: nome, e-mail e endereço. As informações fornecidas devem ser precisas, completas e atualizadas. Você é responsável por manter a confidencialidade dos seus dados de acesso e por todas as atividades realizadas em sua conta.</p>
-            
-                <h2>Propriedade Intelectual</h2>
-                <p>A Plataforma, incluindo todo o seu conteúdo e funcionalidades, é de propriedade da nossa empresa e está protegida por leis de direitos autorais e outras leis de propriedade intelectual. Você concorda em não reproduzir, distribuir, modificar, criar obras derivadas, exibir publicamente, realizar engenharia reversa ou utilizar de qualquer outra forma o conteúdo da Plataforma, exceto conforme expressamente permitido por nós.</p>
-            
-                <h2>Limitação de Responsabilidade</h2>
-                <p>A nossa empresa se esforça para fornecer informações precisas e atualizadas por meio da Plataforma. No entanto, não garantimos a exatidão, integridade ou atualidade das informações apresentadas. Você entende e concorda que é responsável por verificar a precisão das informações antes de tomar qualquer decisão baseada nelas.</p>
-            
-                <h2>Privacidade</h2>
-                <p>Respeitamos sua privacidade e tratamos seus dados pessoais de acordo com nossa Política de Privacidade. Ao utilizar nossa Plataforma, você consente com a coleta, uso e divulgação de suas informações pessoais de acordo com nossa Política de Privacidade.</p>
-            
-                <h2>Rescisão</h2>
-                <p>Podemos rescindir ou suspender seu acesso à Plataforma a qualquer momento, por qualquer motivo, sem aviso prévio ou responsabilidade.</p>
-            
-                <h2>Disposições Gerais</h2>
-                <p>Este Termo constitui o acordo integral entre você e nossa empresa em relação ao uso da Plataforma. A falha em exercer ou aplicar qualquer direito ou disposição deste Termo não constituirá uma renúncia a tal direito ou disposição. Se alguma disposição deste Termo for considerada inválida ou inexequível, as demais disposições permanecerão em vigor.</p>
-            
+                                
+                                
+                    </div>
+                    <button type="button" class="btn btn-warning btn-sm mx-auto mt-1" @click="callModal=false" >&nbsp;<i class="fa-solid fa-chevron-left " ></i>&nbsp;&nbsp;Voltar&nbsp;&nbsp;</button>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
+
+
+
 </template>
 
 <script lang="ts">
@@ -132,7 +139,8 @@ import { defineComponent } from 'vue';
                 endereco:"",
                 senha:"",
                 rsenha:"",
-                agreement: false
+                agreement: false,
+                callModal: false
             }
             
         }, 
@@ -150,42 +158,47 @@ import { defineComponent } from 'vue';
             },
             async criarUsuario(){
                 if (this.agreement){
-                    await api.post('cadastro/consumidor',
-                    {
-                        nome: this.nomeUsuario,
-                        email: this.email,
-                        senha: this.senha,
-                        endereco: this.endereco
-                    },
-                    {
-                        headers: {
-                            
-                        }
-                    })
-                    .then((response) => {
-                        this.atualizacaoBemSucedida()
-                    })
-                    .catch((error) => {
-                        if (error.response && error.response.status === 400) {
-                        // Ocorreu um erro de Bad Request (400)
-                            const errorData = error.response.data;
-                            if (Array.isArray(errorData) && errorData.length > 0) {
-                                let errorMessage = 'Os seguintes campos devem ser preenchidos:';
-                                errorData.forEach((errorItem) => {
-                                    const field = errorItem.field;
-                                    const errorMessageItem = errorItem.errorMessage;
-                                    errorMessage += '\n- O campo: ' + field + ' ' + errorMessageItem;
-                                });
-
-                                alert(errorMessage);
-                            } else {
-                                console.log('Erro de Bad Request (400):', errorData);
+                    if(this.senha == this.rsenha){
+                        await api.post('cadastro/consumidor',
+                        {
+                            nome: this.nomeUsuario,
+                            email: this.email,
+                            senha: this.senha,
+                            endereco: this.endereco
+                        },
+                        {
+                            headers: {
+                                
                             }
-                        } else {
-                            // Outro tipo de erro ocorreu
-                            console.log('Erro:', error.message);
-                        }
-                    })
+                        })
+                        .then((response) => {
+                            this.atualizacaoBemSucedida()
+                        })
+                        .catch((error) => {
+                            if (error.response && error.response.status === 400) {
+                            // Ocorreu um erro de Bad Request (400)
+                                const errorData = error.response.data;
+                                if (Array.isArray(errorData) && errorData.length > 0) {
+                                    let errorMessage = 'Os seguintes campos devem ser preenchidos:';
+                                    errorData.forEach((errorItem) => {
+                                        const field = errorItem.field;
+                                        const errorMessageItem = errorItem.errorMessage;
+                                        errorMessage += '\n- O ' + field + ' ' + errorMessageItem;
+                                    });
+
+                                    alert(errorMessage);
+                                } else {
+                                    console.log('Erro de Bad Request (400):', errorData);
+                                }
+                            } else {
+                                // Outro tipo de erro ocorreu
+                                console.log('Erro:', error.message);
+                            }
+                        })
+                    }else{
+                        alert('As senhas devem ser iguais')
+                    }
+                    
                 }else{
                     alert('Necessario aceitar os termos de uso.')
                 }
@@ -198,6 +211,14 @@ import { defineComponent } from 'vue';
                 this.endereco = ""
                 this.agreement = false
                 alert('Atualização de produto bem sucedida');
+            },
+            callLiTermos() {
+                
+                if(this.callModal)
+                    this.callModal = false;
+                else{
+                    this.callModal = true; 
+                }       
             }
         }
     })
@@ -216,5 +237,28 @@ import { defineComponent } from 'vue';
     }
     .modal-body p {
     margin-bottom: 2rem;
+    }
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        height: 50%;
+        width: 50%;
+    }
+    .hand-cursor {
+        cursor: pointer;
     }
 </style>

@@ -261,18 +261,27 @@ export default defineComponent({
                     const quantidadeAtual = product.qtde;
                     if (novaQuantidade <= 0) {
                             if (window.confirm("Deseja realmente remover este item?")) {
-                            this.filteredList = this.filteredList.filter(
-                                (product) => product.id !== id
-                            );
-                            this.listaProdutos = this.filteredList;
+                                this.filteredList = this.filteredList.filter(
+                                    (product) => product.id !== id
+                                );
+                                this.listaProdutos = this.filteredList;
+                                let diferencaQuantidade = novaQuantidade - quantidadeAtual;
+                                if (diferencaQuantidade < 0) {
+                                    diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
+                                }   
+                                // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
+                                await this.enviarAtualizacaoQuantidade(id, diferencaQuantidade);
                             }
-                    } 
-                    let diferencaQuantidade = novaQuantidade - quantidadeAtual;
-                    if (diferencaQuantidade <= 0) {
-                        diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
-                    }   
-                    // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
-                    await this.enviarAtualizacaoQuantidade(id, diferencaQuantidade);
+                            
+                    } else{
+                        let diferencaQuantidade = novaQuantidade - quantidadeAtual;
+                        if (diferencaQuantidade < 0) {
+                            diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
+                        }   
+                        // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
+                        await this.enviarAtualizacaoQuantidade(id, diferencaQuantidade);
+                    }
+                    
                 }
             });
         },

@@ -255,34 +255,48 @@ export default defineComponent({
                 console.log("Erro ao carregar lista.")
             }
         },
-        atualizarQuantidade(id: number, novaQuantidade: number) {
-            
-            this.filteredList.forEach(product => {
-                
-                if(product.id == id){
+        async atualizarQuantidade(id: number, novaQuantidade: number) {
+            this.filteredList.forEach(async (product) => {
+                if (product.id === id) {
+                    const quantidadeAtual = product.qtde;
                     if (novaQuantidade <= 0) {
-                        if (window.confirm("Deseja realmente remover este item?")) {
-                            this.filteredList = this.filteredList.filter(product => product.id !== id);
-                            this.listaProdutos = this.filteredList
-                        }
-                    } else {
-                        product.qtde = novaQuantidade;
-                        this.listaProdutos = this.filteredList
-                    }
-                    this.fetchData(this.currentPage)
-                    
+                            if (window.confirm("Deseja realmente remover este item?")) {
+                            this.filteredList = this.filteredList.filter(
+                                (product) => product.id !== id
+                            );
+                            this.listaProdutos = this.filteredList;
+                            }
+                    } 
+                    let diferencaQuantidade = novaQuantidade - quantidadeAtual;
+                    if (diferencaQuantidade <= 0) {
+                        diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
+                    }   
+                    // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
+                    await this.enviarAtualizacaoQuantidade(id, diferencaQuantidade);
                 }
             });
-                
-            this.fetchData(this.currentPage)
-            /*const produto = this.listaProdutos.find(p => p.id === id);
-            if (produto) {
-                produto.quantidade = novaQuantidade;
-            }*/
-            
         },
+        async enviarAtualizacaoQuantidade(id: number, diferencaQuantidade: number) {
+            const token = Cookies.get("token");
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
 
+            const data = {
+                produtoId: id,
+                listaId: this.listaId,
+                qtde: diferencaQuantidade,
+            };
 
+            try {
+                await api.post("lista/addproduto", data, { headers });
+                if (this.listaId !== undefined) {
+                this.getLista(this.listaId);
+                }
+            } catch (error) {
+                console.log("Erro:", error);
+            }
+        },
         fetchData(page : number) {
             // calcula o índice do primeiro e do último item a serem exibidos na página selecionada
             const firstItem = (page - 1) * parseInt(this.itemsPerPage);

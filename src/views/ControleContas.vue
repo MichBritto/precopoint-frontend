@@ -179,7 +179,7 @@
                         this.totalPages = Math.ceil(this.listaUsuario.length / this.itemsPerPage);
                     })
             },
-            callEditProduto(produto: IProduto) {
+            callEditUsuario(produto: IProduto) {
                 
                 if(this.callModal)
                     this.callModal = false;

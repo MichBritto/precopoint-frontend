@@ -11,8 +11,12 @@
                     <p></p>
                     <div class="text-center mx-auto "> <span class="h1 text-warning fw-bold" >Listas</span></div>
                     <button type="button" class="btn btn-dark hover" @click="abrirModal">Criar Lista&nbsp;&nbsp;<i class="fa-solid fa-plus"></i></button>
+                    <router-link :to="{ name: 'ControleContas'}">
+                        <button class="btn btn-warning" >Editar&nbsp;&nbsp;<i class="fa-solid fa-pen-to-square"></i></button>
+                    </router-link>
                     
                 </div>
+               
             </div>
         </div> 
         <hr>    
@@ -37,6 +41,7 @@
                 <span class="h4 text-muted">Nenhuma lista foi encontrada</span>
               </div>           
         </div>
+        
           
     </div>
 
@@ -64,6 +69,7 @@
             
         </div>
     </div>
+    
 
 </template>
 

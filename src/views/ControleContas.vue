@@ -5,13 +5,14 @@
             <div class="col">
                 <div class="d-flex justify-content-between mt-4 mb-4" >
                     <p></p>
-                    <div class="text-center mx-auto text-uppercase"> <span class="h1 text-warning fw-bold" >produtos</span></div>
-                    <button type="button" class="btn btn-dark hover">Adicionar Novo Produto</button>
-                    
+                    <div class="text-center mx-auto text-uppercase"> <span class="h1 text-warning fw-bold" >Gerenciar Contas</span></div>
+                    <button type="button" class="btn btn-dark hover" @click="CarregarFornecedores">Fornecedores</button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-warning hover " @click="CarregarClientes">Clientes</button>
                 </div>
             </div>
         </div> 
         <hr>
+        <span class="text-center"> {{ tipoConta }}</span>
         <nav aria-label="Page navigation center">
             <ul class="pagination justify-content-center">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
@@ -29,99 +30,58 @@
                 </li>
             </ul>
         </nav>
-        <table class="container table-light table-hover text-center">
-            <thead>
+        <table class="container table-light table-hover text-center" v-if="CarregaUsuarios">
+            <thead >
                 <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Nome</th>
-                    <th scope="col">Cep</th>
-                    <th scope="col">Email</th>                 
+                    <th scope="col">Email</th>
+                    <th scope="col">Cep</th>          
                 </tr>
             </thead>
-            <tbody>
+            
+            <tbody >
                 <tr v-for="usuario in slicedItems" :key="usuario.id">
                     <th scope="row">{{ usuario.id }}</th>
-                    <td>{{ usuario.produto }}</td>
-                    <td>{{ usuario.descricao }}</td>
-                    <td>R$ {{ (Number(usuario.preco)).toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                                useGrouping: true
-                            }) }}
+                    <td>{{ usuario.nome }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.cep }}</td>
+                    <td >
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                                :checked="usuario.statusConta" @change="toggleStatus(usuario)">
+                        </div>
+                        
                     </td>
-                    <td>{{ usuario.marcaProduto }}</td>
-                    <td>{{ usuario.categoria }}</td>
-                    <td><img v-bind:src="usuario.imagem" width="30" height="30"></td>
-                    <td><i class="fa-solid fa-pen-to-square hand-cursor" @click="callEditUsuario(usuario)"></i></td>
+                </tr>
+            </tbody>
+            
+        </table>
+        <table class="container table-light table-hover text-center" v-if="!CarregaUsuarios && listaContas.length > 0">
+            <thead>
+                <th scope="col">ID</th>
+                <th scope="col" class="text-start">Empresa</th>
+                <th scope="col" class="text-start">Email</th>
+                <th scope="col" class="text-start">Cep</th>     
+                <th scope="col" class="text-start">Status</th>   
+            </thead>
+            <tbody >
+                <tr v-for="usuario in slicedItems" :key="usuario.id">
+                    <th scope="row">{{ usuario.id }}</th>
+                    <td class="text-start"> <img :src="usuario.logotipo || ''" style="width: 30px; height: 30px;margin-right: 1rem;"> {{ usuario.nome }}</td>
+                    <td class="text-start">{{ usuario.email }}</td>
+                    <td class="text-start">{{ usuario.cep }}</td>
+                    <td class="text-start">
+                        <div class="form-check form-switch ">
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                          :checked="usuario.statusConta" @change="toggleStatus(usuario)"
+                          >
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
         
-        <!--Atualizar Produto-->
-        <div v-if="callModal" class="modal-overlay">
-            <div class="card col-6 mx-auto">
-                <div class="card-body">
-                    <h5 class="card-title text-center">Atualização de Produto</h5>
-                    <form @submit.prevent="atualizarProduto">
-                        <!-- Produto -->
-                        <div class="mb-3">
-                            <label for="produto" class="form-label">Produto:</label>
-                            <div class="form-check">
-                                <input id="produto" type="checkbox" v-model="produtoAtivo" class="form-check-input">
-                                <input v-if="!produtoAtivo" type="text" v-model="usuarioAtual.produto" class="form-control" disabled>
-                                <input v-if="produtoAtivo" type="text" v-model="produto" class="form-control">
-                            </div>
-                        </div>
-                         <!-- Preco -->
-                        <div class="mb-3">
-                            <label for="preco" class="form-label">Preço:</label>
-                            <div class="form-check">
-                                <input id="preco" type="checkbox" v-model="precoAtivo" class="form-check-input">
-                                <input v-if="!precoAtivo" type="text" :value="usuarioAtual.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })" class="form-control" disabled>
-                                <div class="input-group" v-if="precoAtivo">
-                                    <span class="input-group-text">R$</span>
-                                    <input  type="text" v-model="preco" class="form-control">
-                                </div>
-                                
-                                
-                                
-                            </div>
-                        </div>
-                         <!-- imagem -->
-                         <div class="mb-3">
-                            <label for="imagem" class="form-label">Imagem(URL):</label>
-                            <div class="form-check">
-                                <input id="imagem" type="checkbox" v-model="imagemAtivo" class="form-check-input">
-                                <input v-if="!imagemAtivo" type="text" v-model="usuarioAtual.imagem" class="form-control" disabled>
-                                <input v-if="imagemAtivo" type="text" v-model="imagem" class="form-control">
-                            </div>
-                        </div>
-                        <!-- descricao -->
-                        <div class="mb-3">
-                            <label for="descricao" class="form-label">Descricão:</label>
-                            <div class="form-check">
-                                <input id="descricao" type="checkbox" v-model="descricaoAtivo" class="form-check-input">
-                                <input v-if="!descricaoAtivo" type="text" v-model="usuarioAtual.descricao" class="form-control" disabled>
-                                <input v-if="descricaoAtivo" type="number" v-model="descricao" class="form-control">
-                            </div>
-                        </div>
-                        <!-- categoria -->
-                        <div class="mb-3">
-                            <label for="categoria" class="form-label">Categoria:</label>
-                            <div class="form-check">
-                                <input id="categoria" type="checkbox" v-model="categoriaAtivo" class="form-check-input">
-                                <input v-if="!categoriaAtivo" type="text" v-model="usuarioAtual.categoria" class="form-control" disabled>
-                                <input v-if="categoriaAtivo" type="text" v-model="categoria" class="form-control">
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button class="btn btn-outline-success me-1" type="submit">Atualizar Dados</button>
-                            <button class="btn btn-outline-danger" @click="cancelarAtualizacaoProduto">Cancelar atualização</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
    
 </template>
@@ -129,7 +89,6 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import Navbar from '../components/HeaderTemplate.vue'
-    import IProduto from '@/interfaces/IProduto'
     import api from '@/http'
     import Cookies from 'js-cookie'
 
@@ -141,122 +100,137 @@
         },
         data() {
             return{
-                listaUsuario: [] as IProduto[],
+                listaContas: [],
                 currentPage: 1,
                 itemsPerPage: 10,
                 totalPages: 0,
-                callModal: false,
-                usuarioAtual: {} as IProduto,
-                produto: '',
-                preco: 0.0,
-                imagem: '',
-                descricao: '',
-                marcaProduto: '',
-                fornecedor: '',
-                categoria: '',
-                produtoAtivo: false,
-                precoAtivo: false,
-                imagemAtivo: false,
-                descricaoAtivo: false,
-                marcaProdutoAtivo: false,
-                fornecedorAtivo: false,
-                categoriaAtivo: false
+                CarregaUsuarios: true,
             }
         },
         computed: {
-            slicedItems(): IProduto[] {
+            slicedItems(): any [] {
                 const start = (this.currentPage - 1) * this.itemsPerPage;
                 const end = start + this.itemsPerPage;
-                return this.listaUsuario.slice(start, end);
+                return this.listaContas.slice(start, end);
             },
+            
+            tipoConta() : string{
+                if(this.CarregaUsuarios){
+                    return 'Clientes'
+                }else{
+                    return 'Fornecedores'
+                }
+            }
             
         },
         methods: {
-            async getListaProduto(){
-                await api.get('filtro/list-produto')
+            async getListaCliente() {
+                const token = Cookies.get("token");
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
+                const config = {
+                    headers: headers,
+                };
+                await api.get('admin/get-all-consumidor', config)
                     .then((response) => {
-                        this.listaUsuario = response.data;
-                        this.totalPages = Math.ceil(this.listaUsuario.length / this.itemsPerPage);
+                    this.listaContas = response.data;
+                    this.totalPages = Math.ceil(this.listaContas.length / this.itemsPerPage);
                     })
+                    .catch((error) => {
+                    console.log(error);
+                    });
             },
-            callEditUsuario(produto: IProduto) {
-                
-                if(this.callModal)
-                    this.callModal = false;
+
+            async getListaFornec() {
+                const token = Cookies.get("token");
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
+                const config = {
+                    headers: headers,
+                };
+                await api.get('admin/get-all-fornecedor', config) // alterado para 'admin/get-all-fornecedor' para buscar fornecedores
+                    .then((response) => {
+                    this.listaContas = response.data;
+                    this.totalPages = Math.ceil(this.listaContas.length / this.itemsPerPage);
+                    })
+                    .catch((error) => {
+                    console.log(error);
+                    });
+            },
+
+            async bloquearConta(usuario : any){
+                const token = Cookies.get("token");
+                const headers = {
+                    Authorization: `Bearer ${token}`,
+                };
+                const config = {
+                    headers: headers,
+                };
+                if(this.CarregaUsuarios){
+                    await api.put('consumidor/update/',
+                    {
+                        email: usuario.email,
+                        statusConta: usuario.statusConta ? 1 : 0 
+                    }, config)
+                    .then((response) => {
+                        if(usuario.statusConta){
+                            console.log('Desbloqueado com sucesso')
+                        }
+                        else{
+                            console.log('Bloqueado com sucesso')
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                }
                 else{
-                    this.usuarioAtual = produto;
-                    this.callModal = true; 
-                }       
-            },
-            cancelarAtualizacaoProduto(){
-                this.produto = '';
-                this.preco = 0.0;
-                this.imagem = '';
-                this.descricao = '';
-                this.marcaProduto = '';
-                this.fornecedor = '';
-                this.categoria = '';
-                this.produtoAtivo = false;
-                this.precoAtivo = false;
-                this.imagemAtivo = false;
-                this.descricaoAtivo = false;
-                this.marcaProdutoAtivo = false;
-                this.fornecedorAtivo = false;
-                this.categoriaAtivo = false;
-                this.callModal = false;
-            },
-            async atualizarProduto(){
-                await api.put('produto/update/'+ this.usuarioAtual.id,
-                {
-                    produto:this.produto,
-                    preco: this.preco,
-                    imagem: this.imagem,
-                    descricao: this.descricao,
-                    marcaProduto: this.marcaProduto,
-                    fornecedor: this.usuarioAtual.fornecedor,
-                    categoria: this.categoria 
-                },
-                {
-                    headers: {
-                        Authorization: 'Bearer '+ Cookies.get('token')
-                    }
-                })
-                .then((response) => {
-                    this.atualizacaoBemSucedida()
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-            },
-            atualizacaoBemSucedida(){
-                this.produto = '';
-                this.preco = 0.0;
-                this.imagem = '';
-                this.descricao = '';
-                this.marcaProduto = '';
-                this.fornecedor = '';
-                this.categoria = '';
-                this.produtoAtivo = false;
-                this.precoAtivo = false;
-                this.imagemAtivo = false;
-                this.descricaoAtivo = false;
-                this.marcaProdutoAtivo = false;
-                this.fornecedorAtivo = false;
-                this.categoriaAtivo = false;
-                this.callModal = false;
-                alert('Atualização de produto bem sucedida');
-                this.getListaProduto();
-            },
+                    await api.put('fornecedor/update/',
+                    {
+                        email: usuario.email,
+                        statusConta: usuario.statusConta ? 1 : 0 
+                    }, config)
+                    .then((response) => {
+                        if(usuario.statusConta){
+                            console.log('Desbloqueado com sucesso')
+                        }
+                        else{
+                            console.log('Bloqueado com sucesso')
+                        }
+                        
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                }
                 
+            },
+            CarregarFornecedores(){
+                this.listaContas = [];
+                this.CarregaUsuarios = false; // alterado para true para exibir a tabela de fornecedores
+                this.getListaFornec();
+            },
+            CarregarClientes(){
+                this.listaContas = [];
+                this.CarregaUsuarios = true; // alterado para false para exibir a tabela de clientes
+                this.getListaCliente();
+            },
+            toggleStatus(usuario : any) {
+                usuario.statusConta = !usuario.statusConta;
+                this.bloquearConta(usuario)
+            }
 
         },
         mounted() {
-            this.getListaProduto()
+            this.CarregaUsuarios = true
+            this.getListaCliente()
             
         },
         watch: {
-            listaProduto() {
-                this.totalPages = Math.ceil(this.listaUsuario.length / this.itemsPerPage);
+            lista() {
+                this.totalPages = Math.ceil(this.listaContas.length / this.itemsPerPage);
             },
         },
     })
@@ -289,4 +263,17 @@
     .hand-cursor {
         cursor: pointer;
     }
+   
+    .btn-success {
+        background-color: green;
+        /* Estilos adicionais para o botão verde */
+      }
+    
+      .btn-danger {
+        background-color: red;
+        /* Estilos adicionais para o botão vermelho */
+      }
+      .custom-checkbox {
+        box-shadow: none;
+      }
 </style>

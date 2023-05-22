@@ -106,18 +106,36 @@ import Swal from 'sweetalert2'
                     allowEscapeKey: false,
                     didOpen: () => {
                     Swal.showLoading();
-                    api
-                        .post('auth', { email: this.email, senha: this.senha })
-                        .then((response) => {
-                        Cookies.set('token', response.data.token, { secure: true, httpOnly: false });
-                        Cookies.set('email', this.email);
-                        Swal.close();
-                        router.push('/');
-                        })
-                        .catch((err) => {
+                    if(this.email == "" || this.senha == ""){
+                        setTimeout(() => {
                             Swal.close();
-                            Swal.fire('Erro de login', err.response.data.errorMessage, 'error');
-                        });
+                            Swal.fire({
+                                title: 'Erro ao fazer login',
+                                text: 'Campos de email e senha precisam estar preenchidos',
+                                icon: 'error',
+                            });
+                        }, 1000);
+                        
+                    }
+                    else{
+                        api
+                            .post('auth', { email: this.email, senha: this.senha })
+                            .then((response) => {
+                            Cookies.set('token', response.data.token, { secure: true, httpOnly: false });
+                            Cookies.set('email', this.email);
+                            setTimeout(() => {
+                                Swal.close();
+                            }, 1000);
+                            router.push('/');
+                            })
+                            .catch((err) => {
+                                Swal.fire({
+                                title: 'Erro ao fazer login',
+                                text: 'Erro encontrado: ' + err.response.data.errorMessage,
+                                icon: 'error',
+                            });
+                            });
+                        }
                     }
                 });
             },

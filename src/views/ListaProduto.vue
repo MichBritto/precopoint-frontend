@@ -113,6 +113,8 @@ import Cookies from 'js-cookie'
 import Pagination from '@/components/Pagination.vue'
 import geraPDF from '@/components/geraPDF.vue'
 import api from '@/http'
+import router from '@/router'
+import Swal from 'sweetalert2'
 
 export default defineComponent({
     name: "ListaProduto",
@@ -291,21 +293,37 @@ export default defineComponent({
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
-
+           
             const data = {
                 produtoId: id,
                 listaId: this.listaId,
                 qtde: diferencaQuantidade,
             };
 
-            try {
-                await api.post("lista/addproduto", data, { headers });
-                if (this.listaId !== undefined) {
-                this.getLista(this.listaId);
-                }
-            } catch (error) {
-                console.log("Erro:", error);
-            }
+           
+
+            Swal.fire({
+                    title: 'Aguarde...',
+                    text: 'Atualizando Quantidades',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        api
+                            .post("lista/addproduto", data, { headers })
+                            .then((response) => {
+                                if (this.listaId !== undefined) {
+                                    this.getLista(this.listaId);
+                                }
+                                setTimeout(() => {
+                                    Swal.close();
+                                }, 1000);
+                            })
+                            .catch((err) => {
+                                Swal.fire('Erro de login', err.response.data.errorMessage, 'error');
+                            });
+                    }
+                });
         },
         fetchData(page : number) {
             // calcula o índice do primeiro e do último item a serem exibidos na página selecionada

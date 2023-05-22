@@ -52,7 +52,7 @@
                     <tbody v-if="filteredList.length > 0">
                         <tr v-for="(produto, index) in itemsToShow" :key="index" class="table-light table-hover text-center">
                           
-                          <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
+                          <td><img v-bind:src="produto.imagem" style="max-width: 30px; max-height: 30px;"></td>
                           <td style="text-align:left">{{ produto.produto }}</td>
                           <td>{{ produto.descricao }}</td>
                           <td>R$ {{ (produto.preco).toLocaleString('pt-BR', {

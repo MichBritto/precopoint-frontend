@@ -1,18 +1,17 @@
 <template>
     <Navbar/>
     <div class="container">
-        <div class="row  ">
-            <div class="col">
-                <div class="d-flex justify-content-between mt-4 mb-4" >
-                    <p></p>
-                    <div class="text-center mx-auto text-uppercase"> <span class="h1 text-warning fw-bold" >Gerenciar Contas</span></div>
-                    <button type="button" class="btn btn-dark hover" @click="CarregarFornecedores">Fornecedores</button>&nbsp;&nbsp;
-                    <button type="button" class="btn btn-warning hover " @click="CarregarClientes">Clientes</button>
-                </div>
-            </div>
-        </div> 
+        <div class="text-center mx-auto text-uppercase">
+            <span class="h1 text-warning fw-bold">Gerenciar Contas</span>
+        </div>
+        <div class="d-flex justify-content-start mt-2">
+            <span class="mt-1 fw-bold">Carregar:&nbsp;&nbsp;</span>
+            <button type="button" class="btn btn-warning hover" @click="CarregarClientes">Clientes</button>&nbsp;&nbsp;
+            <button type="button" class="btn btn-dark hover" @click="CarregarFornecedores">Fornecedores</button>
+            
+        </div>
         <hr>
-        <div class="text-center"><span class="text-center h1  fw-bold"> {{ tipoConta }}</span></div>
+        <div class="text-center"><span class="text-center h1  fw-bold">Contas de {{ tipoConta }}</span></div>
         
        <div class="mt-5">
             <table class="container table-light table-hover text-center" v-if="CarregaUsuarios">
@@ -21,11 +20,11 @@
                         <th scope="col">ID</th>
                         <th scope="col">Nome</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Cep</th>          
+                        <th scope="col">Cep</th>
+                        <th scope="col" class="text-start">Status</th>  
                     </tr>
                 </thead>
-                
-                <tbody >
+                <tbody style="margin-top: 10px;" >
                     <tr v-for="usuario in slicedItems" :key="usuario.id">
                         <th scope="row">{{ usuario.id }}</th>
                         <td>{{ usuario.nome }}</td>
@@ -50,10 +49,10 @@
                     <th scope="col" class="text-start">Cep</th>     
                     <th scope="col" class="text-start">Status</th>   
                 </thead>
-                <tbody >
+                <tbody style="margin-top: 10px;">
                     <tr v-for="usuario in slicedItems" :key="usuario.id">
                         <th scope="row">{{ usuario.id }}</th>
-                        <td class="text-start"> <img :src="usuario.logotipo || ''" style="width: 30px; height: 30px;margin-right: 1rem;"> {{ usuario.nome }}</td>
+                        <td class="text-start"> <img :src="usuario.logotipo || ''" style="max-width: 30px; max-height: 30px;margin-right: 1rem;"> {{ usuario.nome }}</td>
                         <td class="text-start">{{ usuario.email }}</td>
                         <td class="text-start">{{ usuario.cep }}</td>
                         <td class="text-start">

@@ -11,7 +11,7 @@
         <tbody v-for="(fornecedor, nome, index) in fornecedores" :key="nome">
             <tr>
                 <td style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                    <img :src="fornecedor.logotipo || ''" style="width: 45px; height: 45px; margin-bottom: 5px;">
+                    <img :src="fornecedor.logotipo || ''" style="max-width: 45px; max-height: 45px; margin-bottom: 5px;">
                     <span style="display: inline-block; text-transform: capitalize;">{{ nome }}</span>
                   </td>
               <td style="text-align: right; vertical-align: middle;">

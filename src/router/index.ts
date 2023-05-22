@@ -5,7 +5,7 @@ import ListaUsuario from '../views/ListaUsuario.vue'
 import Login from '../views/Login.vue'
 import ListaProduto from '../views/ListaProduto.vue'
 import ListaFornecedor from '../views/ListaFornecedor.vue'
-import EditarUsuario from '../views/EditarUsuario.vue'
+import EditarConsumidor from '../views/EditarConsumidor.vue'
 import EditarFornecedor from '../views/EditarFornecedor.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
 import Pagination  from '../components/Pagination.vue'
@@ -58,7 +58,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path:'/editar-usuario',
     name:'EditarUsuario',
-    component: EditarUsuario,
+    component: EditarConsumidor,
     meta: {
       title: 'Editar Perfil'
     } 

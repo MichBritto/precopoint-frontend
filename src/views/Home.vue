@@ -14,17 +14,11 @@
             <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12 mb-2 mt-4 " v-for="produto in produtos" :key="produto.id" >
                 <div class="card  shadow" style="width: 15rem; height: 19rem;">
                     <div class="container text-center">
-                        <img :src=produto.imagem  class="card-img-top img-produto" >
+                        <img :src="produto.imagem"  class="card-img-top img-produto" >
                     </div>
                     <div class="card-body border ">
                         <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
-                        <!-- <p class="h6 ">{{ Number(produto.preco).toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}}</p> -->
                         <div class="text-center mt-4"><button class="btn btn-outline-warning">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
                     </div>
                 </div>

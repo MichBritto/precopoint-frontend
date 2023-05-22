@@ -68,12 +68,6 @@
                             <li><router-link class="dropdown-item" to="/editar-usuario">Ver minha conta</router-link></li>
                             <li><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
                             <li><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
-                            
-                            <li>
-                                <router-link class="dropdown-item" :to="{ name: 'ControleContas'}">
-                                    Gerenciar Contas
-                                </router-link>
-                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
                         </ul>

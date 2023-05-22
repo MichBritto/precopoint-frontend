@@ -11,7 +11,9 @@
                     <p></p>
                     <div class="text-center mx-auto "> <span class="h1 text-warning fw-bold" >Listas</span></div>
                     <button type="button" class="btn btn-dark hover" @click="abrirModal">Criar Lista&nbsp;&nbsp;<i class="fa-solid fa-plus"></i></button>
-                    
+                    <router-link :to="{ name: 'ControleContas'}">
+                        <button class="btn btn-warning" >Editar&nbsp;&nbsp;<i class="fa-solid fa-pen-to-square"></i></button>
+                    </router-link>
                     
                 </div>
                
@@ -77,7 +79,8 @@ import ILista from "@/interfaces/ILista";
 import Cookies from "js-cookie";
 import Navbar from "../components/HeaderTemplate.vue"
 import api from "@/http";
-import Swal from 'sweetalert2';
+
+   
 
     export default defineComponent({
         name: "ListaUsuario",
@@ -125,6 +128,7 @@ import Swal from 'sweetalert2';
             };
         },
         created(){
+            
             this.getListas(this)
             
         },
@@ -140,18 +144,14 @@ import Swal from 'sweetalert2';
                 if(Cookies.get('token')){
                     this.showModal = true
                 }else{
-                    Swal.fire({
-                        title: 'Erro',
-                        text: 'Necessario estar logado para criar uma lista',
-                        icon: 'error',
-                    });
+                    alert('Necessário estar logado para criar uma lista')
                 }
                 
             },
             async criarLista() {
                 // Lógica para criar a lista de produtos com o nome inserido
                 // Pode enviar os dados para o backend ou fazer outras operações necessárias
-                if(this.nomeLista.length <= 35 && this.nomeLista.length > 4){
+                if(this.nomeLista.length <= 35 && this.nomeLista.length > 5){
                     await api.post('lista/criarlista/',
                     {
                         nomeLista: this.nomeLista,
@@ -174,21 +174,7 @@ import Swal from 'sweetalert2';
                     this.closeModal();
                     window.location.reload();
                 }else{
-                    if(this.nomeLista.length <= 35){
-                        Swal.fire({
-                            title: 'Falha',
-                            text: 'Nome da lista deve conter pelo menos 4 caracteres',
-                            icon: 'error',
-                        });
-                    }
-                    else{
-                        Swal.fire({
-                        title: 'Falha',
-                        text: 'Nome da lista deve conter no maximo 35 caracteres',
-                        icon: 'error',
-                    });
-                    }
-                    
+                    alert('Nome da lista tem que conter de 5 a 35 caracteres')
                 }
                 
             },
@@ -246,7 +232,7 @@ import Swal from 'sweetalert2';
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9998;
+            z-index: 9999;
         }
     
         .modal-content {
@@ -259,8 +245,5 @@ import Swal from 'sweetalert2';
         .hand-cursor {
             cursor: pointer;
         }
-        .swal2-container {
-            z-index: 9999 !important;
-          }
 
 </style>

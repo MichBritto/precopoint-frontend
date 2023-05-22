@@ -12,62 +12,7 @@
             </div>
         </div> 
         <hr>
-        <div class="text-center"><span class="text-center h1  fw-bold"> {{ tipoConta }}</span></div>
-        
-       <div class="mt-5">
-            <table class="container table-light table-hover text-center" v-if="CarregaUsuarios">
-                <thead >
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Cep</th>          
-                    </tr>
-                </thead>
-                
-                <tbody >
-                    <tr v-for="usuario in slicedItems" :key="usuario.id">
-                        <th scope="row">{{ usuario.id }}</th>
-                        <td>{{ usuario.nome }}</td>
-                        <td>{{ usuario.email }}</td>
-                        <td>{{ usuario.cep }}</td>
-                        <td >
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
-                                    :checked="usuario.statusConta" @change="toggleStatus(usuario)">
-                            </div>
-                            
-                        </td>
-                    </tr>
-                </tbody>
-                
-            </table>
-            <table class="container table-light table-hover text-center" v-if="!CarregaUsuarios && listaContas.length > 0">
-                <thead>
-                    <th scope="col">ID</th>
-                    <th scope="col" class="text-start">Empresa</th>
-                    <th scope="col" class="text-start">Email</th>
-                    <th scope="col" class="text-start">Cep</th>     
-                    <th scope="col" class="text-start">Status</th>   
-                </thead>
-                <tbody >
-                    <tr v-for="usuario in slicedItems" :key="usuario.id">
-                        <th scope="row">{{ usuario.id }}</th>
-                        <td class="text-start"> <img :src="usuario.logotipo || ''" style="width: 30px; height: 30px;margin-right: 1rem;"> {{ usuario.nome }}</td>
-                        <td class="text-start">{{ usuario.email }}</td>
-                        <td class="text-start">{{ usuario.cep }}</td>
-                        <td class="text-start">
-                            <div class="form-check form-switch ">
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
-                            :checked="usuario.statusConta" @change="toggleStatus(usuario)"
-                            >
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-       </div>
-        
+        <span class="text-center"> {{ tipoConta }}</span>
         <nav aria-label="Page navigation center">
             <ul class="pagination justify-content-center">
                 <li class="page-item" :class="{ disabled: currentPage === 1 }">
@@ -85,6 +30,58 @@
                 </li>
             </ul>
         </nav>
+        <table class="container table-light table-hover text-center" v-if="CarregaUsuarios">
+            <thead >
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Cep</th>          
+                </tr>
+            </thead>
+            
+            <tbody >
+                <tr v-for="usuario in slicedItems" :key="usuario.id">
+                    <th scope="row">{{ usuario.id }}</th>
+                    <td>{{ usuario.nome }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.cep }}</td>
+                    <td >
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                                :checked="usuario.statusConta" @change="toggleStatus(usuario)">
+                        </div>
+                        
+                    </td>
+                </tr>
+            </tbody>
+            
+        </table>
+        <table class="container table-light table-hover text-center" v-if="!CarregaUsuarios && listaContas.length > 0">
+            <thead>
+                <th scope="col">ID</th>
+                <th scope="col" class="text-start">Empresa</th>
+                <th scope="col" class="text-start">Email</th>
+                <th scope="col" class="text-start">Cep</th>     
+                <th scope="col" class="text-start">Status</th>   
+            </thead>
+            <tbody >
+                <tr v-for="usuario in slicedItems" :key="usuario.id">
+                    <th scope="row">{{ usuario.id }}</th>
+                    <td class="text-start"> <img :src="usuario.logotipo || ''" style="width: 30px; height: 30px;margin-right: 1rem;"> {{ usuario.nome }}</td>
+                    <td class="text-start">{{ usuario.email }}</td>
+                    <td class="text-start">{{ usuario.cep }}</td>
+                    <td class="text-start">
+                        <div class="form-check form-switch ">
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                          :checked="usuario.statusConta" @change="toggleStatus(usuario)"
+                          >
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
     </div>
    
 </template>
@@ -94,7 +91,7 @@
     import Navbar from '../components/HeaderTemplate.vue'
     import api from '@/http'
     import Cookies from 'js-cookie'
-    import Swal from 'sweetalert2';
+
 
     export default defineComponent({
         name: "ControleContas",
@@ -179,26 +176,13 @@
                     }, config)
                     .then((response) => {
                         if(usuario.statusConta){
-                            Swal.fire({
-                            title: 'Cliente desbloqueado',
-                            text: 'Conta desbloqueada com sucesso',
-                            icon: 'success',
-                        });
+                            console.log('Desbloqueado com sucesso')
                         }
                         else{
-                            Swal.fire({
-                                title: 'Cliente bloqueado',
-                                text: 'Conta bloqueada com sucesso',
-                                icon: 'error',
-                            });
+                            console.log('Bloqueado com sucesso')
                         }
                     })
                     .catch((error) => {
-                        Swal.fire({
-                            title: 'Erro',
-                            text: 'Não foi possível bloquear a conta',
-                            icon: 'error',
-                        });
                         console.log(error)
                     })
                 }
@@ -210,18 +194,10 @@
                     }, config)
                     .then((response) => {
                         if(usuario.statusConta){
-                            Swal.fire({
-                            title: 'Fornecedor desbloqueado',
-                            text: 'Conta desbloqueada com sucesso',
-                            icon: 'success',
-                        });
+                            console.log('Desbloqueado com sucesso')
                         }
                         else{
-                            Swal.fire({
-                                title: 'Fornecedor bloqueado',
-                                text: 'Conta bloqueada com sucesso',
-                                icon: 'error',
-                            });
+                            console.log('Bloqueado com sucesso')
                         }
                         
                     })

@@ -10,7 +10,7 @@ import EditarFornecedor from '../views/EditarFornecedor.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
 import Pagination  from '../components/Pagination.vue'
 import RouteMeta from '@/interfaces/RouteMeta'
-
+import ControleContas from '@/views/ControleContas.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -83,6 +83,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/teste',
     name: 'Pagination',
     component: Pagination,
+  },
+  {
+    path: '/gerenciar-contas',
+    name: 'ControleContas',
+    component: ControleContas,
   }
 ]
 

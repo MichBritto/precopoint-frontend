@@ -122,7 +122,8 @@ export default defineComponent({
         EditarListaProduto,
         Total,
         Pagination,
-        geraPDF
+        geraPDF,
+        
 
     },
     data() {

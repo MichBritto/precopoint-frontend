@@ -177,7 +177,12 @@
         },
         methods: {
             async getListaProduto(){
-                await api.get('filtro/list-produto')
+                await api.get('produto/list-produtos/'+ Cookies.get('email'),
+                {
+                    headers: {
+                        Authorization: 'Bearer '+ Cookies.get('token')
+                    }
+                })
                     .then((response) => {
                         this.listaProduto = response.data;
                         this.totalPages = Math.ceil(this.listaProduto.length / this.itemsPerPage);

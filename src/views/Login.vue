@@ -77,6 +77,7 @@
     import api from '@/http/index'
     import router from '@/router'
     import Cookies from 'js-cookie';
+import Swal from 'sweetalert2'
 
     export default defineComponent({
         // eslint-disable-next-line vue/multi-word-component-names
@@ -97,17 +98,28 @@
         },
         methods: {
             
-            async validaUsuario(){
-                await api.post('auth', {'email':this.email, 'senha':this.senha})
-                    .then((response) => {
-                        Cookies.set('token', response.data.token, {secure:true, httpOnly: false})
-                        Cookies.set('email', this.email)
-                        console.log(Cookies.get('token'))
-                        //console.log(response.data),
-                        router.push('/')
-                    })
-                    .catch((err) => console.log("Erro: "+ err))
-                
+            validaUsuario() {
+                Swal.fire({
+                    title: 'Aguarde...',
+                    text: 'Realizando login',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                    Swal.showLoading();
+                    api
+                        .post('auth', { email: this.email, senha: this.senha })
+                        .then((response) => {
+                        Cookies.set('token', response.data.token, { secure: true, httpOnly: false });
+                        Cookies.set('email', this.email);
+                        Swal.close();
+                        router.push('/');
+                        })
+                        .catch((err) => {
+                            Swal.close();
+                            Swal.fire('Erro de login', err.response.data.errorMessage, 'error');
+                        });
+                    }
+                });
             },
             esqueciSenha(){
                 console.log("esqueci minha senha")

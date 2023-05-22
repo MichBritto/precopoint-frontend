@@ -17,41 +17,41 @@
         <div class="row">
           <form>
             <div class="form-group row mt-2">
-              <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+              <label for="nome" class="col-sm-2 col-form-label">Nome</label>
               <div class="col-sm-10">
-                <input v-model="name" type="text" class="form-control" id="inputName" placeholder="Place Your Name">
+                <input v-model="nome" type="text" class="form-control" id="nome" placeholder="Place Your Name">
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="inputEndereco" class="col-sm-2 col-form-label">Address</label>
+              <label for="cep" class="col-sm-2 col-form-label">CEP</label>
               <div class="col-sm-10">
-                <input v-model="endereco" type="text" class="form-control" id="inputEndereco" placeholder="Place Your Address">
+                <input v-model="cep" type="text" class="form-control" id="cep" placeholder="Place Your Address">
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+              <label for="email" class="col-sm-2 col-form-label">E-mail</label>
               <div class="col-sm-10">
-                <input type="text" readonly class="form-control" id="staticEmail" value="email@example.com">
+                <input v-model="email" type="text" readonly class="form-control" id="email" disabled>
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+              <label for="senha" class="col-sm-2 col-form-label">Senha</label>
               <div class="col-sm-10">
-                <input v-model="password" type="password" class="form-control" id="inputPassword" placeholder="Place your Password">
+                <input v-model="senha" type="password" class="form-control" id="senha" placeholder="Place your Password">
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="inputRPassword" class="col-sm-2 col-form-label">Repeat Your Password</label>
+              <label for="confirmarSenha" class="col-sm-2 col-form-label">Repita sua senha</label>
               <div class="col-sm-10">
-                <input v-model="rpassword" type="password" class="form-control" id="inputRPassword" placeholder="Repeat Your Password">
+                <input v-model="confirmarSenha" type="password" class="form-control" id="confirmarSenha" placeholder="Repeat Your Password">
               </div>
             </div>
           </form>
         </div>
         <div class="row">
           <div class="col-lg text-center">
-            <button @click="salvar" type="button" class="btn btn-outline-success btn-block mb-2 mt-4 justify-content-sm-between">Salvar</button>
-            <button type="button" class="btn btn-outline-danger btn-block mb-2 mt-4 justify-content-sm-between" style="margin-left:4px;">Excluir</button>
+            <button @click="atualizarUsuario()" type="button" class="btn btn-outline-success btn-block mb-2 mt-4 justify-content-sm-between">Atualizar</button>
+            <button @click="cancelarAtualizacao()" class="btn btn-outline-danger btn-block mb-2 mt-4 justify-content-sm-between" style="margin-left:4px;">Cancelar</button>
           </div>
         </div>
       </div>
@@ -60,6 +60,9 @@
   
   <script lang="ts">
     import Navbar from "@/components/HeaderTemplate.vue";
+import api from "@/http";
+import router from "@/router";
+import Cookies from "js-cookie";
     import { defineComponent } from "vue";
   
     export default defineComponent({
@@ -69,36 +72,61 @@
         },
         data() {
         return {
-            name: "",
-            endereco: "",
-            password: "",
-            rpassword: "",
+            email:'',
+            nome: '',
+            cep: '',
+            senha: '',
+            confirmarSenha:'',
+            statusConta: true,
             };
         },
+        mounted(){
+          this.email = Cookies.get('email') as string;
+          this.carregarUsuario();
+        },
         methods: {
-            async salvar() {
-                const id = this.$route.params.id; // obtém o ID do usuário da rota
-                const data = { // cria o objeto com os dados atualizados do usuário
-                    name: this.name,
-                    address: this.endereco,
-                    password: this.password
-                };
-
-                try {
-                    const response = await fetch(`http://localhost:8080/editar-usuario/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                    })                  
-                    
-                    alert(await response.json());
-                } catch (error) {
-                    console.log(error); // exibe o erro no console
-                    // exibe uma mensagem de erro para o usuário
-                    alert("Erro ao atualizar os dados do usuário!");
+            async carregarUsuario() {
+                await api.get('consumidor/get/'+this.email,
+                {
+                  headers: {
+                    Authorization: 'Bearer '+Cookies.get('token')
+                  }
+                })
+                .then((response) => {
+                  this.nome = response.data.nome;
+                  this.cep = response.data.cep;
+                })
+                .catch((error) => {
+                  alert(error.response.data.message)
+                })
+            },
+            async atualizarUsuario() {
+              await api.put('consumidor/update',
+              {
+                email:this.email,
+                nome: this.nome,
+                endereco: this.cep,
+                senha: this.senha
+              },
+              {
+                headers: {
+                  Authorization: 'Bearer '+Cookies.get('token')
                 }
+              })
+              .then((response) => {
+                alert('Dados atualizados com sucesso.')
+              })
+              .catch((error) => {
+                if(error.response.status === 403){
+                  alert("Você não está autorizado")
+                }
+                else{
+                  alert("Um erro aconteceu, tente novamente.")
+                }
+              })
+            },
+            cancelarAtualizacao() {
+              router.push('/')
             }
         },
     });

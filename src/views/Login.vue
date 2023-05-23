@@ -57,7 +57,6 @@
                                 <!-- Button trigger modal-->
                                 <div class="text-center">
                                     <RegUsuario/>
-                                    <RegFornecedor/>  
                                                               
                                 </div>
                             </div>
@@ -73,7 +72,6 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
     import RegUsuario from '@/components/modal/RegistrarUsuarioModal.vue'
-    import RegFornecedor from '@/components/modal/RegistrarFornecedorModal.vue'
     import api from '@/http/index'
     import router from '@/router'
     import Cookies from 'js-cookie';
@@ -92,7 +90,6 @@
         emits:['validaUsuarios'],
         components: {
             RegUsuario,
-            RegFornecedor,
            
            
         },

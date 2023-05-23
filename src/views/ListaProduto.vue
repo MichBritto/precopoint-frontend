@@ -90,8 +90,7 @@
             </div>
                 
             <div class="col-12 col-md-4">
-                <ListaCompara :produtos="listaProdutos" />
-                
+                <ListaCompara :produtos="listaProdutos" :key="componentKey"  />
             </div>
         </div>
         <!--container-->
@@ -194,7 +193,8 @@ export default defineComponent({
             itemsPerPage: "5",
             itemsToShow: [] as IProduto [],
             loadPage: true,
-            paginationKey: 1
+            paginationKey: 1,
+            componentKey: 0,
             
         } 
     },
@@ -258,37 +258,38 @@ export default defineComponent({
             }
         },
         atualizarQuantidade(id: number, novaQuantidade: number) {
-            this.filteredList.forEach(async (product) => {
+            this.filteredList.forEach((product) => {
                 if (product.id === id) {
                     const quantidadeAtual = product.qtde;
-                    if (novaQuantidade <= 0) {
-                            if (window.confirm("Deseja realmente remover este item?")) {
-                                this.filteredList = this.filteredList.filter(
-                                    (product) => product.id !== id
-                                );
-                                this.listaProdutos = this.filteredList;
-                                let diferencaQuantidade = novaQuantidade - quantidadeAtual;
-                                if (diferencaQuantidade < 0) {
-                                    diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
-                                }   
-                                // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
-                                this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
-                                    .then(() => {
-                                    // Update the listaProdutos after successful request
-                                    this.listaProdutos = [...this.listaProdutos];
-                                    })
-                                    .catch((error) => {
-                                    console.error("Erro ao atualizar quantidade:", error);
-                                    });
-                            }
-                            
-                    } else{
-                        let diferencaQuantidade = novaQuantidade - quantidadeAtual;
-                        if (diferencaQuantidade < 0) {
-                            diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
-                        }   
-                        // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
+
+                    if (novaQuantidade === quantidadeAtual) {
+                        return;
+                    } else if (novaQuantidade <= 0) {
+                        if (window.confirm("Deseja realmente remover este item?")) {
+                        this.filteredList = this.filteredList.filter((product) => product.id !== id);
+                        this.listaProdutos = this.filteredList;
+
+                        let diferencaQuantidade = -quantidadeAtual; // Zerar a quantidade atual
+                        // Envie uma requisição para adicionar a diferencaQuantidade ao produto no banco de dados
                         this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
+                            .then(() => {
+                            // Update the listaProdutos after successful request
+                                this.listaProdutos = [...this.listaProdutos];
+                            })
+                            .catch((error) => {
+                            console.error("Erro ao atualizar quantidade:", error);
+                            });
+                        }
+                    } 
+                    else {
+
+                        if(novaQuantidade > quantidadeAtual){
+                            let diferencaQuantidade = novaQuantidade - quantidadeAtual;
+                            if (diferencaQuantidade < 0) {
+                                diferencaQuantidade = Math.abs(diferencaQuantidade); // Converter para valor positivo
+                            }
+                            // Envie uma requisição para adicionar a diferencaQuantidade ao produto no banco de dados
+                            this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
                             .then(() => {
                                 // Update the listaProdutos after successful request
                                 this.listaProdutos = [...this.listaProdutos];
@@ -296,12 +297,29 @@ export default defineComponent({
                             .catch((error) => {
                                 console.error("Erro ao atualizar quantidade:", error);
                             });
-                    }
+                        }else{
+                            let diferencaQuantidade = novaQuantidade - quantidadeAtual;
+                            if (diferencaQuantidade < 0) {
+                                diferencaQuantidade = Math.abs(diferencaQuantidade); // Converter para valor positivo
+                            }
+                            // Envie uma requisição para adicionar a diferencaQuantidade ao produto no banco de dados
+                            this.enviarAtualizacaoQuantidade(id, -diferencaQuantidade)
+                            .then(() => {
+                                // Update the listaProdutos after successful request
+                                this.listaProdutos = [...this.listaProdutos];
+                            })
+                            .catch((error) => {
+                                console.error("Erro ao atualizar quantidade:", error);
+                            });
+                        }
                     
+                    }
                 }
             });
-        },
+            },
+
         async enviarAtualizacaoQuantidade(id: number, diferencaQuantidade: number) {
+            console.log('Quantidade enviada para a requisicao ' + diferencaQuantidade)
             const token = Cookies.get("token");
             const headers = {
                 Authorization: `Bearer ${token}`,
@@ -330,6 +348,7 @@ export default defineComponent({
                                     this.listaProdutos = [...this.listaProdutos];
                                 }
                                 setTimeout(() => {
+                                    this.reloadComponent()
                                     Swal.close();
                                 }, 1000);
                             })
@@ -355,7 +374,11 @@ export default defineComponent({
             // altera o valor da chave para forçar o componente ser carregado novamente
             this.totalItems = this.filteredList.length
             this.paginationKey++
-        }
+        },
+        reloadComponent() {
+            // Increment the key value to force component reload
+            this.componentKey++;
+        },
         
     }
         

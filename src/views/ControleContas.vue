@@ -2,17 +2,25 @@
     <Navbar/>
     <div class="container">
         <div class="text-center mx-auto text-uppercase">
-            <span class="h1 text-warning fw-bold">Gerenciar Contas</span>
+            <span class="h1 text-warning fw-bold">{{ tipoConta }}</span>
         </div>
-        <div class="d-flex justify-content-end mt-2">
-            <span class="mt-1 fw-bold">Carregar:&nbsp;&nbsp;</span>
-            <button type="button" class="btn btn-warning hover" @click="CarregarClientes">Clientes</button>&nbsp;&nbsp;
-            <button type="button" class="btn btn-dark hover" @click="CarregarFornecedores">Fornecedores</button>
-            
-        </div>
-        <hr>
-        <div class="text-center"><span class="text-center h1  fw-bold">Contas de {{ tipoConta }}</span></div>
         
+        
+
+        <div clas="container">
+
+            <div class="row d-flex justify-content-between">
+                <div class="col-md-4">
+                  <span class="mt-1 fw-bold">Carregar:&nbsp;&nbsp;</span>
+                  <button type="button" class="btn btn-warning hover" @click="CarregarClientes">Clientes</button>&nbsp;&nbsp;
+                  <button type="button" class="btn btn-dark hover" @click="CarregarFornecedores">Fornecedores</button>
+                </div>
+                <div class="col-md-4 text-end"><RegFornecedor /></div>
+              </div>
+              
+        </div>
+        
+        <hr>
        <div class="mt-5">
             <table class="container table-light table-hover text-center" v-if="CarregaUsuarios">
                 <thead >
@@ -94,11 +102,12 @@
     import api from '@/http'
     import Cookies from 'js-cookie'
     import Swal from 'sweetalert2';
-
+    import RegFornecedor from '@/components/modal/RegistrarFornecedorModal.vue'
     export default defineComponent({
         name: "ControleContas",
         components: {
             Navbar,
+            RegFornecedor
         },
         data() {
             return{

@@ -1,6 +1,6 @@
 <template>
     <!--Button Supplier-->
-    <button type="button" class="btn btn-danger shadow btn-sm" style="margin-left:2px" data-bs-toggle="modal" data-bs-target="#btnSupplier">Empresa</button>
+    <button type="button" class="btn btn-danger shadow "  data-bs-toggle="modal" data-bs-target="#btnSupplier">Cadastrar Fornecedor</button>
     <!-- Modal - Fornecedor-->
     <div class="modal fade" id="btnSupplier" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-centered">

@@ -77,6 +77,7 @@
     import api from '@/http/index'
     import router from '@/router'
     import Cookies from 'js-cookie';
+    import Swal from 'sweetalert2'
 
     export default defineComponent({
         // eslint-disable-next-line vue/multi-word-component-names
@@ -97,17 +98,46 @@
         },
         methods: {
             
-            async validaUsuario(){
-                await api.post('auth', {'email':this.email, 'senha':this.senha})
-                    .then((response) => {
-                        Cookies.set('token', response.data.token, {secure:true, httpOnly: false})
-                        Cookies.set('email', this.email)
-                        console.log(Cookies.get('token'))
-                        //console.log(response.data),
-                        router.push('/')
-                    })
-                    .catch((err) => console.log("Erro: "+ err))
-                
+            validaUsuario() {
+                Swal.fire({
+                    title: 'Aguarde...',
+                    text: 'Realizando login',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                    Swal.showLoading();
+                    if(this.email == "" || this.senha == ""){
+                        setTimeout(() => {
+                            Swal.close();
+                            Swal.fire({
+                                title: 'Erro ao fazer login',
+                                text: 'Campos de email e senha precisam estar preenchidos',
+                                icon: 'error',
+                            });
+                        }, 1000);
+                        
+                    }
+                    else{
+                        api
+                            .post('auth', { email: this.email, senha: this.senha })
+                            .then((response) => {
+                            Cookies.set('token', response.data.token, { secure: true, httpOnly: false });
+                            Cookies.set('email', this.email);
+                            setTimeout(() => {
+                                Swal.close();
+                            }, 1000);
+                            router.push('/');
+                            })
+                            .catch((err) => {
+                                Swal.fire({
+                                title: 'Erro ao fazer login',
+                                text: 'Erro encontrado: ' + err.response.data.errorMessage,
+                                icon: 'error',
+                            });
+                            });
+                        }
+                    }
+                });
             },
             esqueciSenha(){
                 console.log("esqueci minha senha")

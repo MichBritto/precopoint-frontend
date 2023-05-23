@@ -113,6 +113,7 @@ import Cookies from 'js-cookie'
 import Pagination from '@/components/Pagination.vue'
 import geraPDF from '@/components/geraPDF.vue'
 import api from '@/http'
+import Swal from 'sweetalert2'
 
 export default defineComponent({
     name: "ListaProduto",
@@ -256,7 +257,7 @@ export default defineComponent({
                 console.log("Erro ao carregar lista.")
             }
         },
-        async atualizarQuantidade(id: number, novaQuantidade: number) {
+        atualizarQuantidade(id: number, novaQuantidade: number) {
             this.filteredList.forEach(async (product) => {
                 if (product.id === id) {
                     const quantidadeAtual = product.qtde;
@@ -271,7 +272,14 @@ export default defineComponent({
                                     diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
                                 }   
                                 // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
-                                await this.enviarAtualizacaoQuantidade(id, diferencaQuantidade);
+                                this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
+                                    .then(() => {
+                                    // Update the listaProdutos after successful request
+                                    this.listaProdutos = [...this.listaProdutos];
+                                    })
+                                    .catch((error) => {
+                                    console.error("Erro ao atualizar quantidade:", error);
+                                    });
                             }
                             
                     } else{
@@ -280,7 +288,14 @@ export default defineComponent({
                             diferencaQuantidade = -quantidadeAtual; // Calcula a diferença para zerar a quantidade
                         }   
                         // Envie uma requisição para adicionar a diferençaQuantidade ao produto no banco de dados
-                        await this.enviarAtualizacaoQuantidade(id, diferencaQuantidade);
+                        this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
+                            .then(() => {
+                                // Update the listaProdutos after successful request
+                                this.listaProdutos = [...this.listaProdutos];
+                            })
+                            .catch((error) => {
+                                console.error("Erro ao atualizar quantidade:", error);
+                            });
                     }
                     
                 }
@@ -291,21 +306,38 @@ export default defineComponent({
             const headers = {
                 Authorization: `Bearer ${token}`,
             };
-
+           
             const data = {
                 produtoId: id,
                 listaId: this.listaId,
                 qtde: diferencaQuantidade,
             };
 
-            try {
-                await api.post("lista/addproduto", data, { headers });
-                if (this.listaId !== undefined) {
-                this.getLista(this.listaId);
-                }
-            } catch (error) {
-                console.log("Erro:", error);
-            }
+           
+
+            Swal.fire({
+                    title: 'Aguarde...',
+                    text: 'Atualizando Quantidades',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        api
+                            .post("lista/addproduto", data, { headers })
+                            .then((response) => {
+                                if (this.listaId !== undefined) {
+                                    this.getLista(this.listaId);
+                                    this.listaProdutos = [...this.listaProdutos];
+                                }
+                                setTimeout(() => {
+                                    Swal.close();
+                                }, 1000);
+                            })
+                            .catch((err) => {
+                                Swal.fire('Erro ao atualizar quantidade', err.response.data.errorMessage, 'error');
+                            });
+                    }
+                });
         },
         fetchData(page : number) {
             // calcula o índice do primeiro e do último item a serem exibidos na página selecionada

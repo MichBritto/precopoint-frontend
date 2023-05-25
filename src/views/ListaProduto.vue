@@ -9,8 +9,11 @@
                     <div class="text-center mx-auto text-uppercase"> 
                     <span class="h1 text-warning fw-bold">listas de produtos</span>
                     </div>
+                    <div class="text-center">
+                        <button class="btn btn-warning hover"  style="flex: 1;margin-bottom:2px" @click="getLista(listaId as any)"><i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i></button>
+                        <geraPDF :products="listaProdutos"  />
+                    </div>
                     
-                    <geraPDF :products="listaProdutos"  />
 
                 </div>
             </div>
@@ -46,7 +49,7 @@
                         <th scope="col">Preco</th>
                         <th scope="col" style="width:12.5%">Quantidade</th>
                         <th scope="col">Valor</th>
-                        <th scope="col">Alterar</th>
+                        <th scope="col" v-if="isListaUsuario">Alterar</th>
                     </tr>
                     </thead>
                     <tbody v-if="filteredList.length > 0">
@@ -67,7 +70,7 @@
                                           useGrouping: true
                                         }) }}
                           </td>
-                          <td>
+                          <td v-if="isListaUsuario">
                             <EditarListaProduto :produto="produto" @editar-quantidade="atualizarQuantidade(produto.id, $event)" />
                           </td>
                         </tr>
@@ -90,7 +93,7 @@
             </div>
                 
             <div class="col-12 col-md-4">
-                <ListaCompara :produtos="listaProdutos" :key="componentKey"  />
+                <ListaCompara :produtos="listaProdutos" :key="componentKey" @loadFornec="loadCompare" />
             </div>
         </div>
         <!--container-->
@@ -114,6 +117,12 @@ import geraPDF from '@/components/geraPDF.vue'
 import api from '@/http'
 import Swal from 'sweetalert2'
 
+interface FornecedoresComLogotipos {
+        [fornecedor: string]: {
+            valorTotal: number,
+            logotipo: string | null
+        }
+    }
 export default defineComponent({
     name: "ListaProduto",
     components: {
@@ -127,62 +136,10 @@ export default defineComponent({
 
     },
     data() {
+        const nomeLista = Cookies.get('nomeLista');
+        const defaultNomeLista = "Lista de Produtos";
         return {
-            /*
-            listaProdutos: [{
-                id: 1,
-                produto: "Chocolate Kit Kat ao Leite",
-                preco: "3.99",
-                quantidade: 10,
-                imagem: "https://d3o3bdzeq5san1.cloudfront.net/thumbs/290/289082.jpg",
-                descricao: "41g",
-                marcaProduto: "Carrefour"
-            }, {
-                id: 2,
-                produto: "Bis Xtra Chocolate ao Leite",
-                preco: "3.99",
-                quantidade: 5,
-                imagem: "https://images-americanas.b2w.io/produtos/01/00/img/89818/4/89818428_1GG.jpg",
-                descricao: "45g",
-                marcaProduto: "Americanas"
-            },
-            {
-                id: 3,
-                produto: "Fini Dentaduras",
-                preco: "6.99",
-                quantidade: 10,
-                imagem: "https://images-americanas.b2w.io/produtos/01/00/img/6889/6/6889656_1GG.jpg",
-                descricao: "90g",
-                marcaProduto: "FiniStore"
-            },
-            {
-                id: 4,
-                produto: "Fini Dentaduras",
-                preco: "6.99",
-                quantidade: 10,
-                imagem: "https://images-americanas.b2w.io/produtos/01/00/img/6889/6/6889656_1GG.jpg",
-                descricao: "90g",
-                marcaProduto: "FiniStore"
-            },
-            {
-                id: 5,
-                produto: "Fini Dentaduras",
-                preco: "6.99",
-                quantidade: 10,
-                imagem: "https://images-americanas.b2w.io/produtos/01/00/img/6889/6/6889656_1GG.jpg",
-                descricao: "90g",
-                marcaProduto: "FiniStore"
-            },
-            {
-                id: 6,
-                produto: "Fini Dentaduras",
-                preco: "6.99",
-                quantidade: 10,
-                imagem: "https://images-americanas.b2w.io/produtos/01/00/img/6889/6/6889656_1GG.jpg",
-                descricao: "90g",
-                marcaProduto: "FiniStore"
-            }
-        ] as IProduto[],*/
+            
             listaProdutos:[] as IProduto[], 
             searchTerm: '',
             filteredList: [] as IProduto[],
@@ -195,6 +152,8 @@ export default defineComponent({
             loadPage: true,
             paginationKey: 1,
             componentKey: 0,
+            isListaUsuario: false,
+            nomeLista: nomeLista || defaultNomeLista
             
         } 
     },
@@ -233,8 +192,7 @@ export default defineComponent({
             }
         },
 
-        async getLista(id : string){
-          
+        async getLista(id : string){                   
             try {
                 const token = Cookies.get("token")
                 const headers = {
@@ -248,6 +206,8 @@ export default defineComponent({
                     this.filteredList = this.listaProdutos
                     this.totalItems = this.filteredList.length
                     this.fetchData(this.currentPage)
+                    Cookies.set('nomeListaProduto', this.nomeLista)
+                    this.isListaUsuario = true
                 })
                 .catch(error => {
                     console.log('Erro:', error);
@@ -319,7 +279,6 @@ export default defineComponent({
             },
 
         async enviarAtualizacaoQuantidade(id: number, diferencaQuantidade: number) {
-            console.log('Quantidade enviada para a requisicao ' + diferencaQuantidade)
             const token = Cookies.get("token");
             const headers = {
                 Authorization: `Bearer ${token}`,
@@ -379,11 +338,39 @@ export default defineComponent({
             // Increment the key value to force component reload
             this.componentKey++;
         },
-        
-    }
-        
+        loadCompare(fornec : string){
+            const token = Cookies.get("token");
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+            
 
-    })
+           
+
+            Swal.fire({
+                title: 'Aguarde...',
+                text: 'Carregando a lista',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    api
+                    .get("lista/" + this.listaId + "/" + fornec, { headers })
+                    .then((response) => {
+                        Cookies.set('nomeListaProduto', this.nomeLista + " - " + fornec)
+                        this.isListaUsuario = false
+                        this.filteredList = response.data;
+                        setTimeout(() => {
+                            this.reloadComponent();
+                            Swal.close();
+                        }, 1000);
+                    })
+
+                }
+            });
+        },
+    },
+})
 </script>
 
 <style scoped>

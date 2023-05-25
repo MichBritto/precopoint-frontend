@@ -27,7 +27,7 @@
         <div v-if="produtos.length == 0" class="no-results-message">
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
-        
+        <Cart></Cart>
 
     </div>
            
@@ -39,13 +39,14 @@ import HeaderTemplate from '@/components/HeaderTemplate.vue'
 import FiltroProduto from '@/components/FiltroProduto.vue'
 import api from '@/http/index'
 import IProduto from '@/interfaces/IProduto'
-
+import Cart from '@/components/Cart.vue'
 export default defineComponent({
     
     name: "TesteView",
     components: {
         HeaderTemplate,
         FiltroProduto,
+        Cart
         
     },
     data() {

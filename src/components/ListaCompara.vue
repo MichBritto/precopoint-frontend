@@ -10,20 +10,22 @@
         </thead>
         <tbody v-for="(fornecedor, nome, index) in fornecedores" :key="nome">
             <tr>
-                <td style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <td style="text-align: center; display: flex; flex-direction: column; align-items: center;" 
+                    @click="loadList(nome as any)"
+                    class="item-animation">
                     <img :src="fornecedor.logotipo || ''" style="width: 45px; height: 45px; margin-bottom: 5px;">
                     <span style="display: inline-block; text-transform: capitalize;">{{ nome }}</span>
-                  </td>
-              <td style="text-align: right; vertical-align: middle;">
-                R$ {{ Number(fornecedor.valorTotal).toLocaleString('pt-BR', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                  useGrouping: true
-                }) }}
-              </td>
-              <td style="display: flex; justify-content: center; align-items: center;">
+                </td>   
+                <td style="text-align: right; vertical-align: middle;">
+                    R$ {{ Number(fornecedor.valorTotal).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                    useGrouping: true
+                    }) }}
+                </td>
+                <td style="display: flex; justify-content: center; align-items: center;">
                 <ModalItens  :itemsNaoEncontrados="produtos_nao_encontrados" :nomeFornec="(nome as string)" :id="'btnListaProduto'+ index"/>
-              </td>
+                </td>
 
             </tr>
           </tbody>
@@ -49,6 +51,7 @@
     }
     export default defineComponent({
         name: "ListaCompara",
+        emits:["loadFornec"],
         components:{
             ModalItens
         },
@@ -90,6 +93,10 @@
             },
             fornecedorNomeFormatado(nome: string) {
                 return nome.charAt(0).toUpperCase() + nome.slice(1);
+            },
+            loadList(fornecedor : string){
+                
+                this.$emit('loadFornec', fornecedor)
             }
 
         }
@@ -112,4 +119,13 @@
         width: 100%;
     }
     }
+    .item-animation {
+        cursor: pointer; /* Define o cursor como um ponteiro para indicar que o elemento é clicável */
+        transition: background-color 0.3s; /* Adiciona uma transição suave para a cor de fundo */
+      }
+      
+      .item-animation.clicked {
+        background-color: lightgray; /* Altera a cor de fundo quando o item for clicado */
+        box-shadow: 0 0 5px gray; /* Adiciona uma sombra quando o item for clicado */
+      }
 </style>

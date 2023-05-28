@@ -23,7 +23,7 @@ export default defineComponent({
   },
   data(){
     return{
-      nomeArquivo: Cookies.get('nomeListaProduto'),
+      nomeArquivo: Cookies.get('nomeLista'),
       quantidade: 10,
       quantidadeTotal: 0,
       valorTotal: 0,

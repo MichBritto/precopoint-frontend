@@ -136,8 +136,6 @@ export default defineComponent({
 
     },
     data() {
-        const nomeLista = Cookies.get('nomeLista');
-        const defaultNomeLista = "Lista de Produtos";
         return {
             
             listaProdutos:[] as IProduto[], 
@@ -152,8 +150,7 @@ export default defineComponent({
             loadPage: true,
             paginationKey: 1,
             componentKey: 0,
-            isListaUsuario: false,
-            nomeLista: nomeLista || defaultNomeLista
+            isListaUsuario: false
             
         } 
     },
@@ -192,7 +189,8 @@ export default defineComponent({
             }
         },
 
-        async getLista(id : string){                   
+        async getLista(id : string){  
+                               
             try {
                 const token = Cookies.get("token")
                 const headers = {
@@ -206,7 +204,6 @@ export default defineComponent({
                     this.filteredList = this.listaProdutos
                     this.totalItems = this.filteredList.length
                     this.fetchData(this.currentPage)
-                    Cookies.set('nomeListaProduto', this.nomeLista)
                     this.isListaUsuario = true
                 })
                 .catch(error => {
@@ -334,6 +331,11 @@ export default defineComponent({
             this.totalItems = this.filteredList.length
             this.paginationKey++
         },
+
+
+
+
+        
         reloadComponent() {
             // Increment the key value to force component reload
             this.componentKey++;
@@ -357,7 +359,6 @@ export default defineComponent({
                     api
                     .get("lista/" + this.listaId + "/" + fornec, { headers })
                     .then((response) => {
-                        Cookies.set('nomeListaProduto', this.nomeLista + " - " + fornec)
                         this.isListaUsuario = false
                         this.filteredList = response.data;
                         setTimeout(() => {

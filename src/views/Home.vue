@@ -19,7 +19,7 @@
                     <div class="card-body border ">
                         <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
-                        <div class="text-center mt-4"><button class="btn btn-outline-warning" @click="$emit('produtoAdicionado', produto)">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
+                        <div class="text-center mt-4"><button class="btn btn-outline-warning" @click="produtoAdd(produto)">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
                     </div>
                 </div>
             </div>    
@@ -27,7 +27,7 @@
         <div v-if="produtos.length == 0" class="no-results-message">
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
-        <Cart :produtoAdicionado="produtoEscolhido" ></Cart>
+        <Cart ref="AdicionarNoCarrinho"></Cart>
 
     </div>
            
@@ -120,7 +120,9 @@ export default defineComponent({
             this.nomeCategoria = data.nome;
         },
         produtoAdd(produto : IProduto){
-            this.produtoEscolhido = produto
+            let produto_aux = produto
+            produto_aux.qtde = 1;
+            (this.$refs.AdicionarNoCarrinho as typeof Cart).AddCarrinho(produto_aux)
         },
     },
 })

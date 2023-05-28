@@ -150,17 +150,17 @@ export default defineComponent({
   data() {
     return {
       cartItems: [
-          {
-              id: 27,
-              produto: "Leite Longa Vida Integral",
-              qtde: 2,
-              preco: 4.1,
-              imagem: "https://static.paodeacucar.com/img/uploads/1/307/5122307.jpg",
-              descricao: "1L",
-              marcaProduto: "Qualita",
-              categoria: "Laticinios",
-              fornecedor: "Semar"
-          }
+          // {
+          //     id: 27,
+          //     produto: "Leite Longa Vida Integral",
+          //     qtde: 2,
+          //     preco: 4.1,
+          //     imagem: "https://static.paodeacucar.com/img/uploads/1/307/5122307.jpg",
+          //     descricao: "1L",
+          //     marcaProduto: "Qualita",
+          //     categoria: "Laticinios",
+          //     fornecedor: "Semar"
+          // }
       ] as IProduto[],
       showCart: false,
       showModal: false,
@@ -316,6 +316,10 @@ export default defineComponent({
           // Oculte o modal ou execute outras ações necessárias
           // ...
       },
+      AddCarrinho(produto : IProduto){
+        this.cartItems.push(produto)
+      }
+
       
       
   }

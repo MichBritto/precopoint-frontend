@@ -142,6 +142,7 @@
 
 <script lang="ts">  
     import api from '@/http';
+import Cookies from 'js-cookie';
 import { defineComponent } from 'vue';
     export default defineComponent({
         name: "RegFornecedor",
@@ -173,30 +174,28 @@ import { defineComponent } from 'vue';
                 this.agreement= false
                 this.path= ""
             },
-            handleFileChange(event: any) {
-                const file = event.target.files[0];
-                // Faça o que for necessário com o arquivo selecionado
-                console.log(file)
-            },
             async criarFornecedor(){
                 if (this.agreement){
+                    
+                    const body = {
+                        nome: this.empresa,
+                        email: this.email,
+                        senha: this.senha,
+                        endereco: this.endereco,
+                        cnpj: this.cnpj,
+                        logotipo: this.path
+                    }
+                    console.log(body)
                     if(this.senha == this.rsenha){
                         await api.post('cadastro/fornecedor',
+                        body,
                         {
-                            nome: this.empresa,
-                            email: this.email,
-                            senha: this.senha,
-                            endereco: this.endereco,
-                            cnpj: this.cnpj,
-                            logotipo: this.path
-
-                        },
-                        {
-                            headers: {
-                                
+                            headers : {
+                                Authorization: `Bearer ${Cookies.get("token")}`
                             }
                         })
                         .then((response) => {
+                            console.log(response.data)
                             this.atualizacaoBemSucedida()
                         })
                         .catch((error) => {
@@ -213,7 +212,7 @@ import { defineComponent } from 'vue';
 
                                     alert(errorMessage);
                                 } else {
-                                    console.log('Erro de Bad Request (400):', errorData);
+                                    console.log('Erro de Bad Request (400):', errorData.errorMessage);
                                 }
                             } else {
                                 // Outro tipo de erro ocorreu
@@ -223,6 +222,7 @@ import { defineComponent } from 'vue';
                     }else{
                         alert('As senhas devem ser iguais')
                     }
+                    
                 }else{
                     alert('Necessario aceitar os termos de uso.')
                 }
@@ -235,7 +235,7 @@ import { defineComponent } from 'vue';
                 this.cnpj= ''
                 this.path= ''
                 this.agreement = false
-                alert('Atualização de produto bem sucedida');
+                alert('Fornecedor cadastrado com sucesso!');
             },
             callLiTermos(){
                 if(this.callModal)

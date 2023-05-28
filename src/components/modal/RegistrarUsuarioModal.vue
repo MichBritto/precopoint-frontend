@@ -210,7 +210,7 @@ import { defineComponent } from 'vue';
                 this.rsenha = ""
                 this.endereco = ""
                 this.agreement = false
-                alert('Atualização de produto bem sucedida');
+                alert('Usuario atualizado com sucesso!');
             },
             callLiTermos() {
                 

@@ -46,7 +46,7 @@
                         <th scope="col">Imagem</th>
                         <th scope="col">Produto</th>
                         <th scope="col">Detalhes</th>
-                        <th scope="col">Preco</th>
+                        <th scope="col" >Preco</th>
                         <th scope="col" style="width:12.5%">Quantidade</th>
                         <th scope="col">Valor</th>
                         <th scope="col" v-if="isListaUsuario">Alterar</th>
@@ -346,29 +346,32 @@ export default defineComponent({
                 Authorization: `Bearer ${token}`,
             };
             
-
            
 
             Swal.fire({
                 title: 'Aguarde...',
                 text: 'Carregando a lista',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
+                allowOutsideClick: true,
+                allowEscapeKey: true,
+                
                 didOpen: () => {
                     Swal.showLoading();
                     api
-                    .get("lista/" + this.listaId + "/" + fornec, { headers })
+                    .get("lista/getlista-by-fornecedor"+ "/"  + this.listaId + "/" + fornec, { headers })
                     .then((response) => {
                         this.isListaUsuario = false
                         this.filteredList = response.data;
                         setTimeout(() => {
+                            
                             this.reloadComponent();
                             Swal.close();
+                            
                         }, 1000);
                     })
 
                 }
             });
+            this.isListaUsuario = true
         },
     },
 })

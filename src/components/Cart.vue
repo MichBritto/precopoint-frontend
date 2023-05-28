@@ -102,7 +102,7 @@
   <div v-if="showFinalizar" class="modal-overlay " >
       <div class="card col-6 mx-auto" >
           <div class="modal-content" >
-              <h5 class="card-title text-center">Adicionar a Lista</h5>
+              <h2 class="card-title text-center" style="color:#ffc107">Adicionar a Lista</h2>
               <form>
                   <!-- Produto -->
                   
@@ -116,8 +116,13 @@
                           </div>
                         </li>
                       </ul>
-                      <button type="button" class="btn btn-dark" @click="fecharFinalizar()">Cancelar</button>
-                      <button type="button" class="btn btn-dark" @click="adicionarALista()">Adicionar a Lista</button>
+
+                      
+
+                      <button type="button" class="btn btn-dark float-start" @click="fecharFinalizar()">Cancelar</button>
+                      <button type="button" class="btn btn-dark float-end" @click="adicionarALista()">Adicionar a Lista</button>
+                      
+                      
                     </div>
               </form>
           </div>
@@ -132,6 +137,7 @@
   import Cookies from 'js-cookie';
   import Swal from 'sweetalert2';
   import { defineComponent } from 'vue';
+  
   interface listaUsuario {
       id: number,
       nomeLista: string,
@@ -144,24 +150,12 @@ export default defineComponent({
   props: {
     produtoAdicionado: {
       type: Object,
-      required: true
+      required: false
     }
  },
   data() {
     return {
-      cartItems: [
-          // {
-          //     id: 27,
-          //     produto: "Leite Longa Vida Integral",
-          //     qtde: 2,
-          //     preco: 4.1,
-          //     imagem: "https://static.paodeacucar.com/img/uploads/1/307/5122307.jpg",
-          //     descricao: "1L",
-          //     marcaProduto: "Qualita",
-          //     categoria: "Laticinios",
-          //     fornecedor: "Semar"
-          // }
-      ] as IProduto[],
+      cartItems: [] as IProduto[],
       showCart: false,
       showModal: false,
       quantidade: 0,
@@ -170,11 +164,6 @@ export default defineComponent({
       listas:[] as listaUsuario[], 
       selectedLists: [] as number []
     };
-  },
-  computed: {
-    isCartEmpty(){
-      return this.cartItems.length === 0
-    }
   },
   watch: {
   },
@@ -274,7 +263,10 @@ export default defineComponent({
       fecharFinalizar(){
           this.showFinalizar = false
       },
+
+
       adicionarALista() {
+          var erro = false
           if (this.selectedLists.length === 0) {
               // Exibe uma mensagem de erro ou executa outra ação desejada
               console.log("Nenhuma lista selecionada");
@@ -302,27 +294,60 @@ export default defineComponent({
                        console.log('Produto adicionado com sucesso!' + response.data)
                   })
                   .catch(error => {
-                      console.log('Erro:', error);
+                    erro = true
+                    
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Erro!',
+                      text: 'Ocorreu um erro ao adicionar o produto à lista.',
+                      timer: 2000, // opcional, tempo em milissegundos antes de fechar automaticamente
+                      showConfirmButton: false
+                    });
                   });
-             });
+              });
               
                   
                
-              }
+            }
+            if (!erro){
+              this.showFinalizar = false
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Sucesso!',
+                  text: 'Produtos adicionados com sucesso.',
+                  timer: 2000, // opcional, tempo em milissegundos antes de fechar automaticamente
+                  showConfirmButton: false
+                });
+
+            }else{
+              this.showFinalizar = false
+              Swal.fire({
+                      icon: 'error',
+                      title: 'Erro!',
+                      text: 'Ocorreu um erro ao adicionar o produto à lista.',
+                      timer: 2000, // opcional, tempo em milissegundos antes de fechar automaticamente
+                      showConfirmButton: false
+                    });
+            }
           }  
-          // Limpe o carrinho de compras após adicionar às listas
           this.selectedLists = [];
 
-          // Oculte o modal ou execute outras ações necessárias
-          // ...
       },
-      AddCarrinho(produto : IProduto){
-        this.cartItems.push(produto)
-      }
+
+      AddCarrinho(produto: IProduto) {
+        this.showCart = true
+        this.cartItems.push(produto);
+      
+    }
 
       
       
-  }
+  },
+  computed: {
+    isCartEmpty(){
+      return this.cartItems.length === 0
+    }
+  },
 });
 </script>
 

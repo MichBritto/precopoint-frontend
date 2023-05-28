@@ -19,7 +19,7 @@
                     <div class="card-body border ">
                         <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
-                        <div class="text-center mt-4"><button class="btn btn-outline-warning">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
+                        <div class="text-center mt-4"><button class="btn btn-outline-warning" @click="produtoAdd(produto)">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
                     </div>
                 </div>
             </div>    
@@ -27,7 +27,7 @@
         <div v-if="produtos.length == 0" class="no-results-message">
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
-        <Cart></Cart>
+        <Cart ref="AdicionarNoCarrinho"></Cart>
 
     </div>
            
@@ -57,6 +57,7 @@ export default defineComponent({
             precoMaximo: 0,
             guardarProdutoPesquisado: '',
             nomeCategoria: 'Produtos',
+            produtoEscolhido: {} as IProduto,
         };
     },
     mounted() {
@@ -117,7 +118,12 @@ export default defineComponent({
         filtrarProdutosByCategoria(data: {produtos: IProduto[], nome:string}){
             this.produtos = data.produtos;
             this.nomeCategoria = data.nome;
-        }
+        },
+        produtoAdd(produto : IProduto){
+            let produto_aux = produto
+            produto_aux.qtde = 1;
+            (this.$refs.AdicionarNoCarrinho as typeof Cart).AddCarrinho(produto_aux)
+        },
     },
 })
 </script>

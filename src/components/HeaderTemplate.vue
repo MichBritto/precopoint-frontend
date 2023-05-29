@@ -30,7 +30,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown  pe-3">
+                        <li class="nav-item dropdown  pe-3" v-if="hasRoleConsumidor()">
                             <a class="nav-link dropdown-toggle hover" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-list"></i>&nbsp;&nbsp;Suas listas&nbsp;
                             </a>
@@ -64,21 +64,19 @@
                             Opções usuário&nbsp;&nbsp;
                             <i class="fa-solid fa-user" height="30px" width="30px"></i>&nbsp;
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2" v-if="isLogged()">
-                            <li><router-link class="dropdown-item" to="/editar-usuario">Ver minha conta</router-link></li>
-                            <li><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
-                            <li><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
-                            <li>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                            <li v-if="hasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fonercedor">Ver minha conta</router-link></li>
+                            <li v-if="hasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-usuario">Ver minha conta</router-link></li>
+                            <li v-if="hasRoleConsumidor()"><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
+                            <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
+                            <li v-if="hasRoleAdministrador()">
                                 <router-link class="dropdown-item" :to="{ name: 'ControleContas'}">
                                     Gerenciar Contas
                                 </router-link>
                             </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
-                        </ul>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown2" v-else>
-                            
-                            <li><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Entrar </a></li>
+                            <li v-if="usuarioLogado()"><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
+                            <li v-if="!usuarioLogado()"><a class="dropdown-item" @click="entrar" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Entrar </a></li>
                         </ul>
                     </div>
                 </div>
@@ -97,6 +95,8 @@ import ILista from "../interfaces/ILista"
 import api from "@/http"
 import ICategoria from "@/interfaces/ICategoria"
 import IProduto from '@/interfaces/IProduto'
+import router from "@/router"
+import jwt_decode from 'jwt-decode'
 
     export default defineComponent({
         name: "HeaderTemplate",       
@@ -106,14 +106,21 @@ import IProduto from '@/interfaces/IProduto'
                 listas: [] as ILista[],
                 categorias:[] as ICategoria[],
                 produtosByCategoria: [] as IProduto[],
+                userRoles: [] as string[],
             }
         },
 
         created(){
-            this.getListas()
+            const token = Cookies.get('token') as string
+            if(token){
+                const decodedToken = jwt_decode(token) as { roles: string[] };
+                this.userRoles = decodedToken.roles
+                if(this.hasRoleConsumidor()){
+                    this.getListas()
+                }
+            }  
             this.getCategorias()
         },
-
         methods:{
             carregarListaProdutos(id : string, nomeLista: string){
                 Cookies.set('lista', id , {secure:true, httpOnly: false})
@@ -166,12 +173,27 @@ import IProduto from '@/interfaces/IProduto'
                 }
             },
             sair(){
-                Cookies.set('token', '')
+                Cookies.remove('token');
+                Cookies.remove('email');
+                router.push('/login');
+            }, 
+            entrar(){
+                router.push('/login');
+            }, 
+            hasRoleConsumidor(): boolean {
+                return this.userRoles.includes('ROLE_CONSUMIDOR') || this.userRoles.includes('ROLE_ADMINISTRADOR');
             },
-            isLogged() : boolean{
-                const cookieValue = Cookies.get('token'); // Substitua 'nome-do-cookie' pelo nome do seu cookie
-
-                return !!cookieValue; // Converte o valor do cookie para um booleano
+            hasRoleFornecedor(): boolean {
+                return this.userRoles.includes('ROLE_FORNECEDOR') || this.userRoles.includes('ROLE_ADMINISTRADOR');
+            },
+            hasRoleAdministrador(): boolean {
+                return this.userRoles.includes('ROLE_ADMINISTRADOR');
+            },
+            usuarioLogado(): boolean {
+                if(Cookies.get('token')){
+                    return true;
+                }
+                return false;
             }
         }
     })

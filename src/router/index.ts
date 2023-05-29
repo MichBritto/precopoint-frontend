@@ -1,5 +1,4 @@
-
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized } from 'vue-router'
 import Home from '../views/Home.vue'
 import ListaUsuario from '../views/ListaUsuario.vue'
 import Login from '../views/Login.vue'
@@ -8,9 +7,10 @@ import ListaFornecedor from '../views/ListaFornecedor.vue'
 import EditarConsumidor from '../views/EditarConsumidor.vue'
 import EditarFornecedor from '../views/EditarFornecedor.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
-import Pagination  from '../components/Pagination.vue'
-import RouteMeta from '@/interfaces/RouteMeta'
+import Swal from 'sweetalert2'
+import Cookies from 'js-cookie'
 import ControleContas from '@/views/ControleContas.vue'
+import jwt_decode from 'jwt-decode'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,15 +22,6 @@ const routes: Array<RouteRecordRaw> = [
     } 
   },
   {
-    path: '/listas',
-    name: 'ListaUsuario',
-    component: ListaUsuario,
-    meta: {
-      title: 'Suas listas'
-    },
-    
-  },
-  {
     path: '/login',
     name: 'Login',
     component: Login,
@@ -39,11 +30,24 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/listas',
+    name: 'ListaUsuario',
+    component: ListaUsuario,
+    meta: {
+      title: 'Suas listas',
+      auth: true,
+      roles: ['ROLE_CONSUMIDOR']
+    },
+    
+  },
+  {
     path: '/lista-de-produtos',
     name: 'ListaProduto',
     component: ListaProduto,
     meta: {
-      title: 'Sua lista'
+      title: 'Sua lista',
+      auth: true,
+      roles: ['ROLE_CONSUMIDOR']
     },
     props: true
   },
@@ -52,7 +56,9 @@ const routes: Array<RouteRecordRaw> = [
     name: 'ListaFornecedor',
     component: ListaFornecedor,
     meta: {
-      title: 'Seus produtos'
+      title: 'Seus produtos',
+      auth: true,
+      roles: ['ROLE_FORNECEDOR']
     }
   },
   {
@@ -60,7 +66,9 @@ const routes: Array<RouteRecordRaw> = [
     name:'EditarUsuario',
     component: EditarConsumidor,
     meta: {
-      title: 'Editar Perfil'
+      title: 'Editar Perfil',
+      auth: true,
+      roles: ['ROLE_CONSUMIDOR']
     } 
   },
   {
@@ -68,7 +76,9 @@ const routes: Array<RouteRecordRaw> = [
     name:'EditarFornecedor',
     component: EditarFornecedor,
     meta: {
-      title: 'Editar Perfil'
+      title: 'Editar Perfil',
+      auth: true,
+      roles: ['ROLE_FORNECEDOR']
     } 
   },
   {
@@ -76,18 +86,20 @@ const routes: Array<RouteRecordRaw> = [
     name: 'AdicionarProduto',
     component: AdicionarProduto,
     meta: {
-      title: 'Adicionar Produto'
+      title: 'Adicionar Produto',
+      auth: true,
+      roles: ['ROLE_FORNECEDOR']
     }
-  },
-  {
-    path: '/teste',
-    name: 'Pagination',
-    component: Pagination,
   },
   {
     path: '/gerenciar-contas',
     name: 'ControleContas',
     component: ControleContas,
+    meta: {
+      title: 'Gerenciar Contas',
+      auth: true,
+      roles: ['ROLE_ADMINISTRADOR']
+    }
   }
 ]
 
@@ -96,10 +108,44 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const meta = to.meta as unknown as RouteMeta
-  document.title = meta.title
-  next()
-})
+router.beforeEach((to) => {
+  document.title = getTitle(to);
+  if (to.meta?.auth){
+    const token = Cookies.get('token');
+    if (!token) {
+      router.replace('/login')
+      document.title = 'Login'
+      Swal.fire({
+          title: 'Psiuuu, espera aí...',
+          text: 'Antes de prosseguir para a página você precisa fazer login!',
+          icon: 'warning',
+      })
+    }
+    else {
+      const decodedToken = jwt_decode(token) as { roles: string[] };
+      const userRoles = decodedToken.roles
+      if(to.meta.roles && !hasRequiredRoles(userRoles, to.meta.roles as string[])) {
+        router.push('/');
+        Swal.fire({
+          title: 'Psiuuu, espera aí...',
+          text: 'Parece que você não tem permissão para acessar aquela página :(',
+          icon: 'warning',
+        })
+      }
+    }
+  }
+});
+
+function hasRequiredRoles(userRoles: string[], requiredRoles: string[]) {
+  return requiredRoles.every((role) => userRoles.includes(role) || userRoles.includes('ROLE_ADMINISTRADOR'))
+}
+
+function getTitle(route: RouteLocationNormalized){
+  const title = route.meta.title as string;
+  if (title) {
+    return title;
+  }
+  return 'Page not found - PreçoPoint'; // Titulo padrão caso não haja uma definição específica
+}
 
 export default router

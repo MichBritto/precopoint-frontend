@@ -28,7 +28,7 @@
                                 <router-link :to="{ name: 'ListaProduto'}">
                                     <button class="btn btn-warning" @click="carregarListaProdutos((lista.id).toString(), lista.nomeLista)">Editar&nbsp;&nbsp;<i class="fa-solid fa-pen-to-square"></i></button>
                                 </router-link>
-                                <button class="btn btn-danger ms-2">Excluir&nbsp;&nbsp;<i class="fa-solid fa-trash"></i></button>
+                                <button class="btn btn-danger ms-2" @click="excluirLista(lista.id)">Excluir&nbsp;&nbsp;<i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     </div>  
@@ -147,8 +147,7 @@ import Swal from "sweetalert2";
                         text: 'Necessario estar logado para criar uma lista',
                         icon: 'error',
                     });
-                }
-                
+                }            
             },
             async criarLista() {
                 // Lógica para criar a lista de produtos com o nome inserido
@@ -212,6 +211,32 @@ import Swal from "sweetalert2";
             },
             clear(){
                 this.nomeLista ='' 
+            },
+            async excluirLista(listaId:number){
+                await api.delete('lista/delete/'+listaId,
+                {
+                    headers: {
+                        Authorization: 'Bearer '+ Cookies.get('token')
+                    }
+                })
+                .then(() => {
+                    Swal.fire({
+                        title: 'Excluir lista de usuário',
+                        text: 'Lista de usuário exlcuída com sucesso!',
+                        icon: 'success',
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    },1000)
+                    
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        title: 'Excluir lista de usuário',
+                        text: error.response.data.errorMessage,
+                        icon: 'success',
+                    })
+                })
             }
         },
             

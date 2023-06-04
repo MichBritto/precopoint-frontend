@@ -11,7 +11,7 @@
                     </div>
                     <div class="text-center">
                         <button class="btn btn-warning hover"  style="flex: 1;margin-bottom:2px" @click="getLista(listaId as any)"><i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i></button>
-                        <geraPDF :products="listaProdutos"  />
+                        <geraPDF :products="listaProdutos" :fornec="fornec" :key="componentKey" />
                     </div>
                     
 
@@ -21,11 +21,12 @@
         <hr>
         <div class="container">
             <div class="row">
-            <div class="col-3">
+            <div class="col-5">
                 <span class="h2 fw-bold">Descrição da Lista</span>
+                <span class="h2 fw-bold" v-if="!isListaUsuario"> - {{ fornec }} </span>
                 
             </div>
-            <div class="col-4"></div>
+            <div class="col-2"></div>
                 
                 <div class="col-5 d-flex justify-content-end">
                     <div class="form-group" style="display: flex">
@@ -82,7 +83,7 @@
                       </tbody>
                     
                 </table>
-                <Total :produtos="listaProdutos"/>
+                <Total :produtos="listaProdutos" :key="componentKey"/>
                 <div class="d-flex justify-content-center">
                     <Pagination :key="paginationKey" :currentPage="currentPage" :totalItems="totalItems" :itemsPerPage="parseInt(itemsPerPage)" v-on:page-changed="fetchData" ></Pagination>
                 </div>
@@ -133,6 +134,7 @@ export default defineComponent({
         Pagination,
         geraPDF,
         
+        
 
     },
     data() {
@@ -150,7 +152,8 @@ export default defineComponent({
             loadPage: true,
             paginationKey: 1,
             componentKey: 0,
-            isListaUsuario: false
+            isListaUsuario: false,
+            fornec: "",
             
         } 
     },
@@ -360,10 +363,13 @@ export default defineComponent({
                     .get("lista/getlista-by-fornecedor"+ "/"  + this.listaId + "/" + fornec, { headers })
                     .then((response) => {
                         this.isListaUsuario = false
+                        this.listaProdutos = response.data
                         this.filteredList = response.data;
+                        console.log(response.data)
                         setTimeout(() => {
-                            
+                            this.fornec = fornec
                             this.reloadComponent();
+                            this.fetchData(1)
                             Swal.close();
                             
                         }, 1000);
@@ -371,7 +377,6 @@ export default defineComponent({
 
                 }
             });
-            this.isListaUsuario = true
         },
     },
 })

@@ -20,6 +20,10 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    fornec: {
+      type: String,
+      required: false
+    }
   },
   data(){
     return{
@@ -33,7 +37,9 @@ export default defineComponent({
     }
   },
   created(){
+    console.log(this.fornec)
     this.getListas()
+
   },
   methods: {
     getListas(){
@@ -63,14 +69,14 @@ export default defineComponent({
               }
     },
     async generatePDF() {
-      
+      this.quantidadeTotal = 0; 
+      this.valorTotal = 0; 
       this.products.forEach((produto) => {
           const valorItem = produto.preco * produto.qtde;
           this.valorTotal += valorItem;
       });
       this.quantidadeTotal = this.products.reduce((acumulador, produto) => acumulador + produto.qtde, 0);
- 
-
+      
       
       const documentDefinition = {
       pageSize: 'A4',
@@ -94,7 +100,7 @@ export default defineComponent({
             },
             {
               type: 'text',
-              text: 'PrecoPoint',
+              text: 'PrecoPoint' ,
               alignment: 'center',
               fontSize: 30,
               style: 'header',

@@ -84,7 +84,7 @@
                                 <i class="fa-solid fa-trash fa-xs" style="color: white;padding-right:5px"></i>
                                 Remover
                               </button>                         
-                              <button type="button" class="btn btn-warning" @click.prevent="editarProduto(produtoAtual, quantidade)">
+                              <button type="button" class="btn btn-warning" @click.prevent="editarProduto(produtoAtual)">
                                 Atualizar
                               </button>                             
                           </div>
@@ -148,14 +148,18 @@ export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Cart",
   props: {
-    produtoAdicionado: {
-      type: Object,
-      required: false
-    }
- },
+      produtoAdicionado: {
+        type: Object,
+        required: false
+      },
+      cartItems: {
+        type: Array as ()=> IProduto[],
+        required: true
+      }
+  },
+  emits: ['removeProduto', 'limpaCarrinho'],
   data() {
     return {
-      cartItems: [] as IProduto[],
       showCart: false,
       showModal: false,
       quantidade: 0,
@@ -169,16 +173,8 @@ export default defineComponent({
   },
   methods: {
       removeItem(item : IProduto) : void {
-          const index = this.cartItems.indexOf(item);
-          if (index !== -1) {
-              this.cartItems.splice(index, 1);
-              Swal.fire({
-                          title: 'Produto Removido',
-                          text: 'Produto removido com Sucesso!',
-                          icon: 'success',
-                      })
-              this.closeModal()
-          }
+          this.$emit('removeProduto', item)
+          this.closeModal()
       },
       toggleCart(){
           this.showCart = !this.showCart
@@ -192,7 +188,7 @@ export default defineComponent({
           this.quantidade = produto.qtde
           this.produtoAtual = produto
       },
-      editarProduto(produtoAtual: IProduto,quantidade : number){
+      editarProduto(produtoAtual: IProduto){
           if(this.quantidade > 0){
               produtoAtual.qtde = this.quantidade
               Swal.fire({
@@ -213,16 +209,7 @@ export default defineComponent({
                   cancelButtonText: "Cancelar",
               }).then((result)=>{
                   if (result.isConfirmed) {
-                      const index = this.cartItems.indexOf(produtoAtual);
-                      if (index !== -1) {
-                          this.cartItems.splice(index, 1);
-                          Swal.fire({
-                                      title: 'Produto Removido',
-                                      text: 'Produto removido com Sucesso!',
-                                      icon: 'success',
-                          })
-                      }
-                      
+                    this.removeItem(produtoAtual)                 
                   } else if (result.dismiss === Swal.DismissReason.cancel) {
                       this.abrirModal(aux)
                   }     
@@ -318,7 +305,7 @@ export default defineComponent({
                   timer: 2000, // opcional, tempo em milissegundos antes de fechar automaticamente
                   showConfirmButton: false
                 });
-
+              this.$emit('limpaCarrinho')
             }else{
               this.showFinalizar = false
               Swal.fire({
@@ -334,11 +321,6 @@ export default defineComponent({
 
       },
 
-      AddCarrinho(produto: IProduto) {
-        this.showCart = true
-        this.cartItems.push(produto);
-      
-    }
 
       
       

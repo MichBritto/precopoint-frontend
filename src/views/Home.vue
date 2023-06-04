@@ -27,7 +27,7 @@
         <div v-if="produtos.length == 0" class="no-results-message">
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
-        <Cart ref="AdicionarNoCarrinho"></Cart>
+        <Cart :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
 
     </div>
            
@@ -40,6 +40,7 @@ import FiltroProduto from '@/components/FiltroProduto.vue'
 import api from '@/http/index'
 import IProduto from '@/interfaces/IProduto'
 import Cart from '@/components/Cart.vue'
+import Swal from 'sweetalert2'
 export default defineComponent({
     
     name: "TesteView",
@@ -58,6 +59,7 @@ export default defineComponent({
             guardarProdutoPesquisado: '',
             nomeCategoria: 'Produtos',
             produtoEscolhido: {} as IProduto,
+            carrinho: [] as IProduto[]
         };
     },
     mounted() {
@@ -120,10 +122,36 @@ export default defineComponent({
             this.nomeCategoria = data.nome;
         },
         produtoAdd(produto : IProduto){
-            let produto_aux = produto
-            produto_aux.qtde = 1;
-            (this.$refs.AdicionarNoCarrinho as typeof Cart).AddCarrinho(produto_aux)
+            let findProduct = this.carrinho.find(element => element.produto === produto.produto);
+
+            if (findProduct) {
+            this.carrinho.find(element => {
+                if(element.produto == produto.produto){
+                element.qtde += 1
+                }
+            })
+            
+            
+            } else {
+                produto.qtde = 1
+                this.carrinho.push(produto);
+            }
         },
+        removeCarrinho(produto : IProduto){
+            const index = this.carrinho.indexOf(produto);
+
+            if (index !== -1) {
+                this.carrinho.splice(index, 1);
+                Swal.fire({
+                            title: 'Produto Removido',
+                            text: 'Produto removido com Sucesso!',
+                            icon: 'success',
+                        })
+            }
+        },
+        limpaCarrinho(){
+            this.carrinho = []
+        }
     },
 })
 </script>

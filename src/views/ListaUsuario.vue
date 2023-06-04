@@ -213,30 +213,44 @@ import Swal from "sweetalert2";
                 this.nomeLista ='' 
             },
             async excluirLista(listaId:number){
-                await api.delete('lista/delete/'+listaId,
-                {
-                    headers: {
-                        Authorization: 'Bearer '+ Cookies.get('token')
-                    }
-                })
-                .then(() => {
-                    Swal.fire({
-                        title: 'Excluir lista de usuário',
-                        text: 'Lista de usuário exlcuída com sucesso!',
-                        icon: 'success',
-                    });
-                    setTimeout(() => {
-                        window.location.reload();
-                    },1000)
-                    
-                })
-                .catch((error) => {
-                    Swal.fire({
-                        title: 'Excluir lista de usuário',
-                        text: error.response.data.errorMessage,
-                        icon: 'success',
-                    })
-                })
+                Swal.fire({
+                    title: 'Excluir lista de usuário',
+                    text: 'Deseja realmente excluir a lista?',
+                    icon: 'question',
+                    allowOutsideClick: false,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: "#28a745",
+                    cancelButtonColor:"#dc3545",
+                    showCancelButton: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Chame sua função aqui
+                            api.delete('lista/delete/'+listaId,
+                            {
+                                headers: {
+                                    Authorization: 'Bearer '+ Cookies.get('token')
+                                }
+                            })
+                            .then(() => {
+                                Swal.fire({
+                                    title: 'Excluir lista de usuário',
+                                    text: '<i class="fa-solid fa-house"></i>',
+                                    icon: 'success',
+                                })
+                                setTimeout(() => {
+                                    window.location.reload();
+                                },1000)
+                                
+                            })
+                            .catch((error) => {
+                                Swal.fire({
+                                    title: 'Excluir lista de usuário',
+                                    text: error.response.data.errorMessage,
+                                    icon: 'success',
+                                })
+                            })
+                        }
+                    }); 
             }
         },
             
@@ -302,7 +316,4 @@ import Swal from "sweetalert2";
         .hand-cursor {
             cursor: pointer;
         }
-
-        
-
 </style>

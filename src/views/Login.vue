@@ -19,27 +19,33 @@
                 
                     <form method="post" @submit.prevent="validaUsuario()">
                         <hr class="fw-bold text-danger">
-                        <div class="h1">Preço Point</div>
+                        <div class="h1 text-warning">PreçoPoint <i class="fa-solid fa-location-dot"></i></div>
                         <hr class="text-danger">
                         <!--E-mail input-->
                         <div class="form-outline mb-4">
-                            <label class="form-label h6" for="email-input">E-mail address</label>
-                            <input v-model="email" type="email" id="email-input" class="form-control form-control-lg" placeholder="Enter a valid email address" />
+                            <label class="form-label h6" for="email">E-mail</label>
+                            <input v-model="v$.email.$model" :class="{'is-invalid' : v$.email.$errors.length}" type="email" id="email" class="form-control form-control-lg" placeholder="Entre com seu endereço de e-mail" />
+                            <div class="text-danger " v-for="error in v$.email.$errors" :key="error.$uid">
+                                <span> • {{ error.$message }}</span>
+                            </div>
                         </div>
                         <!--Password input-->
                         <div class="form-outline mb-4">
-                            <label class="form-label h6" for="password-input">Password</label>
-                            <input v-model="senha" type="password" id="password-input" class="form-control form-control-lg" placeholder="Type the password" />
+                            <label class="form-label h6" for="password">Senha</label>
+                            <input v-model="v$.senha.$model" :class="{'is-invalid': v$.senha.$errors.length}" type="password" id="password" class="form-control form-control-lg" placeholder="Digite a senha" />
+                            <div class="text-danger " v-for="error in v$.senha.$errors" :key="error.$uid">
+                                <span> • {{ error.$message }}</span>
+                            </div>
                         </div>
                         <!--Checkbox and Forgot Password-->
                         <div class="d-flex justify-content-between align-items-center">
                             <!--checkbox-->
                             <div class="form-check mb-0">
-                              <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
-                              <label class="form-check-label" for="form2Example3"> Remember me </label>
+                              <input class="form-check-input me-2" type="checkbox" value="" id="lembrarSenha"  v-model="lembrarMe" />
+                              <label class="form-check-label" for="lembrarSenha"> Lembrar-me </label>
                             </div>
                             <!--link forgot password-->
-                            <a class="text-body" style="cursor: pointer" @click="esqueciSenha">Forgot password?</a>
+                            <a class="text-body" style="cursor: pointer" @click="esqueciSenha">Esqueceu sua senha?</a>
                         </div>
                    
                         <!--fim-->
@@ -47,11 +53,11 @@
                         <div class="text-center text-lg-start mt-4 pt-2">
                             <!--button-->
                             <div class="d-grid gap-2">
-                                <button class="btn btn-primary btn-primary shadow" type="submit">Sign in</button>
+                                <button class="btn btn-warning  shadow " type="submit">Login</button>
                                 
                             </div>
                             <!--register-->
-                            <p class="small fw-bold mt-2 pt-1 mb-0 text-center">Don't have an account? <span class="text-danger fw-bold">Register as:</span> </p>
+                            <p class="small fw-bold mt-2 pt-1 mb-0 text-center">Não tem conta? <span class="text-danger fw-bold">Cadastre-se:</span> </p>
                             <div class="d-grid gap-2">
 
                                 <!-- Button trigger modal-->
@@ -76,6 +82,8 @@
     import router from '@/router'
     import Cookies from 'js-cookie';
     import Swal from 'sweetalert2'
+    import { useVuelidate } from '@vuelidate/core'
+    import { required, email, helpers } from '@vuelidate/validators'
 
     export default defineComponent({
         // eslint-disable-next-line vue/multi-word-component-names
@@ -83,8 +91,8 @@
         data(){
             return{
                 email: '',
-                senha: ''
-
+                senha: '',
+                lembrarMe: false
             }
         },
         emits:['validaUsuarios'],
@@ -93,8 +101,28 @@
            
            
         },
+        setup() {
+            return { v$: useVuelidate() };
+        },
+        validations() {
+            return {
+                email: {
+                    required: helpers.withMessage('Campo obrigatório', required),
+                    email: helpers.withMessage('E-mail inválido',email)
+                },
+                senha: {
+                    required: helpers.withMessage('Campo obrigatório', required),
+                },
+            }
+        },
+        created() {
+            const emailSalvo = Cookies.get('lembrarMe');
+            if(emailSalvo){
+                this.email = emailSalvo;
+                this.lembrarMe = true;
+            }
+        },
         methods: {
-            
             validaUsuario() {
                 Swal.fire({
                     title: 'Aguarde...',
@@ -107,9 +135,9 @@
                         setTimeout(() => {
                             Swal.close();
                             Swal.fire({
-                                title: 'Erro ao fazer login',
-                                text: 'Campos de email e senha precisam estar preenchidos',
-                                icon: 'error',
+                                title: 'Ops... erro ao fazer login',
+                                text: 'Preencha todos os campos corretamente para prosseguir.',
+                                icon: 'warning',
                             });
                         }, 1000);
                         
@@ -120,6 +148,9 @@
                             .then((response) => {
                             Cookies.set('token', response.data.token, { secure: true, httpOnly: false });
                             Cookies.set('email', this.email);
+                            if(this.lembrarMe){
+                                Cookies.set('lembrarMe', this.email);
+                            }
                             setTimeout(() => {
                                 Swal.close();
                             }, 1000);
@@ -127,7 +158,7 @@
                             })
                             .catch((err) => {
                                 Swal.fire({
-                                title: 'Erro ao fazer login',
+                                title: 'Ops... erro ao fazer login',
                                 text: 'Erro encontrado: ' + err.response.data.errorMessage,
                                 icon: 'error',
                             });

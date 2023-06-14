@@ -1,6 +1,6 @@
 <template>
             <!--Button Consumer-->
-            <button type="button" class="btn btn-danger shadow btn-sm" data-bs-toggle="modal" data-bs-target="#btnConsumer">Cliente</button>
+            <button type="button" class="btn btn-danger shadow btn-sm" data-bs-toggle="modal" data-bs-target="#btnConsumer">Criar sua conta</button>
 
             <!-- Modal - CONSUMIDOR-->
             <div class="modal fade" id="btnConsumer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

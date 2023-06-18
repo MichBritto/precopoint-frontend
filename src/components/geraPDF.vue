@@ -28,6 +28,7 @@ export default defineComponent({
   data(){
     return{
       nomeArquivo: Cookies.get('nomeLista'),
+      nomeFornec: '',
       quantidade: 10,
       quantidadeTotal: 0,
       valorTotal: 0,
@@ -39,7 +40,7 @@ export default defineComponent({
   created(){
     console.log(this.fornec)
     this.getListas()
-
+    
   },
   methods: {
     getListas(){
@@ -69,6 +70,7 @@ export default defineComponent({
               }
     },
     async generatePDF() {
+      this.nomeFornec = Cookies.get('nomeFornec')
       this.quantidadeTotal = 0; 
       this.valorTotal = 0; 
       this.products.forEach((produto) => {
@@ -108,7 +110,7 @@ export default defineComponent({
             },
             {
               type: 'text',
-              text: this.nomeArquivo,
+              text: this.nomeArquivo +  (this.nomeFornec ? ' - ' + this.nomeFornec : ''),
               alignment: 'center',
               fontSize: 25,
               bold: true,

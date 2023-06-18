@@ -10,7 +10,7 @@
                     <span class="h1 text-warning fw-bold">listas de produtos - {{ nomeLista?.toUpperCase() || '' }}</span>
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-warning hover"  style="flex: 1;margin-bottom:2px" @click="getLista(listaId as any)"><i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i></button>
+                        <button class="btn btn-warning hover"  style="flex: 1;margin-bottom:2px" @click="resetLista(listaId as any)"><i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i></button>
                         <geraPDF :products="listaProdutos" :fornec="fornec" :key="componentKey" />
                     </div>
                     
@@ -171,6 +171,10 @@ export default defineComponent({
     methods: {
         listaEstaVazia(listaProdutos: Array<IProduto>) {
                 return listaProdutos.length === 0
+        },
+        resetLista(id : string){
+            Cookies.remove('nomeFornec');
+            this.getLista(id)
         },
         searchList(){
             if(this.searchTerm == '') {
@@ -369,6 +373,7 @@ export default defineComponent({
                         console.log(response.data)
                         setTimeout(() => {
                             this.fornec = fornec
+                            Cookies.set('nomeFornec', fornec)
                             this.reloadComponent();
                             this.fetchData(1)
                             Swal.close();

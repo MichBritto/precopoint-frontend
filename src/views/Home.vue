@@ -27,7 +27,8 @@
         <div v-if="produtos.length == 0" class="no-results-message">
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
-        <Cart :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
+        
+        <Cart v-if="isLogged" :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
 
     </div>
            
@@ -41,9 +42,11 @@ import api from '@/http/index'
 import IProduto from '@/interfaces/IProduto'
 import Cart from '@/components/Cart.vue'
 import Swal from 'sweetalert2'
+import Cookies from 'js-cookie'
 export default defineComponent({
     
-    name: "TesteView",
+    // eslint-disable-next-line vue/multi-word-component-names
+    name: "Home",
     components: {
         HeaderTemplate,
         FiltroProduto,
@@ -59,7 +62,8 @@ export default defineComponent({
             guardarProdutoPesquisado: '',
             nomeCategoria: 'Produtos',
             produtoEscolhido: {} as IProduto,
-            carrinho: [] as IProduto[]
+            carrinho: [] as IProduto[],
+            isLogged: Cookies.get('token')
         };
     },
     mounted() {

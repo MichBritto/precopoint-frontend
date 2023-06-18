@@ -233,8 +233,8 @@ import Swal from "sweetalert2";
                             })
                             .then(() => {
                                 Swal.fire({
-                                    title: 'Excluir lista de usuário',
-                                    text: '<i class="fa-solid fa-house"></i>',
+                                    title: 'Sucesso!',
+                                    text: 'Lista excluida com sucesso!',
                                     icon: 'success',
                                 })
                                 setTimeout(() => {

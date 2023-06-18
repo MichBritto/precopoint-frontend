@@ -18,8 +18,10 @@
                                         <th scope="col">Imagem</th>
                                         <th scope="col">Produto</th>
                                         <th scope="col">Detalhe</th>
+                                        <!--
                                         <th scope="col">Valor</th>
                                         <th scope="col">Valor total</th>
+                                        -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -27,12 +29,14 @@
                                         <td ><img  v-bind:src="produto?.imagem" width="30" height="30" ></td>
                                         <td style="align-items: left">{{ produto?.produto }}</td>
                                         <td style="align-items: left">{{ produto?.descricao }}</td>
+                                        <!--
                                         <td>R$ {{ (Number(produto?.preco)).toLocaleString('pt-BR', {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2,
                                             useGrouping: true
                                             }) }}</td>
                                         <td>R$ {{ valorTotal }}</td>
+                                        -->
                                     </tr>  
                                 </tbody>
                             </table>

@@ -61,7 +61,14 @@
           Object.keys(listaItens).forEach(empresa => {
             if (empresa.toLowerCase() === nomeFornecLowerCase) {
               this.foundProducts = true;
-              this.nao_encontrados = listaItens[empresa as any];
+              const produtos = listaItens[empresa as any];
+              produtos.forEach((element: string) => {
+                console.log(element)
+                console.log(produtos.indexOf(element))
+                if (this.nao_encontrados.indexOf(element) === -1) {
+                    this.nao_encontrados.push(element)
+                }
+              });
               return
             }
             else{

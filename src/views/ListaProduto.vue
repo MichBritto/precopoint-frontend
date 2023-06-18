@@ -7,7 +7,7 @@
                 
                     
                     <div class="text-center mx-auto text-uppercase"> 
-                    <span class="h1 text-warning fw-bold">listas de produtos</span>
+                    <span class="h1 text-warning fw-bold">listas de produtos - {{ nomeLista?.toUpperCase() || '' }}</span>
                     </div>
                     <div class="text-center">
                         <button class="btn btn-warning hover"  style="flex: 1;margin-bottom:2px" @click="getLista(listaId as any)"><i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i></button>
@@ -23,7 +23,7 @@
             <div class="row">
             <div class="col-5">
                 <span class="h2 fw-bold">Descrição da Lista</span>
-                <span class="h2 fw-bold" v-if="!isListaUsuario"> - {{ fornec }} </span>
+                <span class="h2 fw-bold" v-if="!isListaUsuario"> - {{ fornec.toUpperCase() }} </span>
                 
             </div>
             <div class="col-2"></div>
@@ -47,9 +47,9 @@
                         <th scope="col">Imagem</th>
                         <th scope="col">Produto</th>
                         <th scope="col">Detalhes</th>
-                        <th scope="col" >Preco</th>
+                        <th scope="col" v-if="!isListaUsuario">Preco</th>
                         <th scope="col" style="width:12.5%">Quantidade</th>
-                        <th scope="col">Valor</th>
+                        <th scope="col" v-if="!isListaUsuario">Valor</th>
                         <th scope="col" v-if="isListaUsuario">Alterar</th>
                     </tr>
                     </thead>
@@ -59,13 +59,13 @@
                           <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
                           <td style="text-align:left">{{ produto.produto }}</td>
                           <td>{{ produto.descricao }}</td>
-                          <td>R$ {{ (produto.preco).toLocaleString('pt-BR', {
+                          <td v-if="!isListaUsuario">R$ {{ (produto.preco).toLocaleString('pt-BR', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                             useGrouping: true
                           }) }}</td>
                           <td>{{ produto.qtde }}</td>
-                          <td>R$ {{ (produto.preco * produto.qtde).toLocaleString('pt-BR', {
+                          <td v-if="!isListaUsuario">R$ {{ (produto.preco * produto.qtde).toLocaleString('pt-BR', {
                                           minimumFractionDigits: 2,
                                           maximumFractionDigits: 2,
                                           useGrouping: true
@@ -83,7 +83,7 @@
                       </tbody>
                     
                 </table>
-                <Total :produtos="listaProdutos" :key="componentKey"/>
+                <Total :produtos="listaProdutos" :key="componentKey" v-if="!isListaUsuario"/>
                 <div class="d-flex justify-content-center">
                     <Pagination :key="paginationKey" :currentPage="currentPage" :totalItems="totalItems" :itemsPerPage="parseInt(itemsPerPage)" v-on:page-changed="fetchData" ></Pagination>
                 </div>
@@ -93,7 +93,7 @@
                 
             </div>
                 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-4" >
                 <ListaCompara :produtos="listaProdutos" :key="componentKey" @loadFornec="loadCompare" />
             </div>
         </div>
@@ -154,6 +154,7 @@ export default defineComponent({
             componentKey: 0,
             isListaUsuario: false,
             fornec: "",
+            nomeLista: Cookies.get('nomeLista')
             
         } 
     },

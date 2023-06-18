@@ -26,7 +26,7 @@
                                             </div>
                         
                                             <div class="d-flex flex-row align-items-center mb-4 icon-input">
-                                                <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                                <i class="fa-sharp fa-solid fa-location-dot fa-lg me-3 fa-fw" style="color: #000000;"></i>
                                                 <div class="form-outline flex-fill mb-0">
                                                     <input type="email" id="form3Example34c" class="form-control" v-model="endereco" />
                                                     <label class="form-label" for="form3Example34c">Endereço</label>
@@ -34,14 +34,14 @@
                                             </div>
 
                                             <div class="d-flex flex-row align-items-center mb-4 icon-input">
-                                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                                <i class="fa-solid fa-id-card fa-lg me-3 fa-fw" style="color: #000000;"></i>
                                                 <div class="form-outline flex-fill mb-0">
                                                     <input type="tel" id="form3Example33c" class="form-control" v-model="cnpj" />
                                                     <label class="form-label" for="form3Example33c">CPNJ</label>
                                                 </div>
                                             </div>
                                             <div class="d-flex flex-row align-items-center mb-4 icon-input">
-                                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>                                                                                                                                        
+                                                <i class="fa-sharp fa-solid fa-envelope fa-lg me-3 fa-fw" style="color: #000000;"></i>                                                                                                                                                
                                                 <div class="form-outline flex-fill mb-0">
                                                     <input type="tel" id="form3Example73c" class="form-control" v-model="email"/>
                                                     <label class="form-label" for="form3Example73c">Email</label>
@@ -58,7 +58,7 @@
                                             </div>
                         
                                             <div class="d-flex flex-row align-items-center mb-4 icon-input">
-                                                <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>    
                                                 <div class="form-outline flex-fill mb-0">
                                                     <input type="password" id="form3Example43cd" class="form-control" v-model="rsenha" />
                                                     <label class="form-label" for="form3Example43cd">Repetir Senha</label>
@@ -107,7 +107,7 @@
 
 
 <div v-if="callModal" class="modal-overlay ">
-    <div class="card col-6 mx-auto" style="background-color: #EFEBE9">
+    <div class="card col-6 mx-auto text-center" style="background-color: #EFEBE9">
             <h1 class="text-warning" >TERMO DE USO - EMPRESA</h1>
             <div class="card-body modal-dialog-scrollable" style="max-height: 600px; overflow-y: auto;">
                 <p class="mb-3 mt-2">Este Termo de Uso ("Termo") estabelece os termos e condições aplicáveis ao uso da nossa Plataforma de comparação de produtos de supermercado ("Plataforma") pelo fornecedor. Leia atentamente este Termo antes de utilizar nossa Plataforma. Ao utilizar nossa Plataforma, você concorda em cumprir e ficar vinculado a este Termo.</p>
@@ -234,6 +234,7 @@ import { defineComponent } from 'vue';
                 this.endereco= ''
                 this.cnpj= ''
                 this.path= ''
+                this.rsenha= ''
                 this.agreement = false
                 alert('Fornecedor cadastrado com sucesso!');
             },

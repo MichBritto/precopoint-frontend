@@ -1,153 +1,209 @@
 <template>
-    <Navbar></Navbar>
-    <div class="row">
-      <div class="col">
-        <div class="d-flex justify-content-between mt-4 mb-4">
-          <p></p>
-          <div class="text-center mx-auto text-uppercase">
-            <span class="h1 text-warning fw-bold">Editar Perfil</span>
-          </div>
+  <Navbar></Navbar>
+  <div class="row">
+    <div class="col">
+      <div class="d-flex justify-content-between mt-4 mb-4">
+        <p></p>
+        <div class="text-center mx-auto text-uppercase">
+          <span class="h1 text-warning fw-bold">Editar Perfil</span>
         </div>
       </div>
     </div>
-    <hr>
-    <div class="row">
-      <div class="col-lg-2"></div>
-      <div class="col-lg-8">
-        <div class="row">
-          <form>
-            <div class="form-group row mt-2">
-              <label for="nome" class="col-sm-2 col-form-label">Nome</label>
-              <div class="col-sm-10">
-                <input v-model="nome" type="text" class="form-control" id="nome" placeholder="Insira um nome para sua empresa...">
-              </div>
+  </div>
+  <hr>
+  <!--Icone duvida-->
+  <div class="container">
+    <a href="#">
+      <i class="fa-sharp fa-regular fa-circle-question shadow fa-lg " @click="alertDuvida"></i>
+    </a>
+  </div>
+  <!--Campos para atualização-->
+  <div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+      <div class="row">
+        <form>
+          <div class="form-group row mt-2">
+            <label for="nome" class="col-sm-2 col-form-label">Nome</label>
+            <div class="col-sm-10">
+              <input v-model="v$.nome.$model" :class="{'is-invalid' : v$.nome.$errors.length}"  type="text" class="form-control" id="nome" placeholder="Insira um nome para sua empresa...">
             </div>
-            <div class="form-group row mt-2">
-              <label for="cep" class="col-sm-2 col-form-label">CEP</label>
-              <div class="col-sm-10">
-                <input v-model="cep" type="text" class="form-control" id="cep" placeholder="Insira seu CEP...">
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email" class="col-sm-2 col-form-label">E-mail</label>
-              <div class="col-sm-10">
-                <input v-model="email" type="text" readonly class="form-control" id="email" disabled>
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="logotipo" class="col-sm-2 col-form-label">Logotipo</label>
-              <div class="col-sm-10">
-                <input v-model="logotipo" type="text" readonly class="form-control" id="logotipo" placeholder="Insira a URL da logo para sua empresa...">
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="senha" class="col-sm-2 col-form-label">Senha</label>
-              <div class="col-sm-10">
-                <input v-model="senha" type="password" class="form-control" id="senha" placeholder="Place your Password">
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="confirmarSenha" class="col-sm-2 col-form-label">Repita sua senha</label>
-              <div class="col-sm-10">
-                <input v-model="confirmarSenha" type="password" class="form-control" id="confirmarSenha" placeholder="Repeat Your Password">
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="row">
-          <div class="col-lg text-center">
-            <button @click="atualizarUsuario()" type="button" class="btn btn-outline-success btn-block mb-2 mt-4 justify-content-sm-between">Atualizar</button>
-            <button @click="cancelarAtualizacao()" class="btn btn-outline-danger btn-block mb-2 mt-4 justify-content-sm-between" style="margin-left:4px;">Cancelar</button>
           </div>
+          <div class="form-group row mt-2">
+            <label for="cep" class="col-sm-2 col-form-label">CEP</label>
+            <div class="col-sm-10">
+              <input v-model="v$.cep.$model" :class="{'is-invalid' : v$.cep.$errors.length}" type="text" class="form-control" id="cep" placeholder="Insira seu CEP...">
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+            <div class="col-sm-10">
+              <input v-model="v$.email.$model" :class="{'is-invalid' : v$.email.$errors.length}" type="text" readonly class="form-control" id="email" disabled>
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="logotipo" class="col-sm-2 col-form-label">Logotipo</label>
+            <div class="col-sm-10">
+              <input v-model="v$.logotipo.$model" :class="{'is-invalid' : v$.logotipo.$errors.length}" type="text"  class="form-control" id="logotipo" placeholder="Insira a URL da logo para sua empresa...">
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="senha" class="col-sm-2 col-form-label">Senha</label>
+            <div class="col-sm-10">
+              <input v-model="v$.senha.$model" :class="{'is-invalid' : v$.senha.$errors.length}" type="password" class="form-control" id="senha" placeholder="Insira sua senha...">
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="confirmarSenha" class="col-sm-2 col-form-label">Confirmar senha</label>
+            <div class="col-sm-10">
+              <input v-model="v$.confirmarSenha.$model" :class="{'is-invalid' : v$.confirmarSenha.$errors.length}" type="password" class="form-control" id="confirmarSenha" placeholder="Confirmar sua senha...">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row">
+        <div class="col-lg text-center">
+          <button @click="atualizarUsuario()" type="button" class="btn btn-outline-success btn-block mb-2 mt-4 justify-content-sm-between">Atualizar</button>
+          <button @click="cancelarAtualizacao()" class="btn btn-outline-danger btn-block mb-2 mt-4 justify-content-sm-between" style="margin-left:4px;">Cancelar</button>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
-  <script lang="ts">
-    import Navbar from "@/components/HeaderTemplate.vue";
+<script lang="ts">
+import Navbar from "@/components/HeaderTemplate.vue";
 import api from "@/http";
 import router from "@/router";
 import Cookies from "js-cookie";
-    import { defineComponent } from "vue";
-  
-    export default defineComponent({
-        name: "EditarFornecedor",
-        components: {
-            Navbar,
-        },
-        data() {
+import Swal from 'sweetalert2'
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, helpers } from '@vuelidate/validators'
+import { defineComponent } from "vue";
+
+export default defineComponent({
+    name: "EditarFornecedor",
+    components: {
+        Navbar,
+    },
+    data() {
+    return {
+        email:'',
+        nome: '',
+        cep: '',
+        logotipo: '',
+        senha: '',
+        confirmarSenha:'',
+        statusConta: true,
+        };
+    },
+    setup() {
+        return { v$: useVuelidate() };
+    },
+    validations() {
         return {
-            email:'',
-            nome: '',
-            cep: '',
-            logotipo: '',
-            senha: '',
-            confirmarSenha:'',
-            statusConta: true,
-            };
-        },
-        mounted(){
-          
-          this.carregarUsuario();
-        },
-        methods: {
-            async carregarUsuario() {
-                await api.get('fornecedor/get/'+this.email,
-                {
-                  headers: {
-                    Authorization: 'Bearer '+Cookies.get('token')
-                  }
-                })
-                .then((response) => {
-                  this.nome = response.data.nome;
-                  this.email = Cookies.get('email') as string;
-                  this.logotipo = response.data.logotipo;
-                  this.cep = response.data.cep;           
-                })
-                .catch((error) => {
-                  alert(error.response.data.message)
-                })
+            email: {
+                required: helpers.withMessage('Campo obrigatório', required),
+                email: helpers.withMessage('E-mail inválido',email)
             },
-            async atualizarUsuario() {
-              await api.put('fornecedor/update',
-              {
-                email:this.email,
-                nome: this.nome,
-                endereco: this.cep,
-                senha: this.senha
-              },
-              {
-                headers: {
-                  Authorization: 'Bearer '+Cookies.get('token')
-                }
-              })
-              .then((response) => {
-                alert('Dados atualizados com sucesso.')
-              })
-              .catch((error) => {
-                if(error.response.status === 403){
-                  alert("Você não está autorizado")
-                }
-                else{
-                  alert("Um erro aconteceu, tente novamente.")
-                }
-              })
+            senha: {
+                required: helpers.withMessage('Este campo não é obrigatório', required),
             },
-            cancelarAtualizacao() {
-              router.push('/')
+            confirmarSenha: {
+                required: helpers.withMessage("Este campo não é obrigatório, a menos que você tenha digita uma nova 'senha'", required),
+            },
+            nome: {
+                required: helpers.withMessage('Campo obrigatório', required),
+            },
+            cep: {
+                required: helpers.withMessage('Campo obrigatório', required),
+            },
+            logotipo: {
+                required: helpers.withMessage('Campo obrigatório', required),
+            },
+            
+        }
+    },
+    mounted(){
+      this.email = Cookies.get('email') as string;
+      this.carregarUsuario();
+    },
+    methods: {
+        async carregarUsuario() {
+            await api.get('fornecedor/get/'+this.email,
+            {
+              headers: {
+                Authorization: 'Bearer '+Cookies.get('token')
+              }
+            })
+            .then((response) => {
+              this.nome = response.data.nome;
+              this.logotipo = response.data.logotipo;
+              this.cep = response.data.cep;           
+            })
+            .catch((error) => {
+              Swal.fire({
+                title: 'Erro ao carregar dados',
+                text: 'Um erro ocorreu: '+ error.response.data.message +', tente novamnete em instantes. Se o erro persistir entre em contato conosco.',
+                icon: 'error',
+              });
+            })
+        },
+        async atualizarUsuario() {
+          await api.put('fornecedor/update',
+          {
+            email:this.email,
+            nome: this.nome,
+            cep: this.cep,
+            senha: this.senha,
+            logotipo: this.logotipo,
+          },
+          {
+            headers: {
+              Authorization: 'Bearer '+Cookies.get('token')
             }
+          })
+          .then((response) => {
+            Swal.fire({
+                title: 'Atualização realizada com sucesso',
+                text: 'Os dados foram atualizados',
+                icon: 'success',
+            });
+            this.carregarUsuario();
+          })
+          .catch((error) => {
+            Swal.fire({
+                title: 'Falha ao atualizar dados',
+                text: 'Um erro ocorreu ao atualizar seus dados, se o erro persistir, entre em contato conosco',
+                icon: 'error',
+            });
+          })
         },
-    });
+        cancelarAtualizacao() {
+          router.push('/')
+        },
+        alertDuvida(){
+          Swal.fire({
+              title: 'Atualizações de dados',
+              text: 'Os campos não são obrigátorios, mas fique atento! Caso exista algum campo em branco no momento da atualização, não se preocupe, ele permanecerá com o mesmo dado que havia antes. Porém, se ele estiver preenchido com algum caractere, este campo será atualizado junto aos outros.',
+              icon: 'info',
+          });
+        }
+    },
+});
 </script>
 
 <style scoped>
-    label{
-        font-weight:600;
+label{
+    font-weight:600;
 
-    }
-    button{
-        padding-left:5rem;
-        padding-right:5rem;
-    }    
+}
+button{
+    padding-left:5rem;
+    padding-right:5rem;
+}    
+a {
+  color: inherit;  /* Aplica a cor do texto herdada do elemento pai */
+  text-decoration: none;  /* Remove a decoração de texto sublinhado */
+}
 </style>

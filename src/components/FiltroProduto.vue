@@ -1,10 +1,9 @@
 <template>
     <div class="container">
-        <span class="fw-bold me-3">Filtrar:</span>
-        <!--button FILTO-->
+        <!-- <span class="fw-bold me-3">Filtrar:</span>  
         <a class="border rounded shadow p-1 me-5" href="" data-bs-toggle="modal" data-bs-target="#filtro">
             <i class="fa-solid fa-filter text-center text-dark img-filtro hover-effect"></i>
-        </a> 
+        </a>  -->
         <span class="fw-bold me-3">Limpar Filtros:</span>
         <!--button FILTO-->
         <a class="border rounded shadow p-1 hover-effect" href="">

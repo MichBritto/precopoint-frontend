@@ -67,8 +67,8 @@
                             <i class="fa-solid fa-user" height="30px" width="30px"></i>&nbsp;
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                            <li v-if="hasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fornecedor">Ver minha conta</router-link></li>
-                            <li v-if="hasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-consumidor">Ver minha conta</router-link></li>
+                            <li v-if="justHasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fornecedor">Ver minha conta</router-link></li>
+                            <li v-if="justHasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-consumidor">Ver minha conta</router-link></li>
                             <li v-if="hasRoleConsumidor()"><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
                             <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
                             <li v-if="hasRoleAdministrador()">
@@ -197,6 +197,12 @@ import jwt_decode from 'jwt-decode'
             },
             hasRoleAdministrador(): boolean {
                 return this.userRoles.includes('ROLE_ADMINISTRADOR');
+            },
+            justHasRoleConsumidor(): boolean {
+                return this.userRoles.includes('ROLE_CONSUMIDOR')
+            },
+            justHasRoleFornecedor(): boolean {
+                return this.userRoles.includes('ROLE_FORNECEDOR')
             },
             usuarioLogado(): boolean {
                 if(Cookies.get('token')){

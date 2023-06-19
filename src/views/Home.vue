@@ -68,10 +68,17 @@ export default defineComponent({
     },
     mounted() {
         const produtoPesquisado = localStorage.getItem('produtoPesquisado');
+        const categoriaId = localStorage.getItem('categoriaId')
         if (produtoPesquisado) {
             this.guardarProdutoPesquisado = produtoPesquisado as string;
             this.filtrarProduto(produtoPesquisado);
             localStorage.removeItem('produtoPesquisado');
+        }
+        else if (categoriaId) {
+            const nomeCategoria = localStorage.getItem('nomeCategoria') as string;
+            this.filtrarCategoria(categoriaId,nomeCategoria);
+            localStorage.removeItem('nomeCategoria');
+            localStorage.removeItem('categoriaId');
         }
         else {
             this.getProdutos();
@@ -155,7 +162,17 @@ export default defineComponent({
         },
         limpaCarrinho(){
             this.carrinho = []
-        }
+        },
+        async filtrarCategoria(idCategoria: string, nomeCategoria: string) {
+            await api.get('filtro/list-produtos-by-categoria/'+ idCategoria)
+                .then((response) => {
+                    this.nomeCategoria = nomeCategoria;
+                    this.produtos = response.data;
+                })
+                .catch((error) => {
+                    console.log("Erro ao filtrar produtos por categoria: "+ error);
+                })
+        },
     },
 })
 </script>

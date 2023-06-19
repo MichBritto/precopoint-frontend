@@ -11,7 +11,9 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item  pe-3">
-                            <a class="nav-link hover" aria-current="page" href="/" ><i class="fa-solid fa-house"></i>&nbsp;&nbsp;Home </a>
+                            <a class="nav-link hover" aria-current="page" href="/" >
+                                <i class="fa-solid fa-house"></i>&nbsp;&nbsp;Home &nbsp;
+                            </a>
                         </li>
                         <li class="nav-item dropdown  pe-3">
                             <a class="nav-link dropdown-toggle hover" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -65,8 +67,8 @@
                             <i class="fa-solid fa-user" height="30px" width="30px"></i>&nbsp;
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                            <li v-if="hasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fonercedor">Ver minha conta</router-link></li>
-                            <li v-if="hasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-usuario">Ver minha conta</router-link></li>
+                            <li v-if="hasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fornecedor">Ver minha conta</router-link></li>
+                            <li v-if="hasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-consumidor">Ver minha conta</router-link></li>
                             <li v-if="hasRoleConsumidor()"><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
                             <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
                             <li v-if="hasRoleAdministrador()">
@@ -157,8 +159,15 @@ import jwt_decode from 'jwt-decode'
             async getProdutosByCategoria(idCategoria:number, nomeCategoria:string){
                 await api.get('filtro/list-produtos-by-categoria/'+ idCategoria)
                 .then((response) => {
-                    this.produtosByCategoria = response.data;
-                    this.$emit('produtos-by-categoria', { produtos: this.produtosByCategoria, nome: nomeCategoria} );
+                    if (this.$route.name !== 'Home') {
+                        this.$router.replace({ name: 'Home' });
+                        localStorage.setItem('categoriaId',  idCategoria.toString());
+                        localStorage.setItem('nomeCategoria', nomeCategoria);
+                    }
+                    else {
+                        this.produtosByCategoria = response.data;
+                        this.$emit('produtos-by-categoria', { produtos: this.produtosByCategoria, nome: nomeCategoria} );
+                    }    
                 })  
                 .catch((error) => console.log(error));  
             },

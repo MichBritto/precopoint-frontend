@@ -62,7 +62,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path:'/editar-usuario',
+    path:'/editar-consumidor',
     name:'EditarUsuario',
     component: EditarConsumidor,
     meta: {

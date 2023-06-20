@@ -71,11 +71,8 @@
                             <li v-if="justHasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-consumidor">Ver minha conta</router-link></li>
                             <li v-if="hasRoleConsumidor()"><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
                             <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
-                            <li v-if="hasRoleAdministrador()">
-                                <router-link class="dropdown-item" :to="{ name: 'ControleContas'}">
-                                    Gerenciar Contas
-                                </router-link>
-                            </li>
+                            <li v-if="hasRoleAdministrador()"><a class="dropdown-item" href="/admin/gerenciar-contas">Gerenciar contas</a></li>
+                            <li v-if="hasRoleAdministrador()"><a class="dropdown-item" href="/admin/logs">Logs do sistema</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li v-if="usuarioLogado()"><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
                             <li v-if="!usuarioLogado()"><a class="dropdown-item" @click="entrar" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Entrar </a></li>

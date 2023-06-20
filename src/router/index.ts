@@ -7,6 +7,7 @@ import ListaFornecedor from '../views/ListaFornecedor.vue'
 import EditarConsumidor from '../views/EditarConsumidor.vue'
 import EditarFornecedor from '../views/EditarFornecedor.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
+import AdminLogging from '../views/AdminLogging.vue'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
 import ControleContas from '@/views/ControleContas.vue'
@@ -92,11 +93,21 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/gerenciar-contas',
+    path: '/admin/gerenciar-contas',
     name: 'ControleContas',
     component: ControleContas,
     meta: {
       title: 'Gerenciar Contas',
+      auth: true,
+      roles: ['ROLE_ADMINISTRADOR']
+    }
+  },
+  {
+    path: '/admin/logs',
+    name: 'AdminLogging',
+    component: AdminLogging,
+    meta: {
+      title: 'Logs do sistema',
       auth: true,
       roles: ['ROLE_ADMINISTRADOR']
     }

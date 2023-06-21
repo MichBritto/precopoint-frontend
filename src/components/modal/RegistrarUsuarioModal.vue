@@ -265,13 +265,17 @@ import { defineComponent } from 'vue';
                 }
             },
             atualizacaoBemSucedida(){
+                Swal.fire({
+                    title: 'Cadastro realizado com sucesso!',
+                    text:"Bem-vindo(a) "+ this.nomeUsuario +", vá para a tela de login e efetue-o para aproveitar os recursos do PreçoPoint!",
+                    icon: 'success',
+                })
                 this.nomeUsuario = ""
                 this.email = ""
                 this.senha = ""
                 this.rsenha = ""
                 this.endereco = ""
                 this.agreement = false
-                alert('Usuario atualizado com sucesso!');
             },
             callLiTermos() {      
                 if(this.callModal)
@@ -291,7 +295,7 @@ import { defineComponent } from 'vue';
                 return passwordSchema.validate(senha) as boolean;
             },
             validarCampos(): boolean{
-                if(this.nomeUsuario === "" || this.email === "" || this.senha === ""  || this.rsenha === "" ){
+                if(this.nomeUsuario.trim() === "" || this.email.trim() === "" || this.senha.trim() === ""  || this.rsenha.trim() === "" ){
                     return false
                 }
                 return true

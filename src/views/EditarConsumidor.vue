@@ -72,6 +72,7 @@ import Cookies from "js-cookie";
 import Swal from 'sweetalert2'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, helpers } from '@vuelidate/validators'
+import passwordValidator from 'password-validator'
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -137,6 +138,24 @@ export default defineComponent({
           })
       },
       async atualizarUsuario() {
+        if(this.senha.trim() !== '' || this.confirmarSenha.trim() !== ''){
+          if(this.senha != this.confirmarSenha){
+            Swal.fire({
+                title: 'Ops... revise sua senha!',
+                text: "Campos 'Nova senha' e 'Confirmar senha' não correspondem, revise e tente novamente",
+                icon: 'error',
+            })
+            return
+          }
+          if(!this.validadorSenha(this.senha)){
+            Swal.fire({
+                title: 'Ops... revise sua senha!',
+                html: 'Para garantir a segurança de sua conta, precisamos que você siga este modelo:<ul><li>Ao menos 8 caractéres</li><li>Ao menos uma letra minúscula</li><li>Ao menos uma letra maiúscula</li><li>Ao menos um caractere especial: #,$,% etc.</li><li>Ao menos um número</li></ul>',
+                icon: 'warning',
+            })
+            return
+          }
+        }
         await api.put('consumidor/update',
         {
           email:this.email,
@@ -174,7 +193,17 @@ export default defineComponent({
             text: 'Os campos não são obrigátorios, mas fique atento! Caso exista algum campo em branco no momento da atualização, não se preocupe, ele permanecerá com o mesmo dado que havia antes. Porém, se ele estiver preenchido com algum caractere, este campo será atualizado junto aos outros.',
             icon: 'info',
         });
-      }
+      },
+      validadorSenha(senha:string): boolean {
+          const passwordSchema = new passwordValidator()
+          passwordSchema
+              .is().min(8)                                 // Mínimo de 8 caracteres
+              .has().uppercase()                           // Deve ter letras maiúsculas
+              .has().lowercase()                           // Deve ter letras minúsculas
+              .has().digits()                              // Deve ter números
+              .has().symbols();                            // Deve ter caracteres especiais
+          return passwordSchema.validate(senha) as boolean;
+      },
   },
 });
 </script>

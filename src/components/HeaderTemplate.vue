@@ -63,16 +63,17 @@
                     </ul>
                     <div class="dropdown pe-4">
                         <a href="" class=" nav-link nav-item dropdown-toggle hover" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Opções usuário&nbsp;&nbsp;
                             <i class="fa-solid fa-user" height="30px" width="30px"></i>&nbsp;
+                            Opções usuário    
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                            <li v-if="justHasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fornecedor">Ver minha conta</router-link></li>
-                            <li v-if="justHasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-consumidor">Ver minha conta</router-link></li>
-                            <li v-if="hasRoleConsumidor()"><a class="dropdown-item" href="/listas">Minhas Listas</a></li>
-                            <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/produtos-fornecedor">Seus Produtos</a></li>
-                            <li v-if="hasRoleAdministrador()"><a class="dropdown-item" href="/admin/gerenciar-contas">Gerenciar contas</a></li>
-                            <li v-if="hasRoleAdministrador()"><a class="dropdown-item" href="/admin/logs">Logs do sistema</a></li>
+                            <li v-if="justHasRoleFornecedor()"><router-link class="dropdown-item" to="/editar-fornecedor"><i class="fa-solid fa-user-tag fa-lg"></i> Minha conta</router-link></li>
+                            <li v-if="justHasRoleConsumidor()"><router-link class="dropdown-item" to="/editar-consumidor"><i class="fa-solid fa-user-tag fa-lg"></i> Minha conta</router-link></li>
+                            <li v-if="hasRoleConsumidor()"><a class="dropdown-item" href="/listas"><i class="fa-solid fa-table-list fa-lg"></i> Minhas Listas</a></li>
+                            <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/produtos-fornecedor"><i class="fa-solid fa-table-list fa-lg"></i> Gerenciar Produtos</a></li>
+                            <li v-if="hasRoleFornecedor()"><a class="dropdown-item" href="/cadastrar-produto"><i class="fa-solid fa-circle-plus fa-lg"></i> Cadastrar produto</a></li>
+                            <li v-if="hasRoleAdministrador()"><a class="dropdown-item" href="/admin/gerenciar-contas"><i class="fa-solid fa-people-roof fa-lg"></i> Gerenciar contas</a></li>
+                            <li v-if="hasRoleAdministrador()"><a class="dropdown-item" href="/admin/logs"><i class="fa-solid fa-table-list fa-lg"></i> Logs do sistema</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li v-if="usuarioLogado()"><a class="dropdown-item" @click="sair" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Sair </a></li>
                             <li v-if="!usuarioLogado()"><a class="dropdown-item" @click="entrar" href="/login"><i class="fa-solid fa-arrow-right-from-bracket justify-content-end"></i> &nbsp;Entrar </a></li>

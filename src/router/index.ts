@@ -83,11 +83,11 @@ const routes: Array<RouteRecordRaw> = [
     } 
   },
   {
-    path: '/adicionar-produto',
+    path: '/cadastrar-produto',
     name: 'AdicionarProduto',
     component: AdicionarProduto,
     meta: {
-      title: 'Adicionar Produto',
+      title: 'Cadastrar Produto',
       auth: true,
       roles: ['ROLE_FORNECEDOR']
     }

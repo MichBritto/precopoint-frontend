@@ -6,7 +6,7 @@
                 <div class="d-flex justify-content-between mt-4 mb-4" >
                     <p></p>
                     <div class="text-center mx-auto text-uppercase"> <span class="h1 text-warning fw-bold" >produtos</span></div>
-                    <button type="button" class="btn btn-dark hover">Adicionar Novo Produto</button>
+                    <button type="button" class="btn btn-dark hover" @click="callCadastrarProduto"><i class="fa-solid fa-circle-plus"></i> Adicionar Novo Produto</button>
                     
                 </div>
             </div>
@@ -39,7 +39,8 @@
                     <th scope="col">Marca</th>
                     <th scope="col">Categoria</th>
                     <th scope="col">Imagem Produto</th> 
-                    <th scope="col">Editar</th>                   
+                    <th scope="col">Editar</th>     
+                    <th scope="col">Excluir</th>              
                 </tr>
             </thead>
             <tbody>
@@ -57,6 +58,7 @@
                     <td>{{ produto.categoria }}</td>
                     <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
                     <td><i class="fa-solid fa-pen-to-square hand-cursor" @click="callEditProduto(produto)"></i></td>
+                    <td><i class="fa-solid fa-trash hand-cursor" @click="deleteProduto(produto.id)"></i></td>
                 </tr>
             </tbody>
         </table>
@@ -85,10 +87,7 @@
                                 <div class="input-group" v-if="precoAtivo">
                                     <span class="input-group-text">R$</span>
                                     <input  type="text" v-model="preco" class="form-control">
-                                </div>
-                                
-                                
-                                
+                                </div>               
                             </div>
                         </div>
                          <!-- imagem -->
@@ -136,6 +135,7 @@
     import IProduto from '@/interfaces/IProduto'
     import api from '@/http'
     import Cookies from 'js-cookie'
+    import Swal from 'sweetalert2'
 
 
     export default defineComponent({
@@ -230,7 +230,7 @@
                         Authorization: 'Bearer '+ Cookies.get('token')
                     }
                 })
-                .then((response) => {
+                .then(() => {
                     this.atualizacaoBemSucedida()
                 })
                 .catch((error) => {
@@ -256,8 +256,47 @@
                 alert('Atualização de produto bem sucedida');
                 this.getListaProduto();
             },
-                
-
+            callCadastrarProduto() {
+                this.$router.push('/cadastrar-produto')
+            },
+            async deleteProduto(idProduto:number){
+                Swal.fire({
+                    title: 'Aguarde!',
+                    text:"Removendo produto...",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        api.delete('produto/delete/'+idProduto,
+                        {
+                            headers: {
+                                Authorization: 'Bearer '+ Cookies.get('token')
+                            }
+                        })
+                        .then(() => {
+                            setTimeout(() => {
+                                Swal.close();
+                            }, 1000);
+                            setTimeout(() => {
+                                Swal.fire({
+                                    title: 'Produto removido com sucesso!',
+                                    text:"Produto de id: '"+ idProduto +"' foi removido de seus produtos!",
+                                    icon: 'success',
+                                })
+                                this.getListaProduto();
+                            }, 2000)
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                title: 'Erro ao remover produto!',
+                                text:"Produto não removido. Erro: '"+ error.response.data.errorMessage+"'",
+                                icon: 'error',
+                            })
+                        })
+                    }
+                })
+                    
+            }
         },
         mounted() {
             this.getListaProduto()

@@ -45,7 +45,7 @@
                               <label class="form-check-label" for="lembrarSenha"> Lembrar-me </label>
                             </div>
                             <!--link forgot password-->
-                            <a class="text-body" style="cursor: pointer" @click="esqueciSenha">Esqueceu sua senha?</a>
+                            <enviar-email-redefinir-senha-vue></enviar-email-redefinir-senha-vue>
                         </div>
                    
                         <!--fim-->
@@ -62,8 +62,7 @@
 
                                 <!-- Button trigger modal-->
                                 <div class="text-center">
-                                    <RegUsuario/>
-                                                              
+                                    <RegUsuario/>         
                                 </div>
                             </div>
                         </div>
@@ -78,6 +77,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
     import RegUsuario from '@/components/modal/RegistrarUsuarioModal.vue'
+    import EnviarEmailRedefinirSenhaVue from '@/components/modal/EnviarEmailRedefinirSenha.vue'
     import api from '@/http/index'
     import router from '@/router'
     import Cookies from 'js-cookie';
@@ -98,8 +98,7 @@
         emits:['validaUsuarios'],
         components: {
             RegUsuario,
-           
-           
+            EnviarEmailRedefinirSenhaVue,
         },
         setup() {
             return { v$: useVuelidate() };

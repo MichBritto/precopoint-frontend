@@ -53,7 +53,7 @@
                     <div class="mb-3">  
 
                         
-                        <input type="text" v-model="nomeLista" placeholder="Nome da Lista" class="form-control">
+                        <input type="text" v-model="nomeLista" placeholder="Insira o nome da lista..." class="form-control">
                         <div class="text-center mt-5">
                             <button class="btn btn-dark ms-2 text-center">Criar Lista</button>
                             <button class="btn btn-danger" @click="showModal = false;nomeLista= ''">Cancelar</button>

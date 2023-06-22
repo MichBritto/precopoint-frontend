@@ -153,11 +153,19 @@ import Cookies from "js-cookie"
             },
             async cadastrarProduto() {
                 if(!this.validarCampos()){
-                    console.log('nao passamo')
+                    Swal.fire({
+                        title: 'Campos vazios!',
+                        text:"Existem campos vazios que precisam ser preenchidos",
+                        icon: 'warning',
+                    })
                     return;
                 }
                 if(!this.validarPreco()){
-                    console.log('nao passamo nao e numero');
+                    Swal.fire({
+                        title: 'Formato de preço inválido',
+                        text:"Preço não pode contem letrars ou caracteres especiais, Ex de valor correto: 10, 10.5, 10.25 ...",
+                        icon: 'warning',
+                    })
                     return;
                 }
                 Swal.fire({

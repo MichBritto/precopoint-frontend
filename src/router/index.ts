@@ -8,6 +8,7 @@ import EditarConsumidor from '../views/EditarConsumidor.vue'
 import EditarFornecedor from '../views/EditarFornecedor.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
 import AdminLogging from '../views/AdminLogging.vue'
+import RedefinirSenha from '@/components/modal/RedefinirSenha.vue'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
 import ControleContas from '@/views/ControleContas.vue'
@@ -110,6 +111,14 @@ const routes: Array<RouteRecordRaw> = [
       title: 'Logs do sistema',
       auth: true,
       roles: ['ROLE_ADMINISTRADOR']
+    }
+  },
+  {
+    path: '/login/redefinir-senha',
+    name: 'RedefinirSenha',
+    component: RedefinirSenha,
+    meta: {
+      title: 'Redefinição de senha'
     }
   }
 ]

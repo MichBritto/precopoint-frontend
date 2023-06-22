@@ -23,41 +23,35 @@
       <div class="row">
         <form>
           <div class="form-group row mt-2">
-            <label for="nome" class="col-sm-2 col-form-label">Nome</label>
+            <label for="nome" class="col-sm-2 col-form-label"><i class="fa-solid fa-user"></i> Nome</label>
             <div class="col-sm-10">
               <input v-model="v$.nome.$model" :class="{'is-invalid' : v$.nome.$errors.length}" type="text" class="form-control" id="nome" placeholder="Digite seu nome social...">
             </div>
           </div>
           <div class="form-group row mt-2">
-            <label for="cep" class="col-sm-2 col-form-label">CEP</label>
+            <label for="cep" class="col-sm-2 col-form-label"><i class="fa-solid fa-location-dot"></i> CEP</label>
             <div class="col-sm-10">
               <input v-model="v$.cep.$model" :class="{'is-invalid' : v$.cep.$errors.length}" type="text" class="form-control" id="cep" placeholder="Insira seu CEP...">
             </div>
           </div>
           <div class="form-group row mt-2">
-            <label for="email" class="col-sm-2 col-form-label">E-mail</label>
+            <label for="email" class="col-sm-2 col-form-label"><i class="fa-solid fa-envelope"></i> E-mail</label>
             <div class="col-sm-10">
               <input v-model="email" type="text" readonly class="form-control" id="email" disabled>
             </div>
           </div>
           <div class="form-group row mt-2">
-            <label for="senha" class="col-sm-2 col-form-label">Nova senha</label>
+            <label for="senha" class="col-sm-2 col-form-label"><i class="fa-solid fa-key"></i> Alterar senha</label>
             <div class="col-sm-10">
-              <input v-model="v$.senha.$model" :class="{'is-invalid' : v$.senha.$errors.length}" type="password" class="form-control" id="senha" placeholder="Digite sua nova senha caso deseje...">
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="confirmarSenha" class="col-sm-2 col-form-label">Confirmar senha</label>
-            <div class="col-sm-10">
-              <input v-model="v$.confirmarSenha.$model" :class="{'is-invalid' : v$.confirmarSenha.$errors.length}" type="password" class="form-control" id="confirmarSenha" placeholder="Digite sua senha novamente...">
+              <button @click="enviarEmailRecuperacaoSenha()"  type="button" class="btn btn-outline-primary btn-block justify-content-sm-between">Enviar e-mail para redefinir senha <i class="fa-solid fa-paper-plane"></i></button>
             </div>
           </div>
         </form>
       </div>
       <div class="row">
         <div class="col-lg text-center">
-          <button @click="atualizarUsuario()" type="button" class="btn btn-outline-success btn-block mb-2 mt-4 justify-content-sm-between">Atualizar</button>
-          <button @click="cancelarAtualizacao()" class="btn btn-outline-danger btn-block mb-2 mt-4 justify-content-sm-between" style="margin-left:4px;">Cancelar</button>
+          <button @click="atualizarUsuario()" type="button" class="btn btn-outline-success btn-block mb-2 mt-4 justify-content-sm-between">Atualizar <i class="fa-sharp fa-solid fa-pen-to-square"></i></button>
+          <button @click="cancelarAtualizacao()" class="btn btn-outline-danger btn-block mb-2 mt-4 justify-content-sm-between" style="margin-left:4px;">Cancelar <i class="fa-solid fa-ban"></i></button>
         </div>
       </div>
     </div>
@@ -85,8 +79,6 @@ export default defineComponent({
       email:'',
       nome: '',
       cep: '',
-      senha: '',
-      confirmarSenha:'',
       statusConta: true,
       };
   },
@@ -98,12 +90,6 @@ export default defineComponent({
           email: {
               required: helpers.withMessage('Campo obrigatório', required),
               email: helpers.withMessage('E-mail inválido',email)
-          },
-          senha: {
-              required: helpers.withMessage('Este campo não é obrigatório', required),
-          },
-          confirmarSenha: {
-              required: helpers.withMessage("Este campo não é obrigatório, a menos que você tenha digita uma nova 'senha'", required),
           },
           nome: {
               required: helpers.withMessage('Campo obrigatório', required),
@@ -138,30 +124,11 @@ export default defineComponent({
           })
       },
       async atualizarUsuario() {
-        if(this.senha.trim() !== '' || this.confirmarSenha.trim() !== ''){
-          if(this.senha != this.confirmarSenha){
-            Swal.fire({
-                title: 'Ops... revise sua senha!',
-                text: "Campos 'Nova senha' e 'Confirmar senha' não correspondem, revise e tente novamente",
-                icon: 'error',
-            })
-            return
-          }
-          if(!this.validadorSenha(this.senha)){
-            Swal.fire({
-                title: 'Ops... revise sua senha!',
-                html: 'Para garantir a segurança de sua conta, precisamos que você siga este modelo:<ul><li>Ao menos 8 caractéres</li><li>Ao menos uma letra minúscula</li><li>Ao menos uma letra maiúscula</li><li>Ao menos um caractere especial: #,$,% etc.</li><li>Ao menos um número</li></ul>',
-                icon: 'warning',
-            })
-            return
-          }
-        }
         await api.put('consumidor/update',
         {
           email:this.email,
           nome: this.nome,
           endereco: this.cep,
-          senha: this.senha
         },
         {
           headers: {
@@ -204,6 +171,37 @@ export default defineComponent({
               .has().symbols();                            // Deve ter caracteres especiais
           return passwordSchema.validate(senha) as boolean;
       },
+      async enviarEmailRecuperacaoSenha() {
+        Swal.fire({
+          title: 'Aguarde...',
+          text: 'Estamos te enviando um e-mail para redefinir sua senha',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+              Swal.showLoading();
+              api.get('email/enviar-recuperacao-senha/'+ this.email)
+              .then(() => {
+                  Cookies.set('emailRedefinicao',this.email);
+                  console.log(Cookies.get('emailRedefinicao'))
+                  Swal.close();
+                  setTimeout(() => {
+                      Swal.fire({
+                          title: 'E-mail de redefinição enviado!',
+                          text: "Um e-mail de redefinição de senha foi enviado para: " + Cookies.get('emailRedefinicao') +", acesse e redefina sua senha!",
+                          icon: 'success',
+                      });
+                  },500)
+              })
+              .catch((error) => {
+                  Swal.fire({
+                      title: 'Ops... erro ao enviar e-mail',
+                      text: 'Um erro aconteceu ao tentar enviar e-mail, erro: ' + error.response.data.errorMessage,
+                      icon: 'error',
+                  });
+              })
+          }
+        })
+      }
   },
 });
 </script>

@@ -116,7 +116,7 @@
                           </div>
                         </li>
                       </ul> 
-                      <div v-if="!listas.length" class="text-center" style="text-center">
+                      <div v-if="!listas.length" class="text-center" style="padding-top: 10rem;padding-bottom: 10rem;">
                           <h4>Você não tem nenhuma lista</h4>
                       </div>
 

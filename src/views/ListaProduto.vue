@@ -47,6 +47,7 @@
                         <th scope="col">Imagem</th>
                         <th scope="col">Produto</th>
                         <th scope="col">Detalhes</th>
+                        <th scope="col">Marca</th>
                         <th scope="col" v-if="!isListaUsuario">Preco</th>
                         <th scope="col" style="width:12.5%">Quantidade</th>
                         <th scope="col" v-if="!isListaUsuario">Valor</th>
@@ -59,6 +60,7 @@
                           <td><img v-bind:src="produto.imagem" width="30" height="30"></td>
                           <td style="text-align:left">{{ produto.produto }}</td>
                           <td>{{ produto.descricao }}</td>
+                          <td>{{ produto.marcaProduto }}</td>
                           <td v-if="!isListaUsuario">R$ {{ (produto.preco).toLocaleString('pt-BR', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,

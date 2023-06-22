@@ -32,7 +32,7 @@
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
         
-        <Cart v-if="isLogged" :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
+        <Cart v-if="carrinhoAtivo" :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
 
     </div>
            
@@ -46,6 +46,7 @@ import api from '@/http/index'
 import IProduto from '@/interfaces/IProduto'
 import Cart from '@/components/Cart.vue'
 import Swal from 'sweetalert2'
+import jwt_decode from 'jwt-decode'
 import Cookies from 'js-cookie'
 export default defineComponent({
     
@@ -67,12 +68,15 @@ export default defineComponent({
             nomeCategoria: 'Produtos',
             produtoEscolhido: {} as IProduto,
             carrinho: [] as IProduto[],
-            isLogged: Cookies.get('token')
+            isLogged: Cookies.get('token'),
+            userRoles: [] as string[],
+            carrinhoAtivo: false
         };
     },
     mounted() {
         const produtoPesquisado = localStorage.getItem('produtoPesquisado');
         const categoriaId = localStorage.getItem('categoriaId')
+        this.carrinhoAtivo = this.showCart()
         if (produtoPesquisado) {
             this.guardarProdutoPesquisado = produtoPesquisado as string;
             this.filtrarProduto(produtoPesquisado);
@@ -199,6 +203,21 @@ export default defineComponent({
                     console.log("Erro ao filtrar produtos por categoria: "+ error);
                 })
         },
+        showCart(): boolean{
+            if(this.isLogged){
+                
+                const decodedToken = jwt_decode(this.isLogged) as { roles: string[] };
+                this.userRoles = decodedToken.roles
+                if(this.hasRoleConsumidor()){
+                    return true
+                }
+            
+            }
+            return false
+        },
+        hasRoleConsumidor(): boolean {
+            return this.userRoles.includes('ROLE_CONSUMIDOR') || this.userRoles.includes('ROLE_ADMINISTRADOR');
+        }
     },
 })
 </script>

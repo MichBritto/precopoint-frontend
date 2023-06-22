@@ -152,7 +152,7 @@ import Swal from "sweetalert2";
             async criarLista() {
                 // Lógica para criar a lista de produtos com o nome inserido
                 // Pode enviar os dados para o backend ou fazer outras operações necessárias
-                if(this.nomeLista.length <= 35 && this.nomeLista.length > 4){
+                if(this.nomeLista.length <= 35 && this.nomeLista.length >= 4){
                     await api.post('lista/criarlista/',
                     {
                         nomeLista: this.nomeLista,
@@ -164,16 +164,45 @@ import Swal from "sweetalert2";
                         }
                     })
                     .then((response) => {
-                        alert('Lista criada com sucesso!')
-                        this.clear()
+                        this.closeModal();
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: 'Lista ->' + this.nomeLista + ' criada com sucesso!',
+                            icon: 'success',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Chame sua função aqui
+                                    this.clear()
+                                    
+                                    window.location.reload();
+                                }
+                                });
+                        
                     })
                     .catch((error) => {
                         console.log(error)
+                        this.closeModal();
+                        Swal.fire({
+                            title: 'Não foi possível criar lista',
+                            text: error.response.data.errorMessage,
+                            icon: 'error',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Chame sua função aqui
+                                    
+                                    this.clear()
+                                    
+                                }
+                                });
+                        
                     })
                     // Fechar o modal após criar a lista, se necessário
-                    this.clear()
-                    this.closeModal();
-                    window.location.reload();
+                    
+                    
                 }else{
                     if(this.nomeLista.length <= 35){
                         this.closeModal()

@@ -7,11 +7,11 @@
                 
                     
                     <div class="text-center mx-auto text-uppercase"> 
-                    <span class="h1 text-warning fw-bold">listas de produtos - {{ nomeLista?.toUpperCase() || '' }}</span>
+                    <span class="h1 text-warning fw-bold">{{ nomeLista?.toUpperCase() || 'lista de produtos' }}</span>
                     </div>
                     <div class="text-center">
                         <button class="btn btn-warning hover"  style="flex: 1;margin-bottom:2px" @click="resetLista(listaId as any)"><i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i></button>
-                        <geraPDF :products="listaProdutos" :fornec="fornec" :key="componentKey" />
+                        <geraPDF :products="listaProdutos" :fornec="fornec" :key="componentKey" @click="validaLista()"/>
                     </div>
                     
 
@@ -230,21 +230,33 @@ export default defineComponent({
                     if (novaQuantidade === quantidadeAtual) {
                         return;
                     } else if (novaQuantidade <= 0) {
-                        if (window.confirm("Deseja realmente remover este item?")) {
-                        this.filteredList = this.filteredList.filter((product) => product.id !== id);
-                        this.listaProdutos = this.filteredList;
 
-                        let diferencaQuantidade = -quantidadeAtual; // Zerar a quantidade atual
-                        // Envie uma requisição para adicionar a diferencaQuantidade ao produto no banco de dados
-                        this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
-                            .then(() => {
-                            // Update the listaProdutos after successful request
-                                this.listaProdutos = [...this.listaProdutos];
-                            })
-                            .catch((error) => {
-                            console.error("Erro ao atualizar quantidade:", error);
-                            });
-                        }
+                        Swal.fire({
+                            title: 'Remover item',
+                            text: 'Você deseja remover o item da sua lista?',
+                            icon: 'question',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'Remover',
+                            showCancelButton: true,
+                            confirmButtonColor: 'red'
+                        }).then((result) => {
+                                if (result.isConfirmed) {
+                                    this.filteredList = this.filteredList.filter((product) => product.id !== id);
+                                    this.listaProdutos = this.filteredList;
+
+                                    let diferencaQuantidade = -quantidadeAtual; // Zerar a quantidade atual
+                                    // Envie uma requisição para adicionar a diferencaQuantidade ao produto no banco de dados
+                                    this.enviarAtualizacaoQuantidade(id, diferencaQuantidade)
+                                        .then(() => {
+                                        // Update the listaProdutos after successful request
+                                            this.listaProdutos = [...this.listaProdutos];
+                                        })
+                                        .catch((error) => {
+                                        console.error("Erro ao atualizar quantidade:", error);
+                                        });
+                                }
+                                });
+                        
                     } 
                     else {
 
@@ -339,6 +351,17 @@ export default defineComponent({
             this.totalItems = this.filteredList.length
             this.paginationKey++
         },
+        validaLista(){
+            if (this.listaProdutos.length <= 0){
+                Swal.fire({
+                            title: 'Não foi possível salvar sua lista',
+                            text: 'Adicione produtos na sua lista, para poder salvar.',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK',
+                        })
+            }
+        },
 
 
 
@@ -370,7 +393,6 @@ export default defineComponent({
                         this.isListaUsuario = false
                         this.listaProdutos = response.data
                         this.filteredList = response.data;
-                        console.log(response.data)
                         setTimeout(() => {
                             this.fornec = fornec
                             Cookies.set('nomeFornec', fornec)

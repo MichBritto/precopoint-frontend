@@ -63,8 +63,6 @@
               this.foundProducts = true;
               const produtos = listaItens[empresa as any];
               produtos.forEach((element: string) => {
-                console.log(element)
-                console.log(produtos.indexOf(element))
                 if (this.nao_encontrados.indexOf(element) === -1) {
                     this.nao_encontrados.push(element)
                 }

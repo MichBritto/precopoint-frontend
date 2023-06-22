@@ -60,7 +60,7 @@
                                     </div>
                         
                                     <div class="d-flex flex-row align-items-center mb-4 icon-input">
-                                        <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                                        <i class="fas fa-lock  fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <input type="password" id="rsenha" class="form-control" v-model="v$.rsenha.$model" :class="{'is-invalid': v$.rsenha.$errors.length}" placeholder="Confirmar Senha..."/>
                                             <label  v-if="v$.rsenha.$errors.length === 0" class="form-label" for="rsenha">Confirmar Senha</label>

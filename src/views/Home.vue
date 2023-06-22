@@ -16,10 +16,14 @@
                     <div class="container text-center">
                         <img :src="produto.imagem"  class="card-img-top img-produto" >
                     </div>
-                    <div class="card-body border ">
-                        <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
+                    <div class="card-body border d-flex flex-column justify-content-between">
+                        <small class="text-danger fw-bold">{{produto.marcaProduto}}</small>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
-                        <div class="text-center mt-4"><button class="btn btn-outline-warning" @click="produtoAdd(produto)">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
+                        <div class="mt-auto text-center">
+                            <button class="btn btn-outline-warning" @click="produtoAdd(produto)">
+                                Adicionar <i class="fa-solid fa-circle-plus"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>    
@@ -83,6 +87,14 @@ export default defineComponent({
         else {
             this.getProdutos();
         }
+        if (localStorage.getItem("meuItem") !== null) {
+            localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
+        } else {
+            const storageCarrinho = localStorage.getItem("carrinho")
+            if (storageCarrinho){
+                this.carrinho = JSON.parse(storageCarrinho)
+            }
+        }
     },
     methods: {
         async getProdutos() {       
@@ -133,19 +145,31 @@ export default defineComponent({
             this.nomeCategoria = data.nome;
         },
         produtoAdd(produto : IProduto){
-            let findProduct = this.carrinho.find(element => element.produto === produto.produto);
+            if(this.isLogged){
+                let findProduct = this.carrinho.find(element => element.produto === produto.produto);
 
-            if (findProduct) {
-            this.carrinho.find(element => {
-                if(element.produto == produto.produto){
-                element.qtde += 1
+                if (findProduct) {
+                this.carrinho.find(element => {
+                    if(element.produto == produto.produto){
+                    element.qtde += 1
+                    }
+                })
+
+
+                } else {
+                    produto.qtde = 1
+                    this.carrinho.push(produto);
                 }
-            })
-            
-            
-            } else {
-                produto.qtde = 1
-                this.carrinho.push(produto);
+                localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
+            }
+            else{
+                Swal.fire({
+                            title: 'Faça login',
+                            text: 'Necessário estar logado para realizar esta ação',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK',
+                        })
             }
         },
         removeCarrinho(produto : IProduto){
@@ -159,9 +183,11 @@ export default defineComponent({
                             icon: 'success',
                         })
             }
+            localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
         },
         limpaCarrinho(){
             this.carrinho = []
+            localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
         },
         async filtrarCategoria(idCategoria: string, nomeCategoria: string) {
             await api.get('filtro/list-produtos-by-categoria/'+ idCategoria)

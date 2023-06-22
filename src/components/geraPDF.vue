@@ -38,7 +38,6 @@ export default defineComponent({
     }
   },
   created(){
-    console.log(this.fornec)
     this.getListas()
     
   },
@@ -208,8 +207,6 @@ export default defineComponent({
     generate(){
       if (this.products.length > 0){
         this.generatePDF()
-      }else{
-        alert('Sua lista de produtos está vazia')
       }
     },
     

@@ -182,7 +182,9 @@ import jwt_decode from 'jwt-decode'
             sair(){
                 Cookies.remove('token');
                 Cookies.remove('email');
+                localStorage.removeItem('carrinho')
                 router.push('/login');
+
             }, 
             entrar(){
                 router.push('/login');

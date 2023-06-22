@@ -115,7 +115,10 @@
                             <label style="margin-left: 5px;">{{ lista.nomeLista }}</label>
                           </div>
                         </li>
-                      </ul>
+                      </ul> 
+                      <div v-if="!listas.length" class="text-center" style="text-center">
+                          <h4>Você não tem nenhuma lista</h4>
+                      </div>
 
                       
 

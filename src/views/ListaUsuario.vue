@@ -176,7 +176,7 @@ import Swal from "sweetalert2";
                                     // Chame sua função aqui
                                     this.clear()
                                     
-                                    window.location.reload();
+                                    this.getListas(this)
                                 }
                                 });
                         

@@ -38,7 +38,6 @@ export default defineComponent({
     }
   },
   created(){
-    console.log(this.fornec)
     this.getListas()
     
   },
@@ -114,10 +113,42 @@ export default defineComponent({
               alignment: 'center',
               fontSize: 25,
               bold: true,
-              margin: [0, 20, 0, 20]
+              margin: [0, 20, 0, 0]
             },
-            {
-              table: {
+            
+          ],
+        },
+      ],
+      styles: {
+        header: {
+          bold: true,
+          margin: [0, -50, 0, 10],
+          background: "#000000",
+          color: "#FFA500",
+        },
+        head: {
+          bold: true,
+          fontSize: 14,
+          fillColor: '#202A2E',
+          color: '#FFFFFF',
+          alignment: 'center'
+        },
+        table_theme:{
+          alignment: 'center',
+          margin: [200, 0, 0, 0]
+          
+        }
+
+      },
+      layout: {
+          defaultBorder: false,
+        },
+      
+      };
+      if (this.nomeFornec) {
+        documentDefinition.content[0].stack.push({
+          table: {
+                  alignment: 'center',
                   headerRows: 1,
                   widths: ['*', 'auto', {width: 55, alignment: 'right'}, {width: 'auto', alignment: 'center'}, {width: 80, alignment: 'right'}],
                   body: [
@@ -145,7 +176,30 @@ export default defineComponent({
                         maximumFractionDigits: 2,
                       }), alignment: 'right'}
                     ]),
-                  ], style: 'table_theme'           
+                  ], style: 'table_theme',
+                    layout: {
+                      defaultBorder: false,
+                      layout: 'noBorders',
+                      hLineWidth: function (i, node) {
+                        return i === 0 || i === node.table.body.length ? 1 : 0;
+                      },
+                      vLineWidth: function (i, node) {
+                        return i === 0 ? 1 : 0;
+                      },
+                      hLineColor: function (i, node) {
+                        return i === 0 || i === node.table.body.length ? '#202A2E' : 'transparent';
+                      },
+                      vLineColor: function () {
+                        return '#202A2E';
+                      },
+                      paddingLeft: function (i, node) {
+                        return i === 0 ? 0 : 8;
+                      },
+                      paddingRight: function (i, node) {
+                        return i === node.table.widths.length - 1 ? 0 : 8;
+                      },
+                    },
+                    keepWithHeaderRows: 1,         
                 },
               
               margin: [50, 40, 40, 0]
@@ -154,7 +208,7 @@ export default defineComponent({
               table: {
                   alignment: 'center',
                   headerRows: 1,
-                  widths: ['60%', '40%'],
+                  widths: [ {width: 300, alignment: 'center'},  {width: 186, alignment: 'right'}],
                   body: [
                     [
                       {text: "Quantidade de Produtos", style: 'head' },
@@ -169,47 +223,93 @@ export default defineComponent({
                         maximumFractionDigits: 2,
                       }), alignment: 'right'}
                     ]
-                  ], style: 'table_theme'                    
+                  ], style: 'table_theme',
+                  layout: {
+                    defaultBorder: false,
+                    layout: 'noBorders',
+                    hLineWidth: function (i, node) {
+                      return i === 0 || i === node.table.body.length ? 1 : 0;
+                    },
+                    vLineWidth: function (i, node) {
+                      return i === 0 ? 1 : 0;
+                    },
+                    hLineColor: function (i, node) {
+                      return i === 0 || i === node.table.body.length ? '#202A2E' : 'transparent';
+                    },
+                    vLineColor: function () {
+                      return '#202A2E';
+                    },
+                    paddingLeft: function (i, node) {
+                      return i === 0 ? 0 : 8;
+                    },
+                    paddingRight: function (i, node) {
+                      return i === node.table.widths.length - 1 ? 0 : 8;
+                    }
+                  },
+                  keepWithHeaderRows: 1,                   
                 },
                 
-              margin: [50, 40, 40, 0] 
-            },
-            
-          ],
-        },
-      ],
-      styles: {
-        header: {
-          bold: true,
-          margin: [0, -50, 0, 10],
-          background: "#000000",
-          color: "#FFA500",
-        },
-        head: {
-          bold: true,
-          fontSize: 14,
-          fillColor: '#202A2E',
-          color: '#FFFFFF',
-          alignment: 'center'
-        },
-        table_theme:{
-          alignment: 'center',
-          
-        }
+              margin: [50, 40, 40, 60] 
 
-      },
-      layout: {
-          defaultBorder: false,
-        },
-      };
+
+        });
+      }
+      else{
+        documentDefinition.content[0].stack.push({
+          table: {
+                  alignment: 'center',
+                  headerRows: 1,
+                  widths: ['*', 'auto', {width: 'auto', alignment: 'center'}],
+                  body: [
+                    [
+                      {text: "Produto", style: 'head' },
+                      {text: "Detalhes          ", style: 'head'},
+                      {text: "Quantidade", style: 'head'},
+                    ],
+                    ...this.products.map((product) => [
+                      product.produto,
+                      product.descricao,
+                      {text: product.qtde, alignment: 'right'}
+                    ]),
+                  ], style: 'table_theme',
+                  layout: {
+                    defaultBorder: false,
+                    layout: 'noBorders',
+                    hLineWidth: function (i, node) {
+                      return i === 0 || i === node.table.body.length ? 1 : 0;
+                    },
+                    vLineWidth: function (i, node) {
+                      return i === 0 ? 1 : 0;
+                    },
+                    hLineColor: function (i, node) {
+                      return i === 0 || i === node.table.body.length ? '#202A2E' : 'transparent';
+                    },
+                    vLineColor: function () {
+                      return '#202A2E';
+                    },
+                    paddingLeft: function (i, node) {
+                      return i === 0 ? 0 : 8;
+                    },
+                    paddingRight: function (i, node) {
+                      return i === node.table.widths.length - 1 ? 0 : 8;
+                    },
+                  },
+                  keepWithHeaderRows: 1,         
+                },
+              
+              margin: [50, 40, 40, 0]
+            
+
+        });
+      }
+
+      
       pdfMake.createPdf(documentDefinition).download(this.nomeArquivo ? this.nomeArquivo + '.pdf' : undefined);
 
     },
     generate(){
       if (this.products.length > 0){
         this.generatePDF()
-      }else{
-        alert('Sua lista de produtos está vazia')
       }
     },
     

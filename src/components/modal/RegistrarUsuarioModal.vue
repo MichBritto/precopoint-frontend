@@ -3,7 +3,7 @@
         <button type="button" class="btn btn-danger shadow btn-sm" data-bs-toggle="modal" data-bs-target="#btnConsumer">Criar sua conta</button>
 
         <!-- Modal - CONSUMIDOR-->
-        <div class="modal fade" id="btnConsumer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="btnConsumer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" ref="closeButton">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                 <div class="modal-header border-0">
@@ -44,7 +44,7 @@
                                 <i class="fa-sharp fa-solid fa-location-dot fa-lg me-3 fa-fw"></i>
                                 <div class="form-outline flex-fill mb-0">
                                     <input type="tel" id="endereco" class="form-control" v-model="endereco" placeholder="CEP..." />
-                                    <label class="form-label" for="endereco">CEP (não obrigatório)</label>
+                                    <label class="form-label" for="endereco">CEP</label>
                                 </div>
                             </div>
                 
@@ -60,7 +60,7 @@
                             </div>
                 
                             <div class="d-flex flex-row align-items-center mb-4 icon-input">
-                                <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                 <div class="form-outline flex-fill mb-0">
                                     <input type="password" id="rsenha" class="form-control" v-model="v$.rsenha.$model" :class="{'is-invalid': v$.rsenha.$errors.length}" placeholder="Confirmar Senha..."/>
                                     <label  v-if="v$.rsenha.$errors.length === 0" class="form-label" for="rsenha">Confirmar Senha</label>
@@ -267,12 +267,14 @@ import { defineComponent } from 'vue';
                     text:"Bem-vindo(a) "+ this.nomeUsuario +", vá para a tela de login e efetue-o para aproveitar os recursos do PreçoPoint!",
                     icon: 'success',
                 })
+                
                 this.nomeUsuario = ""
                 this.email = ""
                 this.senha = ""
                 this.rsenha = ""
                 this.endereco = ""
                 this.agreement = false
+                
             },
             callLiTermos() {      
                 if(this.callModal)

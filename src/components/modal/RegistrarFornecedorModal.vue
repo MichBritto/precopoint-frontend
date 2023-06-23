@@ -44,7 +44,7 @@
                                 <i class="fa-sharp fa-solid fa-location-dot fa-lg me-3 fa-fw"></i>
                                 <div class="form-outline flex-fill mb-0">
                                     <input type="tel" id="endereco" class="form-control" v-model="v$.endereco.$model" :class="{'is-invalid' : v$.endereco.$errors.length}" placeholder="CEP..." />
-                                    <label class="form-label" for="endereco">CEP (não obrigatório)</label>
+                                    <label class="form-label" for="endereco">CEP</label>
                                     <div class="text-danger mt-1" v-for="error in v$.endereco.$errors" :key="error.$uid">
                                         <span> • {{ error.$message }}</span>
                                     </div>

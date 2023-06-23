@@ -16,7 +16,7 @@
                     <div class="container text-center">
                         <img :src="produto.imagem"  class="card-img-top img-produto" >
                     </div>
-                    <div class="card-body border ">
+                    <div class="card-body border  d-flex flex-column justify-content-between">
                         <small class="text-danger fw-bold">{{produto.marcaProduto}}</small><br>
                         <span class="text-muted fs-6">{{produto.produto}}<span> - {{produto.descricao}}</span></span>
                         <div class="text-center mt-4"><button class="btn btn-outline-warning" @click="produtoAdd(produto)">Adicionar <i class="fa-solid fa-circle-plus"></i></button></div>
@@ -28,7 +28,7 @@
             <span class="h4 text-muted">Nenhum produto foi encontrado</span>
         </div>
         
-        <Cart v-if="isLogged" :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
+        <Cart v-if="carrinhoAtivo" :cartItems="carrinho" @removeProduto="removeCarrinho" @limpaCarrinho="limpaCarrinho"></Cart>
 
     </div>
            
@@ -43,6 +43,8 @@ import IProduto from '@/interfaces/IProduto'
 import Cart from '@/components/Cart.vue'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
+import jwt_decode from 'jwt-decode'
+
 export default defineComponent({
     
     // eslint-disable-next-line vue/multi-word-component-names
@@ -63,10 +65,13 @@ export default defineComponent({
             nomeCategoria: 'Produtos',
             produtoEscolhido: {} as IProduto,
             carrinho: [] as IProduto[],
-            isLogged: Cookies.get('token')
+            isLogged: Cookies.get('token'),
+            userRoles: [] as string[],
+            carrinhoAtivo: false
         };
     },
     mounted() {
+        this.carrinhoAtivo = this.showCart()
         const produtoPesquisado = localStorage.getItem('produtoPesquisado');
         const categoriaId = localStorage.getItem('categoriaId')
         if (produtoPesquisado) {
@@ -82,6 +87,14 @@ export default defineComponent({
         }
         else {
             this.getProdutos();
+        }
+        if (localStorage.getItem("meuItem") !== null) {
+            localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
+        } else {
+            const storageCarrinho = localStorage.getItem("carrinho")
+            if (storageCarrinho){
+                this.carrinho = JSON.parse(storageCarrinho)
+            }
         }
     },
     methods: {
@@ -133,19 +146,38 @@ export default defineComponent({
             this.nomeCategoria = data.nome;
         },
         produtoAdd(produto : IProduto){
-            let findProduct = this.carrinho.find(element => element.produto === produto.produto);
+            if(this.carrinhoAtivo){
+                let findProduct = this.carrinho.find(element => element.produto === produto.produto);
 
-            if (findProduct) {
-            this.carrinho.find(element => {
-                if(element.produto == produto.produto){
-                element.qtde += 1
+                if (findProduct) {
+                this.carrinho.find(element => {
+                    if(element.produto == produto.produto){
+                    element.qtde += 1
+                    }
+                })
+
+
+                } else {
+                    produto.qtde = 1
+                    this.carrinho.push(produto);
                 }
-            })
-            
-            
-            } else {
-                produto.qtde = 1
-                this.carrinho.push(produto);
+                Swal.fire({
+                    title: 'Produto adicionado com sucesso!',
+                    text: 'Produto foi adicionado ao seu carrinho de compras',
+                    icon: 'success',
+                    timer: 1000,
+                    showConfirmButton: false  
+                })
+                localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
+            }
+            else{
+                Swal.fire({
+                            title: 'Faça login',
+                            text: 'Necessário estar logado para realizar esta ação',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK',
+                        })
             }
         },
         removeCarrinho(produto : IProduto){
@@ -159,9 +191,11 @@ export default defineComponent({
                             icon: 'success',
                         })
             }
+            localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
         },
         limpaCarrinho(){
             this.carrinho = []
+            localStorage.setItem("carrinho", JSON.stringify(this.carrinho))
         },
         async filtrarCategoria(idCategoria: string, nomeCategoria: string) {
             await api.get('filtro/list-produtos-by-categoria/'+ idCategoria)
@@ -173,6 +207,21 @@ export default defineComponent({
                     console.log("Erro ao filtrar produtos por categoria: "+ error);
                 })
         },
+        showCart(): boolean{
+            if(this.isLogged){
+                
+                const decodedToken = jwt_decode(this.isLogged) as { roles: string[] };
+                this.userRoles = decodedToken.roles
+                if(this.hasRoleConsumidor()){
+                    return true
+                }
+            
+            }
+            return false
+        },
+        hasRoleConsumidor(): boolean {
+            return this.userRoles.includes('ROLE_CONSUMIDOR') || this.userRoles.includes('ROLE_ADMINISTRADOR');
+        }
     },
 })
 </script>

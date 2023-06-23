@@ -211,9 +211,9 @@
                     })
                 }
                 else{
-                    await api.put('fornecedor/update/' + usuario.id,
+                    await api.put('fornecedor/update/',
                     {
-                        nome: usuario.nome,
+                        email: usuario.email,
                         statusConta: usuario.statusConta ? 1 : 0 
                     }, config)
                     .then((response) => {

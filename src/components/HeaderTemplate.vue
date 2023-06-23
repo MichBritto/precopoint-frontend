@@ -50,6 +50,11 @@
                                 <li class="text-center">
                                   <label>Sem Listas</label>
                                 </li>
+
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <router-link class="dropdown-item" :to="{ name: 'ListaUsuario'}" ><i class="fa-solid fa-plus"></i> &nbsp;Criar lista</router-link>
+                                </li>
                             </ul>    
                         </li>
                         <li class="nav-item">
@@ -182,6 +187,7 @@ import jwt_decode from 'jwt-decode'
             sair(){
                 Cookies.remove('token');
                 Cookies.remove('email');
+                localStorage.removeItem('carrinho')
                 router.push('/login');
             }, 
             entrar(){

@@ -116,7 +116,9 @@
                           </div>
                         </li>
                       </ul>
-
+                      <div v-if="!listas.length" class="text-center" style="padding-top: 10rem;padding-bottom: 10rem;">
+                          <h4>Você não tem nenhuma lista</h4>
+                      </div>
                       
 
                       <button type="button" class="btn btn-dark float-start" @click="fecharFinalizar()">Cancelar</button>
@@ -256,7 +258,6 @@ export default defineComponent({
           var erro = false
           if (this.selectedLists.length === 0) {
               // Exibe uma mensagem de erro ou executa outra ação desejada
-              console.log("Nenhuma lista selecionada");
               return;
           }
 
@@ -277,9 +278,7 @@ export default defineComponent({
                   },
                   { headers }
                   )
-                  .then(response => {
-                       console.log('Produto adicionado com sucesso!' + response.data)
-                  })
+                  .then()
                   .catch(error => {
                     erro = true
                     
